@@ -21,7 +21,7 @@ export function ModeToggle() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild className="h-8 w-8 sm:h-9 sm:w-9 relative">
+      <DropdownMenuTrigger asChild className="h-6 w-6 sm:h-8 sm:w-8 relative">
         <Button
           variant="outline"
           size="icon"
