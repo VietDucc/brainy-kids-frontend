@@ -16,6 +16,7 @@ import {
   Zap,
   ArrowRight,
   Crown,
+  Loader,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
@@ -24,6 +25,9 @@ import { motion, useScroll } from "framer-motion";
 import { ModeToggle } from "../mode-toggle";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { ClerkLoading, ClerkLoaded, useAuth } from "@clerk/nextjs";
+import { UserButton } from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 
 // Add a function to scroll to top
 export const scrollToTop = () => {
@@ -62,6 +66,7 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [hidden, setHidden] = useState(false);
+  const { isSignedIn } = useAuth();
 
   // Handle scroll direction for hiding/showing header
   useEffect(() => {
@@ -203,40 +208,51 @@ const Header = () => {
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Mode toggle - always visible */}
             <ModeToggle />
-
-            {/* Login button - only visible on large screens */}
-            <Link href="/login" className="hidden lg:inline-flex">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 rounded-lg gap-1.5 group"
-              >
-                <LogIn className="h-3.5 w-3.5 text-primary group-hover:animate-pulse" />
-                <span>Đăng nhập</span>
-              </Button>
-            </Link>
+            <div className="flex gap-x-3">
+              <ClerkLoading>
+                <Loader className="h-5 w-5 animate-spin text-muted-foreground" />
+              </ClerkLoading>
+              <ClerkLoaded>
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <Button
+                      className="hidden lg:flex group text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 rounded-lg gap-1.5 shadow-md shadow-primary/20"
+                      variant="outline"
+                    >
+                      <span className="mr-1">Đăng nhập</span>
+                      {/* Animated arrow on hover */}
+                    </Button>
+                  </SignInButton>
+                </SignedOut>
+              </ClerkLoaded>
+            </div>
 
             {/* Trial button - only visible on large screens */}
-            <Button
-              className="hidden lg:flex group text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 rounded-lg gap-1.5 shadow-md shadow-primary/20"
-              variant="default"
-            >
-              <span className="mr-1">Dùng thử</span>
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            {!isSignedIn && (
+              <Button
+                className="hidden lg:flex group text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 rounded-lg gap-1.5 shadow-md shadow-primary/20"
+                variant="default"
               >
-                <Star className="h-3.5 w-3.5 text-yellow-300 group-hover:text-yellow-100" />
-              </motion.div>
+                <span className="mr-1">Dùng thử</span>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                >
+                  <Star className="h-3.5 w-3.5 text-yellow-300 group-hover:text-yellow-100" />
+                </motion.div>
 
-              {/* Animated arrow on hover */}
-              <motion.div
-                className="absolute right-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
-                transition={{ duration: 0.2 }}
-              >
-                <ArrowRight className="h-3.5 w-3.5" />
-              </motion.div>
-            </Button>
+                {/* Animated arrow on hover */}
+                <motion.div
+                  className="absolute right-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
+                  transition={{ duration: 0.2 }}
+                >
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </motion.div>
+              </Button>
+            )}
 
             {/* Mobile menu button - visible on all screens except large */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
