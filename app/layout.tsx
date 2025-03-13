@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ClerkLoaded, ClerkLoading, ClerkProvider } from "@clerk/nextjs";
+import { Loader2 } from "lucide-react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -28,7 +29,9 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <ClerkLoading>
-              <div>...Loading</div>
+              <div className="flex h-screen w-full items-center justify-center">
+                <Loader2 className="h-10 w-10 animate-spin" />
+              </div>
             </ClerkLoading>
             <ClerkLoaded>{children}</ClerkLoaded>
           </ThemeProvider>

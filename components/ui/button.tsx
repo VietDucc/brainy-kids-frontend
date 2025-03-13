@@ -19,6 +19,10 @@ const buttonVariants = cva(
           "bg-[#FFC800] text-[#4B4B4B] shadow-[0_5px_0_0_#E5A600] border-[#E5A600] border-b-4 hover:bg-[#FFD500] hover:border-[#FFBE00]",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        sidebar:
+          "bg-transparent text-slate-500 border-2 border-transparent hover:bg-slate-100 transition-none",
+        sidebarOutline:
+          "bg-sky-500/15 text-sky-500 border-sky-300 border-2 hover:bg-sky-500/20 transition-none",
       },
       size: {
         default: "h-12 px-6 py-3",
