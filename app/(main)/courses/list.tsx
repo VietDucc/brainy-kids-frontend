@@ -4,9 +4,10 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Card } from "./card";
+import { motion } from "framer-motion";
 
 // Define types based on our mock data structure
-type Course = {
+export type Course = {
   id: number;
   title: string;
   imageSrc: string;
@@ -29,25 +30,54 @@ export const List = ({ courses, activeCourseId }: ListProps) => {
     startTransition(() => {
       // Mock the database update
       toast.success(
-        `Switched to ${courses.find((c) => c.id === id)?.title} course`
+        `Switched to ${courses.find((c) => c.id === id)?.title} course`,
+        {
+          icon: "🎉",
+          style: {
+            backgroundColor: "#4ade80",
+            color: "white",
+            border: "none",
+          },
+        }
       );
       // In a real app, this would call upsertUserProgress
     });
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 },
+  };
+
   return (
-    <div className="grid grid-cols-2 gap-4 pt-2 lg:grid-cols-[repeat(auto-fill,minmax(210px,1fr))]">
+    <motion.div
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-2"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       {courses.map((course) => (
-        <Card
-          key={course.id}
-          id={course.id}
-          title={course.title}
-          imageSrc={course.imageSrc}
-          onClick={onClick}
-          disabled={pending}
-          isActive={course.id === activeCourseId}
-        />
+        <motion.div key={course.id} variants={item}>
+          <Card
+            id={course.id}
+            title={course.title}
+            imageSrc={course.imageSrc}
+            onClick={onClick}
+            disabled={pending}
+            isActive={course.id === activeCourseId}
+          />
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 };
