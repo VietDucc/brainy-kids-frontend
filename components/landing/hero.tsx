@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { ChevronRight, Sparkles, Stars, BookOpen, Rocket } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const Hero = () => {
   const [isClient, setIsClient] = useState(false);
@@ -331,19 +332,21 @@ const Hero = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button
-                  variant="default"
-                  size="default"
-                  className="w-full sm:w-auto text-primary-foreground text-sm sm:text-base group h-10 sm:h-11"
-                >
-                  <span className="text-white">Bắt đầu ngay</span>
-                  <motion.div
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1, repeat: Infinity }}
+                <Link href="/courses">
+                  <Button
+                    variant="default"
+                    size="default"
+                    className="w-full sm:w-auto text-primary-foreground text-sm sm:text-base group h-10 sm:h-11"
                   >
-                    <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:text-yellow-200 text-white" />
-                  </motion.div>
-                </Button>
+                    <span className="text-white">Bắt đầu ngay</span>
+                    <motion.div
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    >
+                      <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:text-yellow-200 text-white" />
+                    </motion.div>
+                  </Button>
+                </Link>
               </motion.div>
 
               <motion.div
