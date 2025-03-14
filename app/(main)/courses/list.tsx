@@ -40,7 +40,6 @@ export const List = ({ courses, activeCourseId }: ListProps) => {
           },
         }
       );
-      // In a real app, this would call upsertUserProgress
     });
   };
 

@@ -1,10 +1,38 @@
-import { mockCourses, mockUserProgress } from "./mock-data";
+"use client";
+import { useEffect, useState } from "react";
+import { Course } from "@/types/courses";
 import { List } from "./list";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
-const CoursesPage = async () => {
-  const languagesCourses = mockCourses;
-  const userProgress = mockUserProgress;
+const CoursesPage = () => {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("/api/courses");
+        if (!response.ok) throw new Error("Failed to fetch courses");
+        const data = await response.json();
+        setCourses(data);
+      } catch (error) {
+        toast.error(`Failed to load courses: ${error}`);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  if (isLoading)
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin" />
+      </div>
+    );
 
   return (
     <div className="mx-auto h-full max-w-[1200px] px-3 py-6">
@@ -36,58 +64,7 @@ const CoursesPage = async () => {
             </h2>
           </div>
           <Separator className="my-4 bg-gradient-to-r from-blue-500 to-purple-500" />
-          <List
-            courses={languagesCourses}
-            activeCourseId={userProgress?.activeCourseId}
-          />
-        </section>
-
-        <section>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-green-500 w-10 h-10 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold">🔢</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
-              Math Courses
-            </h2>
-          </div>
-          <Separator className="my-4 bg-gradient-to-r from-green-500 to-teal-500" />
-          <List
-            courses={languagesCourses}
-            activeCourseId={userProgress?.activeCourseId}
-          />
-        </section>
-
-        <section>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-orange-500 w-10 h-10 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold">🧪</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-              Science Courses
-            </h2>
-          </div>
-          <Separator className="my-4 bg-gradient-to-r from-orange-500 to-red-500" />
-          <List
-            courses={languagesCourses}
-            activeCourseId={userProgress?.activeCourseId}
-          />
-        </section>
-
-        <section>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-purple-500 w-10 h-10 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold">🎨</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Art Courses
-            </h2>
-          </div>
-          <Separator className="my-4 bg-gradient-to-r from-purple-500 to-pink-500" />
-          <List
-            courses={languagesCourses}
-            activeCourseId={userProgress?.activeCourseId}
-          />
+          <List courses={courses} activeCourseId={1} />
         </section>
       </div>
     </div>
