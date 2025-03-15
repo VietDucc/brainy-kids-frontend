@@ -10,6 +10,7 @@ import { Header } from "./header";
 import { LessonCard } from "./lesson-card";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Unit } from "./unit";
 
 // Định nghĩa các kiểu dữ liệu dựa trên API response
 interface ChallengeOption {
@@ -66,6 +67,9 @@ const LearnPage = () => {
     useState<UserProgressData | null>(null);
   const [units, setUnits] = useState<Unit[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
+  const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
+  const [activeLessonPercentage, setActiveLessonPercentage] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,6 +159,75 @@ const LearnPage = () => {
     return "📚";
   };
 
+  const handleLessonClick = (unitId: number, lesson: Lesson) => {
+    setSelectedUnitId(unitId);
+    setActiveLesson(lesson);
+
+    // Tính toán phần trăm hoàn thành của bài học
+    if (lesson.challenges && lesson.challenges.length > 0) {
+      const completedChallenges = lesson.challenges.filter(
+        (challenge) =>
+          challenge.challengesProgress &&
+          challenge.challengesProgress.some((progress) => progress.completed)
+      ).length;
+
+      const percentage = (completedChallenges / lesson.challenges.length) * 100;
+      setActiveLessonPercentage(percentage);
+    } else {
+      setActiveLessonPercentage(0);
+    }
+  };
+
+  const handleBackToUnits = () => {
+    setSelectedUnitId(null);
+    setActiveLesson(null);
+  };
+
+  // Nếu đã chọn một unit, hiển thị giao diện unit
+  if (selectedUnitId !== null) {
+    const selectedUnit = units.find((unit) => unit.id === selectedUnitId);
+
+    if (!selectedUnit) {
+      return (
+        <div className="flex h-screen w-full items-center justify-center">
+          <p>Unit not found</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col lg:flex-row-reverse gap-[48px] px-6">
+        <StickyWrapper>
+          <UserProgress
+            activeCourse={userProgressData.activeCourse}
+            hearts={userProgressData.hearts}
+            points={userProgressData.points}
+            hasActiveSubscription={false}
+          />
+        </StickyWrapper>
+        <FeedWrapper>
+          <Header
+            title={userProgressData.activeCourse.title}
+            onBack={handleBackToUnits}
+            showBackToUnits
+          />
+          <div className="mt-8">
+            <Unit
+              id={selectedUnit.id}
+              orderUnit={selectedUnit.orderUnit}
+              title={selectedUnit.title}
+              description={selectedUnit.description || ""}
+              lessons={selectedUnit.lessons || []}
+              activeLesson={activeLesson || undefined}
+              activeLessonPercentage={activeLessonPercentage}
+            />
+          </div>
+        </FeedWrapper>
+      </div>
+    );
+  }
+
+  // Hiển thị danh sách các unit và lesson
   return (
     <div className="flex flex-col lg:flex-row-reverse gap-[48px] px-6">
       <StickyWrapper>
@@ -191,6 +264,7 @@ const LearnPage = () => {
                         } challenges`}
                         status={getLessonStatus(lesson)}
                         icon={getLessonIcon(lesson)}
+                        onClick={() => handleLessonClick(unit.id, lesson)}
                       />
                     ))
                   ) : (

@@ -1,7 +1,6 @@
 "use client";
 
 import { CheckCircle, Lock, Play } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -11,22 +10,21 @@ interface LessonCardProps {
   description: string;
   status: "locked" | "available" | "completed";
   icon: string;
+  onClick: () => void;
 }
 
 export const LessonCard = ({
-  id,
   title,
   description,
   status,
   icon,
+  onClick,
 }: LessonCardProps) => {
-  const router = useRouter();
   const [isHovering, setIsHovering] = useState(false);
 
-  const onClick = () => {
+  const handleClick = () => {
     if (status === "locked") return;
-
-    router.push(`/lesson/${id}`);
+    onClick();
   };
 
   const statusMap = {
@@ -57,7 +55,7 @@ export const LessonCard = ({
 
   return (
     <div
-      onClick={onClick}
+      onClick={handleClick}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       className={cn(
