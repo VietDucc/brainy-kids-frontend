@@ -331,7 +331,7 @@ export const ChallengeScreen = ({
           ) : (
             <Button
               onClick={handleNext}
-              className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl flex items-center justify-center gap-2"
             >
               {currentChallengeIndex < challenges.length - 1
                 ? "Next"
