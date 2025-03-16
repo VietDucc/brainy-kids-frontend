@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle, Lock, Play } from "lucide-react";
+import { CheckCircle, Lock, Play, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +11,7 @@ interface LessonCardProps {
   status: "locked" | "available" | "completed";
   icon: string;
   onClick: () => void;
+  isLoading?: boolean;
 }
 
 export const LessonCard = ({
@@ -19,13 +20,9 @@ export const LessonCard = ({
   status,
   icon,
   onClick,
+  isLoading = false,
 }: LessonCardProps) => {
   const [isHovering, setIsHovering] = useState(false);
-
-  const handleClick = () => {
-    if (status === "locked") return;
-    onClick();
-  };
 
   const statusMap = {
     locked: {
@@ -52,6 +49,36 @@ export const LessonCard = ({
   };
 
   const currentStatus = statusMap[status];
+
+  const handleClick = () => {
+    if (status === "locked" || isLoading) return;
+    onClick();
+  };
+
+  // Hiển thị loading state
+  if (isLoading) {
+    return (
+      <div
+        className={cn(
+          "flex items-center gap-4 rounded-xl border-2 p-4 cursor-wait transition-all shadow-sm",
+          "bg-white dark:bg-slate-900",
+          "border-blue-200 dark:border-blue-800"
+        )}
+      >
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/50">
+          <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+        </div>
+        <div>
+          <h3 className="font-bold text-slate-700 dark:text-slate-200">
+            {title}
+          </h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Loading...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

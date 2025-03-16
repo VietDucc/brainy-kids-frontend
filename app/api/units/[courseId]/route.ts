@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
 import { api } from "../../config";
 
-export async function GET(
-  request: Request,
-  context: { params: { courseId: string } }
-) {
-  try {
-    const params = await context.params;
-    const courseId = parseInt(params.courseId);
+export const dynamic = "force-dynamic"; // Use Next.js dynamic configuration
 
+export async function GET(request, { params }) {
+  try {
+    const courseId = parseInt(params.courseId, 10);
     if (isNaN(courseId)) {
       return NextResponse.json({ error: "Invalid course ID" }, { status: 400 });
     }
@@ -16,7 +13,6 @@ export async function GET(
     const response = await fetch(api.units(courseId), {
       cache: "no-store",
     });
-
     if (!response.ok) {
       throw new Error(`Failed to fetch units for course ${courseId}`);
     }
@@ -24,7 +20,10 @@ export async function GET(
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error(`Error fetching units:`, error);
-    return NextResponse.json([], { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to fetch units for course" },
+      { status: 500 }
+    );
   }
 }
