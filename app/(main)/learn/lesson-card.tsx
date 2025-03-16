@@ -10,11 +10,12 @@ interface LessonCardProps {
   description: string;
   status: "locked" | "available" | "completed";
   icon: string;
-  onClick: () => void;
+  onClick: (lessonId: number) => void;
   isLoading?: boolean;
 }
 
 export const LessonCard = ({
+  id,
   title,
   description,
   status,
@@ -52,7 +53,7 @@ export const LessonCard = ({
 
   const handleClick = () => {
     if (status === "locked" || isLoading) return;
-    onClick();
+    onClick(id);
   };
 
   // Hiển thị loading state
