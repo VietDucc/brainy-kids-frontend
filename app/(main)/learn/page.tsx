@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 
 import { FeedWrapper } from "@/components/feed-wrapper";
 import { StickyWrapper } from "@/components/sticky-wrapper";
@@ -11,7 +11,9 @@ import { LessonCard } from "./lesson-card";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Unit } from "./unit";
-
+import { ChallengeScreen } from "./challenge-screen";
+import { transformLessonData } from "@/utils/transform-lesson-data";
+import { LessonType } from "@/types/learn";
 // Định nghĩa các kiểu dữ liệu dựa trên API response
 interface ChallengeOption {
   id: number;
@@ -62,12 +64,16 @@ interface UserProgressData {
 }
 
 const LearnPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [userProgressData, setUserProgressData] =
     useState<UserProgressData | null>(null);
   const [units, setUnits] = useState<Unit[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<LessonType | null>(null);
+  const [isLoadingLesson, setIsLoadingLesson] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,6 +102,13 @@ const LearnPage = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const unitId = searchParams.get("unitId");
+    if (unitId) {
+      setSelectedUnitId(parseInt(unitId, 10));
+    }
+  }, [searchParams]);
 
   if (isLoading) {
     return (
@@ -156,24 +169,105 @@ const LearnPage = () => {
     return "📚";
   };
 
-  const handleLessonClick = (unitId: number, lesson: Lesson) => {
-    setSelectedUnitId(unitId);
-    if (lesson.challenges && lesson.challenges.length > 0) {
-      const completedChallenges = lesson.challenges.filter(
-        (challenge) =>
-          challenge.challengesProgress &&
-          challenge.challengesProgress.some((progress) => progress.completed)
-      ).length;
+  const handleLessonClick = async (lessonId: number) => {
+    try {
+      setIsLoadingLesson(true);
+      setError(null);
 
-      console.log(
-        `Completed ${completedChallenges} out of ${lesson.challenges.length} challenges`
-      );
+      // Gọi API để lấy dữ liệu lesson
+      const response = await fetch(`/api/lessons/${lessonId}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to load lesson ${lessonId}`);
+      }
+
+      const data = await response.json();
+      console.log("API response:", data);
+
+      // Chuyển đổi dữ liệu
+      const lessonData = transformLessonData(data, lessonId);
+
+      // Kiểm tra xem có challenges không
+      if (!lessonData.challenges || lessonData.challenges.length === 0) {
+        setError("This lesson doesn't have any challenges yet.");
+        setSelectedLesson(null);
+      } else {
+        setSelectedLesson(lessonData);
+      }
+    } catch (error) {
+      console.error("Error loading lesson:", error);
+      setError("Failed to load lesson. Please try again.");
+    } finally {
+      setIsLoadingLesson(false);
     }
   };
 
   const handleBackToUnits = () => {
+    router.push("/learn");
     setSelectedUnitId(null);
+    setSelectedLesson(null);
   };
+
+  const handleChallengeComplete = () => {
+    toast.success("Lesson completed!", {
+      description: "You've earned 10 XP!",
+      icon: "🎉",
+    });
+
+    setSelectedLesson(null);
+  };
+
+  const handleExitChallenge = () => {
+    setSelectedLesson(null);
+  };
+
+  // Hiển thị loading state
+  if (isLoadingLesson) {
+    return (
+      <div className="fixed inset-0 bg-white dark:bg-gray-950 z-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-lg font-medium text-slate-700 dark:text-slate-300">
+            Loading lesson...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Hiển thị thông báo lỗi nếu có
+  if (error) {
+    return (
+      <div className="fixed inset-0 bg-white dark:bg-gray-950 z-50 flex items-center justify-center">
+        <div className="text-center max-w-md p-6">
+          <h2 className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-200">
+            {error}
+          </h2>
+          <button
+            onClick={handleBackToUnits}
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+          >
+            Back to units
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Hiển thị ChallengeScreen nếu đã chọn lesson
+  if (selectedLesson) {
+    return (
+      <div className="fixed inset-0 bg-white dark:bg-gray-950 z-50 overflow-auto">
+        <ChallengeScreen
+          challenges={selectedLesson.challenges}
+          onComplete={handleChallengeComplete}
+          lessonTitle={selectedLesson.title}
+          onExit={handleExitChallenge}
+          lessonId={selectedLesson.id}
+        />
+      </div>
+    );
+  }
 
   // Nếu đã chọn một unit, hiển thị giao diện unit
   if (selectedUnitId !== null) {
@@ -203,13 +297,42 @@ const LearnPage = () => {
             onBack={handleBackToUnits}
             showBackToUnits
           />
-          <div className="mt-8">
-            <Unit
-              id={selectedUnit.id}
-              orderUnit={selectedUnit.orderUnit}
-              title={selectedUnit.title}
-              lessons={selectedUnit.lessons || []}
-            />
+          <div className="mt-8 space-y-4">
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 mb-6">
+              {selectedUnit.title}
+            </h2>
+
+            {selectedUnit.lessons.map((lesson) => {
+              // Xác định trạng thái của lesson
+              const isCompleted = lesson.challenges?.every(
+                (challenge) =>
+                  challenge.challengesProgress &&
+                  challenge.challengesProgress.some(
+                    (progress) => progress.completed
+                  )
+              );
+
+              let status: "locked" | "available" | "completed" = "available";
+              if (isCompleted) {
+                status = "completed";
+              } else if (false) {
+                // Logic để xác định lesson bị khóa
+                status = "locked";
+              }
+
+              return (
+                <LessonCard
+                  key={lesson.id}
+                  id={lesson.id}
+                  title={lesson.title}
+                  description={`Lesson ${lesson.orderIndex + 1}`}
+                  status={status}
+                  icon="🎓"
+                  onClick={handleLessonClick}
+                  isLoading={isLoadingLesson}
+                />
+              );
+            })}
           </div>
         </FeedWrapper>
       </div>
@@ -253,7 +376,8 @@ const LearnPage = () => {
                         } challenges`}
                         status={getLessonStatus(lesson)}
                         icon={getLessonIcon(lesson)}
-                        onClick={() => handleLessonClick(unit.id, lesson)}
+                        onClick={() => handleLessonClick(lesson.id)}
+                        isLoading={isLoadingLesson}
                       />
                     ))
                   ) : (
