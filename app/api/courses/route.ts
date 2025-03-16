@@ -14,7 +14,7 @@ export async function GET() {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error fetching courses:", error);
+    console.error(error);
     return NextResponse.json([], { status: 500 });
   }
 }

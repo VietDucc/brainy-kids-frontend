@@ -1,24 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   CheckCircle,
   XCircle,
   Volume2,
   ArrowRight,
   Heart,
-  X,
+  ArrowLeft,
+  Trophy,
+  Zap,
+  Home,
+  StarIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface ChallengeOption {
   id: number;
   textOption: string;
   correct: boolean;
-  imageSrc: string;
-  audioSrc: string;
+  imageSrc: string | null;
+  audioSrc: string | null;
 }
 
 interface Challenge {
@@ -39,14 +45,22 @@ interface ChallengeScreenProps {
   onComplete: () => void;
   lessonTitle: string;
   onExit: () => void;
+  lessonId: number;
 }
 
 export const ChallengeScreen = ({
   challenges,
   onComplete,
-  lessonTitle,
   onExit,
 }: ChallengeScreenProps) => {
+  const router = useRouter();
+
+  const validChallenges = Array.isArray(challenges) ? challenges : [];
+
+  const sortedChallenges = [...validChallenges].sort(
+    (a, b) => a.orderChallenge - b.orderChallenge
+  );
+
   const [currentChallengeIndex, setCurrentChallengeIndex] = useState(0);
   const [selectedOptionId, setSelectedOptionId] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -57,15 +71,58 @@ export const ChallengeScreen = ({
   const [autoAdvanceTimeout, setAutoAdvanceTimeout] =
     useState<NodeJS.Timeout | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [showSummary, setShowSummary] = useState(false);
+  const [results, setResults] = useState<{
+    correct: number;
+    incorrect: number;
+    xp: number;
+  }>({
+    correct: 0,
+    incorrect: 0,
+    xp: 0,
+  });
+  const correctSoundRef = useRef<HTMLAudioElement | null>(null);
+  const incorrectSoundRef = useRef<HTMLAudioElement | null>(null);
+  const completeSoundRef = useRef<HTMLAudioElement | null>(null);
 
-  const currentChallenge = challenges[currentChallengeIndex];
+  // Đảm bảo currentChallenge luôn có giá trị hợp lệ
+  const currentChallenge = sortedChallenges[currentChallengeIndex] || null;
+
+  // Khởi tạo audio elements khi component mount
+  useEffect(() => {
+    correctSoundRef.current = new Audio("/correct.wav");
+    incorrectSoundRef.current = new Audio("/incorrect.wav");
+    completeSoundRef.current = new Audio("/complete.wav");
+
+    return () => {
+      if (correctSoundRef.current) {
+        correctSoundRef.current.pause();
+        correctSoundRef.current = null;
+      }
+      if (incorrectSoundRef.current) {
+        incorrectSoundRef.current.pause();
+        incorrectSoundRef.current = null;
+      }
+      if (completeSoundRef.current) {
+        completeSoundRef.current.pause();
+        completeSoundRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
-    // Cập nhật progress khi chuyển challenge
-    setProgress((currentChallengeIndex / challenges.length) * 100);
-  }, [currentChallengeIndex, challenges.length]);
+    if (!sortedChallenges || sortedChallenges.length === 0) {
+      toast.error("No challenges available for this lesson");
+      onExit();
+    } else {
+      console.log(`Starting with ${sortedChallenges.length} challenges`);
+    }
+  }, [sortedChallenges, onExit]);
 
-  // Xử lý cleanup khi component unmount
+  useEffect(() => {
+    setProgress((currentChallengeIndex / sortedChallenges.length) * 100);
+  }, [currentChallengeIndex, sortedChallenges.length]);
+
   useEffect(() => {
     return () => {
       if (autoAdvanceTimeout) {
@@ -74,67 +131,68 @@ export const ChallengeScreen = ({
     };
   }, [autoAdvanceTimeout]);
 
-  const handleOptionSelect = (optionId: number, isCorrect: boolean) => {
-    if (selectedOptionId !== null) return; // Đã chọn đáp án rồi
+  const handleOptionClick = (optionId: number) => {
+    if (selectedOptionId !== null) return; // Prevent changing answer after selection
 
     setSelectedOptionId(optionId);
-    setIsCorrect(isCorrect);
 
-    // Cập nhật streak và hearts
-    if (isCorrect) {
-      setStreak((prev) => prev + 1);
-      setFeedbackMessage(
-        streak > 0 ? `Correct! ${streak + 1} in a row! 🔥` : "Correct!"
-      );
+    const selectedOption = currentChallenge?.challengesOption.find(
+      (option) => option.id === optionId
+    );
 
-      // Tự động chuyển sang câu tiếp theo sau 1.5 giây nếu trả lời đúng
-      const timeout = setTimeout(() => {
-        handleNext();
-      }, 1500);
+    if (selectedOption) {
+      if (selectedOption.correct) {
+        setIsCorrect(true);
+        setStreak(streak + 1);
+        setFeedbackMessage("Correct!");
+        correctSoundRef.current?.play();
 
-      setAutoAdvanceTimeout(timeout);
-    } else {
-      setHearts((prev) => Math.max(0, prev - 1));
-      setStreak(0);
-      setFeedbackMessage("Incorrect. Try again!");
+        // Cập nhật kết quả
+        setResults((prev) => ({
+          ...prev,
+          correct: prev.correct + 1,
+          xp: prev.xp + 10,
+        }));
+
+        const timeout = setTimeout(() => {
+          handleNext();
+        }, 1500);
+        setAutoAdvanceTimeout(timeout);
+      } else {
+        setIsCorrect(false);
+        setStreak(0);
+        setHearts(hearts - 1);
+        setFeedbackMessage("Incorrect!");
+        incorrectSoundRef.current?.play();
+
+        // Cập nhật kết quả
+        setResults((prev) => ({
+          ...prev,
+          incorrect: prev.incorrect + 1,
+        }));
+      }
     }
-
-    // Phát âm thanh phản hồi
-    const audio = new Audio(isCorrect ? "/correct.wav" : "/incorrect.wav");
-    audio.play().catch((e) => console.error("Could not play audio", e));
   };
 
   const handleNext = () => {
-    // Hủy timeout nếu người dùng bấm nút next thủ công
     if (autoAdvanceTimeout) {
       clearTimeout(autoAdvanceTimeout);
       setAutoAdvanceTimeout(null);
     }
 
-    setFeedbackMessage("");
-
-    if (currentChallengeIndex < challenges.length - 1) {
-      setCurrentChallengeIndex((prev) => prev + 1);
+    if (currentChallengeIndex < sortedChallenges.length - 1) {
+      setCurrentChallengeIndex(currentChallengeIndex + 1);
       setSelectedOptionId(null);
       setIsCorrect(null);
+      setFeedbackMessage("");
     } else {
-      // Hoàn thành tất cả challenges
-      onComplete();
+      // Completed all challenges
+      completeSoundRef.current?.play();
+      setShowSummary(true);
     }
-  };
-
-  const playAudio = (audioSrc: string) => {
-    const audio = new Audio(audioSrc);
-    audio.play().catch((e) => console.error("Could not play audio", e));
   };
 
   const handleExitClick = () => {
-    // Hủy timeout nếu đang có
-    if (autoAdvanceTimeout) {
-      clearTimeout(autoAdvanceTimeout);
-      setAutoAdvanceTimeout(null);
-    }
-
     setShowExitConfirmation(true);
   };
 
@@ -146,84 +204,165 @@ export const ChallengeScreen = ({
     setShowExitConfirmation(false);
   };
 
-  if (!currentChallenge) {
+  const handleFinishLesson = () => {
+    onComplete();
+    router.push("/learn");
+  };
+
+  const playAudio = (src: string) => {
+    const audio = new Audio(src);
+    audio.play();
+  };
+
+  // Nếu không có challenges, hiển thị loading
+  if (!currentChallenge && !showSummary) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p>No challenges available.</p>
+      <div className="flex flex-col items-center justify-center h-screen">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
+        <p className="text-slate-500">Loading challenges...</p>
+      </div>
+    );
+  }
+
+  // Hiển thị màn hình tổng kết khi hoàn thành
+  if (showSummary) {
+    return (
+      <div className="fixed inset-0 bg-white dark:bg-gray-950 z-50 flex flex-col items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 animate-fade-in">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Trophy className="h-10 w-10 text-yellow-500" />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+              Lesson Completed!
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400">
+              Great job! You&apos;ve completed all challenges.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl text-center">
+              <StarIcon className="h-6 w-6 text-blue-500 mx-auto mb-2" />
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Total
+              </p>
+              <p className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                {sortedChallenges.length}
+              </p>
+            </div>
+            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl text-center">
+              <CheckCircle className="h-6 w-6 text-green-500 mx-auto mb-2" />
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Correct
+              </p>
+              <p className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                {results.correct}
+              </p>
+            </div>
+            <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl text-center">
+              <XCircle className="h-6 w-6 text-red-500 mx-auto mb-2" />
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Incorrect
+              </p>
+              <p className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                {results.incorrect}
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-primary/10 p-4 rounded-xl flex items-center justify-between mb-8">
+            <div>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                You earned
+              </p>
+              <p className="text-2xl font-bold text-primary">{results.xp} XP</p>
+            </div>
+            <Zap className="h-8 w-8 text-primary" />
+          </div>
+
+          <div className="flex gap-4">
+            <Button
+              variant="outline"
+              className="flex-1 py-3"
+              onClick={() => (window.location.href = "/learn")}
+            >
+              <Home className="h-4 w-4 mr-2" />
+              Home
+            </Button>
+            <Button
+              className="flex-1 py-3 bg-primary hover:bg-primary/90"
+              onClick={handleFinishLesson}
+            >
+              Continue
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col relative">
-      {/* Fixed header */}
-      <div className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-950 z-10 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="py-4 flex justify-between items-center">
+    <div className="min-h-screen bg-white dark:bg-gray-950 relative">
+      {/* Header with progress bar and hearts */}
+      <header className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-950 border-b dark:border-gray-800 z-10">
+        <div className="max-w-4xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
             <Button
               variant="ghost"
-              size="sm"
-              className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 -ml-2"
+              size="icon"
               onClick={handleExitClick}
+              className="text-slate-500"
             >
-              <X className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1">
-                <Heart className="h-5 w-5 text-red-500 fill-red-500" />
-                <span className="text-sm font-medium">{hearts}</span>
+
+            <div className="flex-1 mx-4">
+              <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                ></div>
               </div>
             </div>
-          </div>
-          <div className="relative h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-2">
-            <div
-              className="absolute top-0 left-0 h-full bg-green-500 transition-all duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-          <div className="flex justify-between items-center py-2 text-sm">
-            <div className="font-medium text-slate-700 dark:text-slate-200">
-              {currentChallengeIndex + 1}/{challenges.length}
-            </div>
-            <div className="font-medium text-slate-700 dark:text-slate-200">
-              {lessonTitle}
+
+            <div className="flex items-center gap-1">
+              {Array.from({ length: hearts }).map((_, i) => (
+                <Heart
+                  key={i}
+                  className="h-5 w-5 text-red-500 fill-red-500"
+                  strokeWidth={0}
+                />
+              ))}
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col justify-center items-center px-4 pt-28 pb-24">
-        {/* Challenge question */}
-        <div className="w-full max-w-2xl mx-auto mb-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-slate-800 dark:text-slate-100">
-            {currentChallenge.question}
-          </h2>
-
-          {/* Feedback message */}
-          {feedbackMessage && (
-            <div
-              className={cn(
-                "mb-6 p-3 rounded-lg text-center animate-fade-in font-medium",
-                isCorrect
-                  ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400"
-                  : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400"
-              )}
-            >
-              {feedbackMessage}
-            </div>
-          )}
+      <div className="flex-1 pt-16 pb-24 px-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Challenge question */}
+          <div className="mt-20 text-center">
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+              {currentChallenge.question}
+            </h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">
+              {currentChallenge.type === "SELECT"
+                ? "Select the correct answer"
+                : "Complete the challenge"}
+            </p>
+          </div>
 
           {/* Challenge options */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
             {currentChallenge.challengesOption.map((option) => (
               <div
                 key={option.id}
-                onClick={() => handleOptionSelect(option.id, option.correct)}
                 className={cn(
-                  "p-4 border-2 rounded-xl cursor-pointer transition-all flex items-center justify-between",
+                  "p-4 border rounded-xl transition-all cursor-pointer flex justify-between items-center",
                   selectedOptionId === null
-                    ? "hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:scale-105 transition-transform"
+                    ? "hover:border-primary hover:bg-primary/5"
                     : "",
                   selectedOptionId === option.id && isCorrect
                     ? "border-green-500 bg-green-50 dark:bg-green-900/20"
@@ -236,64 +375,77 @@ export const ChallengeScreen = ({
                     option.correct
                     ? "border-green-500 bg-green-50 dark:bg-green-900/20"
                     : "",
-                  selectedOptionId !== null && selectedOptionId !== option.id
-                    ? "opacity-70"
+                  selectedOptionId !== null &&
+                    selectedOptionId !== option.id &&
+                    !option.correct
+                    ? "opacity-50"
                     : ""
                 )}
+                onClick={() => handleOptionClick(option.id)}
               >
-                <div className="flex-1">
-                  {option.imageSrc && option.imageSrc !== "url" && (
-                    <div className="mb-3">
+                <div className="flex items-center gap-3">
+                  {option.audioSrc && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playAudio(option.audioSrc!);
+                      }}
+                      className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                    >
+                      <Volume2 className="h-5 w-5 text-primary" />
+                    </button>
+                  )}
+                  <span className="font-medium text-slate-800 dark:text-slate-200">
+                    {option.textOption}
+                  </span>
+                </div>
+
+                <div className="flex items-center">
+                  {option.imageSrc && (
+                    <div className="h-14 w-14 relative mr-3 rounded-md overflow-hidden">
                       <Image
                         src={option.imageSrc}
                         alt={option.textOption}
-                        className="w-full h-32 object-contain rounded-lg"
-                        width={100}
-                        height={100}
+                        fill
+                        className="object-cover"
                       />
                     </div>
                   )}
-                  <div className="flex items-center justify-center">
-                    <span className="text-lg font-medium">
-                      {option.textOption}
-                    </span>
-                    {option.audioSrc && option.audioSrc !== "url" && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="ml-2"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playAudio(option.audioSrc);
-                        }}
-                      >
-                        <Volume2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
 
-                {selectedOptionId === option.id && isCorrect && (
-                  <CheckCircle className="h-6 w-6 text-green-500 ml-2" />
-                )}
-                {selectedOptionId === option.id && !isCorrect && (
-                  <XCircle className="h-6 w-6 text-red-500 ml-2" />
-                )}
-                {selectedOptionId !== null &&
-                  selectedOptionId !== option.id &&
-                  option.correct && (
-                    <CheckCircle className="h-6 w-6 text-green-500 ml-2" />
+                  {selectedOptionId === option.id && isCorrect && (
+                    <CheckCircle className="h-6 w-6 text-green-500 ml-2 flex-shrink-0" />
                   )}
+                  {selectedOptionId === option.id && !isCorrect && (
+                    <XCircle className="h-6 w-6 text-red-500 ml-2 flex-shrink-0" />
+                  )}
+                  {selectedOptionId !== null &&
+                    selectedOptionId !== option.id &&
+                    option.correct && (
+                      <CheckCircle className="h-6 w-6 text-green-500 ml-2 flex-shrink-0" />
+                    )}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
+      {/* Feedback message with animation */}
+      {feedbackMessage && (
+        <div
+          className={cn(
+            "fixed bottom-24 left-0 right-0 text-center py-3 font-bold text-white animate-fade-in",
+            isCorrect ? "bg-green-500" : "bg-red-500"
+          )}
+        >
+          {feedbackMessage}
+        </div>
+      )}
+
       {/* Exit confirmation dialog */}
       {showExitConfirmation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-xl max-w-md w-full">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-30 p-4">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-xl max-w-md w-full shadow-xl">
             <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">
               Exit lesson?
             </h3>
@@ -321,19 +473,19 @@ export const ChallengeScreen = ({
         </div>
       )}
 
-      {/* Bottom navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 border-t dark:border-gray-800 p-4">
-        <div className="max-w-4xl mx-auto flex justify-between">
+      {/* Bottom navigation - Fixed at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 border-t dark:border-gray-800 p-4 z-10">
+        <div className="max-w-4xl mx-auto">
           {selectedOptionId === null ? (
-            <p className="text-slate-500 dark:text-slate-400 text-sm italic">
+            <p className="text-slate-500 dark:text-slate-400 text-sm text-center">
               Select an answer to continue
             </p>
           ) : (
             <Button
               onClick={handleNext}
-              className="w-full py-3 rounded-xl flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl flex items-center justify-center gap-2 bg-primary hover:bg-primary/90"
             >
-              {currentChallengeIndex < challenges.length - 1
+              {currentChallengeIndex < sortedChallenges.length - 1
                 ? "Next"
                 : "Complete"}
               <ArrowRight className="h-4 w-4" />
