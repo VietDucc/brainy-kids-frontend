@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { api } from "../../config";
 
+export const dynamic = "force-dynamic"; // Use Next.js dynamic configuration
+
 export async function GET(
-  request: Request,
-  context: { params: { lessonId: string } }
+  request: NextRequest,
+  { params }: { params: { lessonId: string } }
 ) {
   try {
-    const params = await context.params;
-    const lessonId = parseInt(params.lessonId);
-
+    const lessonId = parseInt(params.lessonId, 10);
     if (isNaN(lessonId)) {
       return NextResponse.json({ error: "Invalid lesson ID" }, { status: 400 });
     }
@@ -16,15 +16,17 @@ export async function GET(
     const response = await fetch(api.lessons(lessonId), {
       cache: "no-store",
     });
-
     if (!response.ok) {
-      throw new Error(`Failed to fetch lesson with ID ${lessonId}`);
+      throw new Error(`Failed to fetch lesson ${lessonId}`);
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error(`Error fetching lesson:`, error);
-    return NextResponse.json([], { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to fetch lesson" },
+      { status: 500 }
+    );
   }
 }

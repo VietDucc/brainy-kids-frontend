@@ -68,8 +68,6 @@ const LearnPage = () => {
   const [units, setUnits] = useState<Unit[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
-  const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
-  const [activeLessonPercentage, setActiveLessonPercentage] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,8 +86,7 @@ const LearnPage = () => {
         }
         const unitsData = await unitsResponse.json();
         setUnits(unitsData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      } catch {
         setError("Failed to load course data. Please try again later.");
         toast.error("Failed to load course data");
       } finally {
@@ -161,9 +158,6 @@ const LearnPage = () => {
 
   const handleLessonClick = (unitId: number, lesson: Lesson) => {
     setSelectedUnitId(unitId);
-    setActiveLesson(lesson);
-
-    // Tính toán phần trăm hoàn thành của bài học
     if (lesson.challenges && lesson.challenges.length > 0) {
       const completedChallenges = lesson.challenges.filter(
         (challenge) =>
@@ -171,16 +165,14 @@ const LearnPage = () => {
           challenge.challengesProgress.some((progress) => progress.completed)
       ).length;
 
-      const percentage = (completedChallenges / lesson.challenges.length) * 100;
-      setActiveLessonPercentage(percentage);
-    } else {
-      setActiveLessonPercentage(0);
+      console.log(
+        `Completed ${completedChallenges} out of ${lesson.challenges.length} challenges`
+      );
     }
   };
 
   const handleBackToUnits = () => {
     setSelectedUnitId(null);
-    setActiveLesson(null);
   };
 
   // Nếu đã chọn một unit, hiển thị giao diện unit
@@ -216,10 +208,7 @@ const LearnPage = () => {
               id={selectedUnit.id}
               orderUnit={selectedUnit.orderUnit}
               title={selectedUnit.title}
-              description={selectedUnit.description || ""}
               lessons={selectedUnit.lessons || []}
-              activeLesson={activeLesson || undefined}
-              activeLessonPercentage={activeLessonPercentage}
             />
           </div>
         </FeedWrapper>
