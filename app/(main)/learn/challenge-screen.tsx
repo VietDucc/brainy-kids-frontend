@@ -291,7 +291,8 @@ export const ChallengeScreen = ({
               Home
             </Button>
             <Button
-              className="flex-1 py-3 bg-primary hover:bg-primary/90"
+              variant="default"
+              className="flex-1 py-3"
               onClick={handleFinishLesson}
             >
               Continue
