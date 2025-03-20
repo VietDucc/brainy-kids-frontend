@@ -5,10 +5,13 @@ import { List } from "./list";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 
 const CoursesPage = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { userId } = useAuth();
+  console.log("userId", userId);
 
   useEffect(() => {
     const fetchCourses = async () => {
