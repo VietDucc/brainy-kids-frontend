@@ -1,9 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { api } from "../../config";
 
 export const dynamic = "force-dynamic"; // Use Next.js dynamic configuration
 
-export async function GET(request, { params }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { courseId: string } }
+) {
   try {
     const courseId = parseInt(params.courseId, 10);
     if (isNaN(courseId)) {
