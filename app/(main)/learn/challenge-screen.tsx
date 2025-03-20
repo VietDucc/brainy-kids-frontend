@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 interface ChallengeOption {
   id: number;
@@ -52,9 +52,8 @@ export const ChallengeScreen = ({
   challenges,
   onComplete,
   onExit,
+  lessonId,
 }: ChallengeScreenProps) => {
-  const router = useRouter();
-
   const validChallenges = Array.isArray(challenges) ? challenges : [];
 
   const sortedChallenges = [...validChallenges].sort(
@@ -72,6 +71,7 @@ export const ChallengeScreen = ({
     useState<NodeJS.Timeout | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [showSummary, setShowSummary] = useState(false);
+  const { userId } = useAuth();
   const [results, setResults] = useState<{
     correct: number;
     incorrect: number;
@@ -156,7 +156,7 @@ export const ChallengeScreen = ({
 
         const timeout = setTimeout(() => {
           handleNext();
-        }, 1500);
+        }, 3500);
         setAutoAdvanceTimeout(timeout);
       } else {
         setIsCorrect(false);
@@ -204,9 +204,30 @@ export const ChallengeScreen = ({
     setShowExitConfirmation(false);
   };
 
-  const handleFinishLesson = () => {
-    onComplete();
-    router.push("/learn");
+  const handleFinishLesson = async () => {
+    try {
+      if (
+        sortedChallenges.length &&
+        results.correct &&
+        results.correct / sortedChallenges.length >= 0.5
+      ) {
+        await fetch("/api/lesson-progress", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            clerkUserId: userId,
+            lessonId,
+            completed: true,
+          }),
+        });
+      }
+    } catch (error) {
+      toast.error(error);
+    } finally {
+      onComplete();
+    }
   };
 
   const playAudio = (src: string) => {
@@ -214,7 +235,6 @@ export const ChallengeScreen = ({
     audio.play();
   };
 
-  // Nếu không có challenges, hiển thị loading
   if (!currentChallenge && !showSummary) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">

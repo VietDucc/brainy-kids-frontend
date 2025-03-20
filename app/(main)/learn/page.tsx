@@ -10,10 +10,10 @@ import { Header } from "./header";
 import { LessonCard } from "./lesson-card";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Unit } from "./unit";
 import { ChallengeScreen } from "./challenge-screen";
 import { transformLessonData } from "@/utils/transform-lesson-data";
 import { LessonType } from "@/types/learn";
+import { useAuth } from "@clerk/nextjs";
 // Định nghĩa các kiểu dữ liệu dựa trên API response
 interface ChallengeOption {
   id: number;
@@ -74,6 +74,8 @@ const LearnPage = () => {
   const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<LessonType | null>(null);
   const [isLoadingLesson, setIsLoadingLesson] = useState(false);
+  const [completedLessonId, setCompletedLessonId] = useState<number[]>();
+  const { userId } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,7 +86,15 @@ const LearnPage = () => {
         }
         const userProgress = await userProgressResponse.json();
         setUserProgressData(userProgress);
-
+        const clerkUserId = userId;
+        const completedLessonResponse = await fetch(
+          `api/lesson-progress/${clerkUserId}`
+        );
+        if (completedLessonResponse) {
+          const completedLesson = await completedLessonResponse.json();
+          const lessonId = completedLesson.lessonId;
+          setCompletedLessonId(lessonId);
+        }
         const courseId = userProgress.activeCourse.id;
         const unitsResponse = await fetch(`/api/units/${courseId}`);
         if (!unitsResponse.ok) {
@@ -101,7 +111,11 @@ const LearnPage = () => {
     };
 
     fetchData();
-  }, []);
+  }, [userId]);
+
+  useEffect(() => {
+    console.log("completedLessonId");
+  }, [completedLessonId]);
 
   useEffect(() => {
     const unitId = searchParams.get("unitId");
