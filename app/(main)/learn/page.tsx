@@ -88,12 +88,12 @@ const LearnPage = () => {
         setUserProgressData(userProgress);
         const clerkUserId = userId;
         const completedLessonResponse = await fetch(
-          `api/lesson-progress/${clerkUserId}`
+          `/api/lesson-progress/${clerkUserId}`
         );
-        if (completedLessonResponse) {
-          const completedLesson = await completedLessonResponse.json();
-          const lessonId = completedLesson.lessonId;
-          setCompletedLessonId(lessonId);
+        if (completedLessonResponse.ok) {
+          const completedLessons = await completedLessonResponse.json();
+          const lessonIds = completedLessons.map((lesson) => lesson.lessonId);
+          setCompletedLessonId(lessonIds);
         }
         const courseId = userProgress.activeCourse.id;
         const unitsResponse = await fetch(`/api/units/${courseId}`);
@@ -112,10 +112,6 @@ const LearnPage = () => {
 
     fetchData();
   }, [userId]);
-
-  useEffect(() => {
-    console.log("completedLessonId");
-  }, [completedLessonId]);
 
   useEffect(() => {
     const unitId = searchParams.get("unitId");
@@ -153,21 +149,32 @@ const LearnPage = () => {
   const getLessonStatus = (
     lesson: Lesson
   ): "locked" | "available" | "completed" => {
+    if (completedLessonId && completedLessonId.includes(lesson.id)) {
+      return "completed";
+    }
+
     if (!lesson.challenges || lesson.challenges.length === 0) {
       return "locked";
     }
 
-    const allCompleted = lesson.challenges.every(
-      (challenge) =>
-        challenge.challengesProgress &&
-        challenge.challengesProgress.some((progress) => progress.completed)
-    );
-
-    if (allCompleted) {
-      return "completed";
-    }
-
     return "available";
+  };
+
+  const getLessonStatusDescription = (
+    status: "locked" | "available" | "completed",
+    orderIndex: number,
+    challengesCount: number
+  ): string => {
+    switch (status) {
+      case "completed":
+        return `✅ Completed! ${challengesCount} challenges in lesson! 🌟`;
+      case "available":
+        return `Lesson ${orderIndex + 1} • ${challengesCount} fun ${
+          challengesCount === 1 ? "challenge" : "challenges"
+        } 🎮`;
+      case "locked":
+        return "🔒 Coming soon • New adventures await!";
+    }
   };
 
   const getLessonIcon = (lesson: Lesson): string => {
@@ -187,8 +194,6 @@ const LearnPage = () => {
     try {
       setIsLoadingLesson(true);
       setError(null);
-
-      // Gọi API để lấy dữ liệu lesson
       const response = await fetch(`/api/lessons/${lessonId}`);
 
       if (!response.ok) {
@@ -198,10 +203,8 @@ const LearnPage = () => {
       const data = await response.json();
       console.log("API response:", data);
 
-      // Chuyển đổi dữ liệu
       const lessonData = transformLessonData(data, lessonId);
 
-      // Kiểm tra xem có challenges không
       if (!lessonData.challenges || lessonData.challenges.length === 0) {
         setError("This lesson doesn't have any challenges yet.");
         setSelectedLesson(null);
@@ -317,32 +320,24 @@ const LearnPage = () => {
             </h2>
 
             {selectedUnit.lessons.map((lesson) => {
-              // Xác định trạng thái của lesson
-              const isCompleted = lesson.challenges?.every(
-                (challenge) =>
-                  challenge.challengesProgress &&
-                  challenge.challengesProgress.some(
-                    (progress) => progress.completed
-                  )
+              // Use the improved getLessonStatus function
+              const status = getLessonStatus(lesson);
+              const challengesCount = lesson.challenges?.length || 0;
+              const statusDescription = getLessonStatusDescription(
+                status,
+                lesson.orderIndex,
+                challengesCount
               );
-
-              let status: "locked" | "available" | "completed" = "available";
-              if (isCompleted) {
-                status = "completed";
-              } else if (false) {
-                // Logic để xác định lesson bị khóa
-                status = "locked";
-              }
 
               return (
                 <LessonCard
                   key={lesson.id}
                   id={lesson.id}
                   title={lesson.title}
-                  description={`Lesson ${lesson.orderIndex + 1}`}
+                  description={statusDescription}
                   status={status}
-                  icon="🎓"
-                  onClick={handleLessonClick}
+                  icon={getLessonIcon(lesson)}
+                  onClick={status !== "locked" ? handleLessonClick : undefined}
                   isLoading={isLoadingLesson}
                 />
               );
@@ -380,20 +375,32 @@ const LearnPage = () => {
                 )}
                 <div className="grid grid-cols-1 gap-4">
                   {unit.lessons && unit.lessons.length > 0 ? (
-                    unit.lessons.map((lesson) => (
-                      <LessonCard
-                        key={lesson.id}
-                        id={lesson.id}
-                        title={lesson.title}
-                        description={`${
-                          lesson.challenges?.length || 0
-                        } challenges`}
-                        status={getLessonStatus(lesson)}
-                        icon={getLessonIcon(lesson)}
-                        onClick={() => handleLessonClick(lesson.id)}
-                        isLoading={isLoadingLesson}
-                      />
-                    ))
+                    unit.lessons.map((lesson) => {
+                      const status = getLessonStatus(lesson);
+                      const challengesCount = lesson.challenges?.length || 0;
+                      const statusDescription = getLessonStatusDescription(
+                        status,
+                        lesson.orderIndex,
+                        challengesCount
+                      );
+
+                      return (
+                        <LessonCard
+                          key={lesson.id}
+                          id={lesson.id}
+                          title={lesson.title}
+                          description={statusDescription}
+                          status={status}
+                          icon={getLessonIcon(lesson)}
+                          onClick={
+                            status !== "locked"
+                              ? () => handleLessonClick(lesson.id)
+                              : undefined
+                          }
+                          isLoading={isLoadingLesson}
+                        />
+                      );
+                    })
                   ) : (
                     <p className="text-sm italic text-slate-500 dark:text-slate-400">
                       No lessons available in this unit yet.
