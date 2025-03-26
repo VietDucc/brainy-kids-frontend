@@ -12,6 +12,7 @@ import {
   Zap,
   Home,
   StarIcon,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -42,7 +43,7 @@ interface Challenge {
 
 interface ChallengeScreenProps {
   challenges: Challenge[];
-  onComplete: () => void;
+  onComplete: (completedLessonId?: number) => void;
   lessonTitle: string;
   onExit: () => void;
   lessonId: number;
@@ -84,6 +85,7 @@ export const ChallengeScreen = ({
   const correctSoundRef = useRef<HTMLAudioElement | null>(null);
   const incorrectSoundRef = useRef<HTMLAudioElement | null>(null);
   const completeSoundRef = useRef<HTMLAudioElement | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Đảm bảo currentChallenge luôn có giá trị hợp lệ
   const currentChallenge = sortedChallenges[currentChallengeIndex] || null;
@@ -206,12 +208,15 @@ export const ChallengeScreen = ({
 
   const handleFinishLesson = async () => {
     try {
+      setIsSubmitting(true);
+
       if (
         sortedChallenges.length &&
         results.correct &&
         results.correct / sortedChallenges.length >= 0.5
       ) {
-        await fetch("/api/lesson-progress", {
+        onComplete(lessonId);
+        fetch("/api/lesson-progress", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -221,12 +226,17 @@ export const ChallengeScreen = ({
             lessonId,
             completed: true,
           }),
+        }).catch((error) => {
+          console.error("Error saving progress:", error);
         });
+      } else {
+        onComplete();
       }
     } catch (error) {
-      toast.error(error);
-    } finally {
+      console.error("Error in handleFinishLesson:", error);
       onComplete();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -305,18 +315,28 @@ export const ChallengeScreen = ({
             <Button
               variant="outline"
               className="flex-1 py-3"
-              onClick={() => (window.location.href = "/learn")}
+              onClick={() => onComplete()}
             >
               <Home className="h-4 w-4 mr-2" />
               Home
             </Button>
             <Button
               variant="default"
-              className="flex-1 py-3"
+              className="flex-1 py-3 relative overflow-hidden"
               onClick={handleFinishLesson}
+              disabled={isSubmitting}
             >
-              Continue
-              <ArrowRight className="h-4 w-4 ml-2" />
+              {isSubmitting ? (
+                <>
+                  <span className="opacity-0">Continue</span>
+                  <Loader2 className="h-5 w-5 animate-spin absolute" />
+                </>
+              ) : (
+                <>
+                  Continue
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </>
+              )}
             </Button>
           </div>
         </div>

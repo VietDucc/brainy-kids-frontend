@@ -76,6 +76,7 @@ const LearnPage = () => {
   const [isLoadingLesson, setIsLoadingLesson] = useState(false);
   const [completedLessonId, setCompletedLessonId] = useState<number[]>();
   const { userId } = useAuth();
+  const [loadingLessonId, setLoadingLessonId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,15 +86,38 @@ const LearnPage = () => {
           throw new Error("Failed to fetch user progress");
         }
         const userProgress = await userProgressResponse.json();
-        setUserProgressData(userProgress);
+
+        let activeCourse = userProgress.activeCourse;
+        try {
+          const storedCourse = localStorage.getItem("activeCourse");
+          if (storedCourse) {
+            const parsedCourse = JSON.parse(storedCourse);
+            if (
+              parsedCourse &&
+              parsedCourse.id &&
+              parsedCourse.title &&
+              parsedCourse.imageSrc
+            ) {
+              activeCourse = parsedCourse;
+            }
+          }
+        } catch (error) {
+          console.error("Error parsing stored course:", error);
+        }
+
+        setUserProgressData({
+          ...userProgress,
+          activeCourse: activeCourse,
+        });
+
         const clerkUserId = userId;
         const completedLessonResponse = await fetch(
-          `api/lesson-progress/${clerkUserId}`
+          `/api/lesson-progress/${clerkUserId}`
         );
-        if (completedLessonResponse) {
-          const completedLesson = await completedLessonResponse.json();
-          const lessonId = completedLesson.lessonId;
-          setCompletedLessonId(lessonId);
+        if (completedLessonResponse.ok) {
+          const completedLessons = await completedLessonResponse.json();
+          const lessonIds = completedLessons.map((lesson) => lesson.lessonId);
+          setCompletedLessonId(lessonIds);
         }
         const courseId = userProgress.activeCourse.id;
         const unitsResponse = await fetch(`/api/units/${courseId}`);
@@ -114,10 +138,6 @@ const LearnPage = () => {
   }, [userId]);
 
   useEffect(() => {
-    console.log("completedLessonId");
-  }, [completedLessonId]);
-
-  useEffect(() => {
     const unitId = searchParams.get("unitId");
     if (unitId) {
       setSelectedUnitId(parseInt(unitId, 10));
@@ -126,8 +146,14 @@ const LearnPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      <div className="flex h-screen w-full items-center justify-center flex-col gap-4">
+        <div className="relative w-20 h-20">
+          <div className="absolute inset-0 rounded-full border-4 border-primary border-opacity-20"></div>
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin"></div>
+        </div>
+        <p className="text-slate-600 dark:text-slate-300 font-medium animate-pulse">
+          Đang tải bài học...
+        </p>
       </div>
     );
   }
@@ -153,21 +179,32 @@ const LearnPage = () => {
   const getLessonStatus = (
     lesson: Lesson
   ): "locked" | "available" | "completed" => {
+    if (completedLessonId && completedLessonId.includes(lesson.id)) {
+      return "completed";
+    }
+
     if (!lesson.challenges || lesson.challenges.length === 0) {
       return "locked";
     }
 
-    const allCompleted = lesson.challenges.every(
-      (challenge) =>
-        challenge.challengesProgress &&
-        challenge.challengesProgress.some((progress) => progress.completed)
-    );
-
-    if (allCompleted) {
-      return "completed";
-    }
-
     return "available";
+  };
+
+  const getLessonStatusDescription = (
+    status: "locked" | "available" | "completed",
+    orderIndex: number,
+    challengesCount: number
+  ): string => {
+    switch (status) {
+      case "completed":
+        return `✅ Completed! ${challengesCount} challenges in lesson! 🌟`;
+      case "available":
+        return ` ${challengesCount} fun ${
+          challengesCount === 1 ? "challenge" : "challenges"
+        } 🎮`;
+      case "locked":
+        return "🔒 Coming soon • New adventures await!";
+    }
   };
 
   const getLessonIcon = (lesson: Lesson): string => {
@@ -186,9 +223,8 @@ const LearnPage = () => {
   const handleLessonClick = async (lessonId: number) => {
     try {
       setIsLoadingLesson(true);
+      setLoadingLessonId(lessonId);
       setError(null);
-
-      // Gọi API để lấy dữ liệu lesson
       const response = await fetch(`/api/lessons/${lessonId}`);
 
       if (!response.ok) {
@@ -198,10 +234,8 @@ const LearnPage = () => {
       const data = await response.json();
       console.log("API response:", data);
 
-      // Chuyển đổi dữ liệu
       const lessonData = transformLessonData(data, lessonId);
 
-      // Kiểm tra xem có challenges không
       if (!lessonData.challenges || lessonData.challenges.length === 0) {
         setError("This lesson doesn't have any challenges yet.");
         setSelectedLesson(null);
@@ -213,6 +247,7 @@ const LearnPage = () => {
       setError("Failed to load lesson. Please try again.");
     } finally {
       setIsLoadingLesson(false);
+      setLoadingLessonId(null);
     }
   };
 
@@ -222,20 +257,41 @@ const LearnPage = () => {
     setSelectedLesson(null);
   };
 
-  const handleChallengeComplete = () => {
-    toast.success("Lesson completed!", {
-      description: "You've earned 10 XP!",
-      icon: "🎉",
+  const updateCompletedLesson = (completedLessonId: number) => {
+    setCompletedLessonId((prev) => {
+      if (prev && prev.includes(completedLessonId)) {
+        return prev;
+      }
+      return prev ? [...prev, completedLessonId] : [completedLessonId];
     });
 
+    setUserProgressData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        points: prev.points + 10,
+      };
+    });
+
+    toast.success("Bài học đã hoàn thành!", {
+      description: "Tiến trình của bạn đã được cập nhật",
+      icon: "🎉",
+    });
+  };
+
+  const handleChallengeComplete = (completedLessonId?: number) => {
+    if (completedLessonId) {
+      updateCompletedLesson(completedLessonId);
+    }
+
     setSelectedLesson(null);
+    window.location.href = "/learn";
   };
 
   const handleExitChallenge = () => {
     setSelectedLesson(null);
   };
 
-  // Hiển thị loading state
   if (isLoadingLesson) {
     return (
       <div className="fixed inset-0 bg-white dark:bg-gray-950 z-50 flex items-center justify-center">
@@ -249,7 +305,6 @@ const LearnPage = () => {
     );
   }
 
-  // Hiển thị thông báo lỗi nếu có
   if (error) {
     return (
       <div className="fixed inset-0 bg-white dark:bg-gray-950 z-50 flex items-center justify-center">
@@ -268,7 +323,6 @@ const LearnPage = () => {
     );
   }
 
-  // Hiển thị ChallengeScreen nếu đã chọn lesson
   if (selectedLesson) {
     return (
       <div className="fixed inset-0 bg-white dark:bg-gray-950 z-50 overflow-auto">
@@ -283,7 +337,6 @@ const LearnPage = () => {
     );
   }
 
-  // Nếu đã chọn một unit, hiển thị giao diện unit
   if (selectedUnitId !== null) {
     const selectedUnit = units.find((unit) => unit.id === selectedUnitId);
 
@@ -317,33 +370,25 @@ const LearnPage = () => {
             </h2>
 
             {selectedUnit.lessons.map((lesson) => {
-              // Xác định trạng thái của lesson
-              const isCompleted = lesson.challenges?.every(
-                (challenge) =>
-                  challenge.challengesProgress &&
-                  challenge.challengesProgress.some(
-                    (progress) => progress.completed
-                  )
+              const status = getLessonStatus(lesson);
+              const challengesCount = lesson.challenges?.length || 0;
+              const statusDescription = getLessonStatusDescription(
+                status,
+                lesson.orderIndex,
+                challengesCount
               );
-
-              let status: "locked" | "available" | "completed" = "available";
-              if (isCompleted) {
-                status = "completed";
-              } else if (false) {
-                // Logic để xác định lesson bị khóa
-                status = "locked";
-              }
+              const isCurrentLessonLoading = loadingLessonId === lesson.id;
 
               return (
                 <LessonCard
                   key={lesson.id}
                   id={lesson.id}
                   title={lesson.title}
-                  description={`Lesson ${lesson.orderIndex + 1}`}
+                  description={statusDescription}
                   status={status}
-                  icon="🎓"
-                  onClick={handleLessonClick}
-                  isLoading={isLoadingLesson}
+                  icon={getLessonIcon(lesson)}
+                  onClick={status !== "locked" ? handleLessonClick : undefined}
+                  isLoading={isCurrentLessonLoading}
                 />
               );
             })}
@@ -353,7 +398,6 @@ const LearnPage = () => {
     );
   }
 
-  // Hiển thị danh sách các unit và lesson
   return (
     <div className="flex flex-col lg:flex-row-reverse gap-[48px] px-6">
       <StickyWrapper>
@@ -380,20 +424,34 @@ const LearnPage = () => {
                 )}
                 <div className="grid grid-cols-1 gap-4">
                   {unit.lessons && unit.lessons.length > 0 ? (
-                    unit.lessons.map((lesson) => (
-                      <LessonCard
-                        key={lesson.id}
-                        id={lesson.id}
-                        title={lesson.title}
-                        description={`${
-                          lesson.challenges?.length || 0
-                        } challenges`}
-                        status={getLessonStatus(lesson)}
-                        icon={getLessonIcon(lesson)}
-                        onClick={() => handleLessonClick(lesson.id)}
-                        isLoading={isLoadingLesson}
-                      />
-                    ))
+                    unit.lessons.map((lesson) => {
+                      const status = getLessonStatus(lesson);
+                      const challengesCount = lesson.challenges?.length || 0;
+                      const statusDescription = getLessonStatusDescription(
+                        status,
+                        lesson.orderIndex,
+                        challengesCount
+                      );
+                      const isCurrentLessonLoading =
+                        loadingLessonId === lesson.id;
+
+                      return (
+                        <LessonCard
+                          key={lesson.id}
+                          id={lesson.id}
+                          title={lesson.title}
+                          description={statusDescription}
+                          status={status}
+                          icon={getLessonIcon(lesson)}
+                          onClick={
+                            status !== "locked"
+                              ? () => handleLessonClick(lesson.id)
+                              : undefined
+                          }
+                          isLoading={isCurrentLessonLoading}
+                        />
+                      );
+                    })
                   ) : (
                     <p className="text-sm italic text-slate-500 dark:text-slate-400">
                       No lessons available in this unit yet.

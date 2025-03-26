@@ -8,7 +8,7 @@ export async function GET() {
         title: "French",
         imageSrc: "/france.svg",
       },
-      hearts: 5,
+      hearts: 2,
       points: 120,
     };
 
