@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, InfinityIcon, Trophy } from "lucide-react";
@@ -7,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 
 interface UserProgressProps {
   activeCourse: {
+    id: number;
     title: string;
     imageSrc: string;
   };
@@ -21,19 +25,40 @@ export const UserProgress = ({
   points,
   hasActiveSubscription,
 }: UserProgressProps) => {
+  const [courseInfo, setCourseInfo] = useState(activeCourse);
+
+  useEffect(() => {
+    try {
+      const storedCourse = localStorage.getItem("activeCourse");
+      if (storedCourse) {
+        const parsedCourse = JSON.parse(storedCourse);
+        if (
+          parsedCourse &&
+          parsedCourse.id &&
+          parsedCourse.title &&
+          parsedCourse.imageSrc
+        ) {
+          setCourseInfo(parsedCourse);
+        }
+      }
+    } catch (error) {
+      console.error("Error parsing stored course:", error);
+    }
+  }, []);
+
   return (
     <div className="h-full w-full min-w-[270px] max-w-[340px] rounded-xl border-2 border-slate-200 dark:border-slate-700 p-5 shadow-md bg-white dark:bg-slate-900">
       <div className="flex items-center gap-x-2">
         <Image
-          src={activeCourse.imageSrc}
-          alt={activeCourse.title}
+          src={courseInfo.imageSrc}
+          alt={courseInfo.title}
           height={40}
           width={40}
           className="object-cover"
         />
         <div>
           <p className="font-bold text-slate-700 dark:text-slate-200">
-            {activeCourse.title}
+            {courseInfo.title}
           </p>
           <div className="flex items-center gap-x-2">
             <p className="text-slate-500 dark:text-slate-400 text-xs">

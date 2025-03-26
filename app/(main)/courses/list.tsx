@@ -25,21 +25,43 @@ export const List = ({ courses, activeCourseId }: ListProps) => {
   const onClick = (id: number) => {
     if (pending) return;
 
-    if (id === activeCourseId) return router.push("/learn");
+    const selectedCourse = courses.find((c) => c.id === id);
+
+    if (id === activeCourseId) {
+      if (selectedCourse) {
+        localStorage.setItem(
+          "activeCourse",
+          JSON.stringify({
+            id: selectedCourse.id,
+            title: selectedCourse.title,
+            imageSrc: selectedCourse.imageSrc,
+          })
+        );
+      }
+      return router.push("/learn");
+    }
 
     startTransition(() => {
-      // Mock the database update
-      toast.success(
-        `Switched to ${courses.find((c) => c.id === id)?.title} course`,
-        {
-          icon: "🎉",
-          style: {
-            backgroundColor: "#4ade80",
-            color: "white",
-            border: "none",
-          },
-        }
-      );
+      // Lưu thông tin khóa học vào localStorage
+      if (selectedCourse) {
+        localStorage.setItem(
+          "activeCourse",
+          JSON.stringify({
+            id: selectedCourse.id,
+            title: selectedCourse.title,
+            imageSrc: selectedCourse.imageSrc,
+          })
+        );
+      }
+
+      toast.success(`Switched to ${selectedCourse?.title} course`, {
+        icon: "🎉",
+        style: {
+          backgroundColor: "#4ade80",
+          color: "white",
+          border: "none",
+        },
+      });
     });
   };
 
