@@ -56,26 +56,32 @@ export const LessonCard = ({
     onClick(id);
   };
 
-  // Hiển thị loading state
   if (isLoading) {
     return (
       <div
         className={cn(
-          "flex items-center gap-4 rounded-xl border-2 p-4 cursor-wait transition-all shadow-sm",
+          "flex items-center gap-4 rounded-xl border-2 p-4 transition-all shadow-sm",
           "bg-white dark:bg-slate-900",
-          "border-blue-200 dark:border-blue-800"
+          "border-blue-200 dark:border-blue-800",
+          "relative overflow-hidden"
         )}
       >
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/50">
+        {/* Thêm hiệu ứng loading shimmer */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-100/50 dark:via-blue-900/30 to-transparent animate-shimmer" />
+
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/50 relative">
           <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
         </div>
-        <div>
+        <div className="flex-1">
           <h3 className="font-bold text-slate-700 dark:text-slate-200">
             {title}
           </h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Loading...
-          </p>
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-24 bg-slate-200 dark:bg-slate-700 rounded-full animate-pulse"></div>
+            <p className="text-xs text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">
+              Đang tải...
+            </p>
+          </div>
         </div>
       </div>
     );
