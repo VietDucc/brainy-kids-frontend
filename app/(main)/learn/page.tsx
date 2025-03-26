@@ -285,6 +285,18 @@ const LearnPage = () => {
     }
 
     setSelectedLesson(null);
+    setUserProgressData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        points: prev.points + 10,
+      };
+    });
+
+    toast.success("Bài học đã hoàn thành!", {
+      description: "Tiến trình của bạn đã được cập nhật",
+      icon: "🎉",
+    });
   };
 
   const handleExitChallenge = () => {
