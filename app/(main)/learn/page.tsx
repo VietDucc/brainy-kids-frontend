@@ -284,6 +284,7 @@ const LearnPage = () => {
       updateCompletedLesson(completedLessonId);
     }
 
+    setSelectedLesson(null);
     setUserProgressData((prev) => {
       if (!prev) return prev;
       return {
