@@ -86,7 +86,30 @@ const LearnPage = () => {
           throw new Error("Failed to fetch user progress");
         }
         const userProgress = await userProgressResponse.json();
-        setUserProgressData(userProgress);
+
+        let activeCourse = userProgress.activeCourse;
+        try {
+          const storedCourse = localStorage.getItem("activeCourse");
+          if (storedCourse) {
+            const parsedCourse = JSON.parse(storedCourse);
+            if (
+              parsedCourse &&
+              parsedCourse.id &&
+              parsedCourse.title &&
+              parsedCourse.imageSrc
+            ) {
+              activeCourse = parsedCourse;
+            }
+          }
+        } catch (error) {
+          console.error("Error parsing stored course:", error);
+        }
+
+        setUserProgressData({
+          ...userProgress,
+          activeCourse: activeCourse,
+        });
+
         const clerkUserId = userId;
         const completedLessonResponse = await fetch(
           `/api/lesson-progress/${clerkUserId}`
