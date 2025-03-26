@@ -285,7 +285,6 @@ const LearnPage = () => {
     }
 
     setSelectedLesson(null);
-    window.location.href = "/learn";
   };
 
   const handleExitChallenge = () => {
