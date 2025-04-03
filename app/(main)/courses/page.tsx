@@ -10,12 +10,13 @@ import { useAuth } from "@clerk/nextjs";
 const CoursesPage = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { userId } = useAuth();
-  console.log("userId", userId);
+  const { getToken } = useAuth();
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
+        const token = await getToken();
+        console.log("token", token);
         const response = await fetch("/api/courses");
         if (!response.ok) throw new Error("Failed to fetch courses");
         const data = await response.json();
