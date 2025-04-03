@@ -81,7 +81,7 @@ const LearnPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userProgressResponse = await fetch("/api/user-progress");
+        const userProgressResponse = await fetch("/api/user-progress", {});
         if (!userProgressResponse.ok) {
           throw new Error("Failed to fetch user progress");
         }
@@ -120,7 +120,7 @@ const LearnPage = () => {
           setCompletedLessonId(lessonIds);
         }
         const courseId = userProgress.activeCourse.id;
-        const unitsResponse = await fetch(`/api/units/${courseId}`);
+        const unitsResponse = await fetch(`/api/units/${courseId}`, {});
         if (!unitsResponse.ok) {
           throw new Error("Failed to fetch course units");
         }
