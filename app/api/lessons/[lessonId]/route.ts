@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const { userId, getToken } = await auth();
-    const token = await getToken();
+    const token = await getToken({ template: "jwt-clerk" });
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

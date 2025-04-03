@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 export async function POST(req: Request) {
   try {
     const { userId, getToken } = await auth();
-    const token = await getToken();
+    const token = await getToken({ template: "jwt-clerk" });
     const body = await req.json();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

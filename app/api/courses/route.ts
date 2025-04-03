@@ -9,7 +9,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   
-  const token = await getToken();
+  const token = await getToken({ template: "jwt-clerk" });
   
   
   console.log("API token from cookie:", token?.substring(0, 10) + "...");
