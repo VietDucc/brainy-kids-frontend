@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { clerkUserId: string } } // Changed from userId to clerkUserId to match route param
+  { params }: { params: { clerkUserId: string } }
 ) {
   
   try {
@@ -29,6 +29,7 @@ export async function GET(
       headers: {
         Authorization: `Bearer ${token}`,
       },
+     
     });
 
     if (!response.ok) {

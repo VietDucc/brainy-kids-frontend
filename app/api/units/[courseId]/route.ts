@@ -19,7 +19,6 @@ export async function GET(
     if (isNaN(courseId)) {
       return NextResponse.json({ error: "Invalid course ID" }, { status: 400 });
     }
-
     const response = await fetch(api.units(courseId), {
       cache: "no-store",
       headers: {

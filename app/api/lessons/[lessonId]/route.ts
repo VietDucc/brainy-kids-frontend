@@ -24,6 +24,7 @@ export async function GET(
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch lesson ${lessonId}`);
