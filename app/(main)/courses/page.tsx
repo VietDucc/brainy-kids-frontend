@@ -15,7 +15,7 @@ const CoursesPage = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const token = await getToken();
+        const token = await getToken({ template: "jwt-clerk" });
         console.log("token", token);
         const response = await fetch("/api/courses");
         if (!response.ok) throw new Error("Failed to fetch courses");
