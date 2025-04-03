@@ -623,7 +623,7 @@ export default function DictionaryPage() {
                         >
                           <Button
                             variant="outline"
-                            className="rounded-full border-2 border-primary/20 hover:bg-primary/10 transition-all duration-300"
+                            className="transition-all duration-300"
                             onClick={() => {
                               setSearchTerm(word);
                               searchWord(word);
