@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "../../config";
-
+import { auth } from "@clerk/nextjs/server";
 export const dynamic = "force-dynamic"; // Use Next.js dynamic configuration
 
 export async function GET(
@@ -8,6 +8,13 @@ export async function GET(
   { params }: { params: { courseId: string } }
 ) {
   try {
+    const { userId, getToken } = await auth();
+    const token = await getToken();
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const courseId = parseInt(params.courseId, 10);
     if (isNaN(courseId)) {
       return NextResponse.json({ error: "Invalid course ID" }, { status: 400 });
@@ -15,6 +22,9 @@ export async function GET(
 
     const response = await fetch(api.units(courseId), {
       cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch units for course ${courseId}`);

@@ -1,15 +1,21 @@
 import { NextResponse } from "next/server";
 import { api } from "../config";
-
+import { auth } from "@clerk/nextjs/server";
 export async function POST(req: Request) {
   try {
+    const { userId, getToken } = await auth();
+    const token = await getToken();
     const body = await req.json();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     console.log("[LESSON_PROGRESS_POST] Request body:", body);
 
     const response = await fetch(`${api.lessonProgress}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     });
