@@ -17,7 +17,11 @@ const CoursesPage = () => {
       try {
         const token = await getToken({ template: "jwt-clerk" });
         console.log("token", token);
-        const response = await fetch("/api/courses");
+        const response = await fetch("/api/courses", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) throw new Error("Failed to fetch courses");
         const data = await response.json();
         setCourses(data);

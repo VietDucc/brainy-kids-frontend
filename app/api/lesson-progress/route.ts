@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
 import { api } from "../config";
+import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const token = (await cookies()).get("token")?.value;
     console.log("[LESSON_PROGRESS_POST] Request body:", body);
 
     const response = await fetch(`${api.lessonProgress}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     });

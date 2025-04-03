@@ -1,14 +1,16 @@
 // api/lesson-progress/[clerkUserId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "../../config";
+import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { clerkUserId: string } } // Changed from userId to clerkUserId to match route param
+  { params }: { params: { clerkUserId: string } }
 ) {
   try {
+    const token = (await cookies()).get("token")?.value;
     const clerkUserId = params.clerkUserId;
     if (!clerkUserId) {
       // Changed condition from if(userId) to if(!clerkUserId)
@@ -17,6 +19,9 @@ export async function GET(
 
     const response = await fetch(api.getLessonProgress(clerkUserId), {
       cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {

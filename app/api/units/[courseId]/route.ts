@@ -12,9 +12,12 @@ export async function GET(
     if (isNaN(courseId)) {
       return NextResponse.json({ error: "Invalid course ID" }, { status: 400 });
     }
-
+    const token = request.headers.get("Authorization")?.split(" ")[1];
     const response = await fetch(api.units(courseId), {
       cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch units for course ${courseId}`);
