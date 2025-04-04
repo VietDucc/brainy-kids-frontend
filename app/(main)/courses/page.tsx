@@ -5,14 +5,17 @@ import { List } from "./list";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 
 const CoursesPage = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const { getToken } = useAuth();
   useEffect(() => {
     const fetchCourses = async () => {
       try {
+        const token = await getToken();
+        console.log("token", token);
         const response = await fetch("/api/courses");
         if (!response.ok) throw new Error("Failed to fetch courses");
         const data = await response.json();
