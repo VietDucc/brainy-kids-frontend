@@ -41,7 +41,8 @@ export const Sidebar = ({ className }: SidebarProps) => {
           href="/dictionary"
           iconSrc="/dictionary.svg"
         />
-        <SidebarItem label="Games" href="/games" iconSrc="/games.svg" />
+        <SidebarItem label="Games" href="/games" iconSrc="/game.png" />
+        <SidebarItem label="Videos" href="/videos" iconSrc="/video.png" />
       </div>
 
       <div className="py-4">
