@@ -17,7 +17,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Types for dictionary data
 interface Phonetic {
   text?: string;
   audio?: string;
@@ -105,7 +104,26 @@ export default function DictionaryPage() {
     },
   };
 
-  // Function to search for a word
+  const combineMeanings = (entry: DictionaryEntry) => {
+    const combined = entry.meanings.reduce((acc, curr) => {
+      const existing = acc.find((m) => m.partOfSpeech === curr.partOfSpeech);
+      if (existing) {
+        existing.definitions = [...existing.definitions, ...curr.definitions];
+        existing.synonyms = [
+          ...new Set([...existing.synonyms, ...curr.synonyms]),
+        ];
+        existing.antonyms = [
+          ...new Set([...existing.antonyms, ...curr.antonyms]),
+        ];
+      } else {
+        acc.push({ ...curr });
+      }
+      return acc;
+    }, [] as Meaning[]);
+
+    return { ...entry, meanings: combined };
+  };
+
   const searchWord = async (word: string) => {
     if (!word.trim()) return;
 
@@ -131,18 +149,17 @@ export default function DictionaryPage() {
       }
 
       const data = await response.json();
-      setEntries(data);
+      const combinedData = data.map(combineMeanings);
+      setEntries(combinedData);
 
-      // Add to recent searches
       setRecentSearches((prev) => {
         const newSearches = [
           word.toLowerCase(),
           ...prev.filter((s) => s.toLowerCase() !== word.toLowerCase()),
         ];
-        return newSearches.slice(0, 5); // Keep only the 5 most recent searches
+        return newSearches.slice(0, 5);
       });
 
-      // Translate the word
       translateWord(word);
     } catch (err) {
       console.error("Error fetching dictionary data:", err);
@@ -153,7 +170,6 @@ export default function DictionaryPage() {
     }
   };
 
-  // Function to translate a word
   const translateWord = async (word: string) => {
     setIsTranslating(true);
 
@@ -188,7 +204,6 @@ export default function DictionaryPage() {
     searchWord(word);
   };
 
-  // Play audio pronunciation
   const playAudio = (audioUrl: string) => {
     if (audioUrl) {
       const audio = new Audio(audioUrl);
@@ -198,7 +213,6 @@ export default function DictionaryPage() {
     }
   };
 
-  // Find the first available audio
   const findAudio = (phonetics: Phonetic[]) => {
     return phonetics.find((p) => p.audio && p.audio.trim() !== "");
   };
@@ -356,14 +370,16 @@ export default function DictionaryPage() {
                         >
                           {entry.word}
                         </motion.h2>
-                        {entry.phonetic && (
+                        {(entry.phonetic ||
+                          entry.phonetics.find((p) => p.text)?.text) && (
                           <motion.p
                             className="text-primary/80 text-lg"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.2 }}
                           >
-                            {entry.phonetic}
+                            {entry.phonetic ||
+                              entry.phonetics.find((p) => p.text)?.text}
                           </motion.p>
                         )}
                       </div>
