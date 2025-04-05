@@ -550,7 +550,7 @@ export default function WordChainGame() {
                   </h3>
                   <p className="text-xs text-muted-foreground">
                     Next word must start with:{" "}
-                    <span className="text-lg font-bold text-primary inline-block px-3 py-1 bg-primary/10 rounded-md mt-1 border border-primary/20 shadow-sm animate-pulse-slow">
+                    <span className="text-base font-bold text-primary inline-block px-3 py-1 bg-primary/10 rounded-md mt-1 border border-primary/20 shadow-sm animate-pulse-slow">
                       {currentWord.charAt(currentWord.length - 1)}
                     </span>
                   </p>
