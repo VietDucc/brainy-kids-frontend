@@ -544,13 +544,13 @@ export default function WordChainGame() {
                 <div className="md:col-span-2 bg-primary/5 p-3 rounded-md space-y-2 border border-primary/20 shadow-sm">
                   <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                     Current word:
-                    <span className="ml-1 text-primary font-bold bg-primary/10 px-2 py-0.5 rounded">
+                    <span className="ml-1 text-lg text-primary font-bold bg-primary/10 px-2 py-0.5 rounded">
                       {currentWord}
                     </span>
                   </h3>
                   <p className="text-xs text-muted-foreground">
                     Next word must start with:{" "}
-                    <span className="text-base font-bold text-primary inline-block px-3 py-1 bg-primary/10 rounded-md mt-1 border border-primary/20 shadow-sm animate-pulse-slow">
+                    <span className="text-lg font-bold text-primary inline-block px-3 py-1 bg-primary/10 rounded-md mt-1 border border-primary/20 shadow-sm animate-pulse-slow">
                       {currentWord.charAt(currentWord.length - 1)}
                     </span>
                   </p>
