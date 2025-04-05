@@ -20,7 +20,6 @@ import {
   VolumeX,
   Trophy,
 } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -655,15 +654,22 @@ export default function WordChainGame() {
               </div>
 
               {message && (
-                <Alert
-                  variant={isError ? "destructive" : "default"}
-                  className="text-xs py-2 px-3 border border-primary/10"
+                <div
+                  className={`rounded-md border px-3 py-2 ${
+                    isError
+                      ? "bg-destructive/10 border-destructive/30 text-destructive dark:text-red-400"
+                      : "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900/30 text-green-600 dark:text-green-400"
+                  }`}
                 >
-                  <AlertCircle className="h-3 w-3 mr-1" />
-                  <AlertDescription className="text-xs font-medium">
-                    {message}
-                  </AlertDescription>
-                </Alert>
+                  <div className="flex items-center">
+                    {isError ? (
+                      <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+                    ) : (
+                      <Check className="h-4 w-4 mr-2 flex-shrink-0" />
+                    )}
+                    <p className="text-xs font-medium">{message}</p>
+                  </div>
+                </div>
               )}
 
               {achievements.length > 0 && (
@@ -693,8 +699,6 @@ export default function WordChainGame() {
   );
 }
 
-// Add this to the styles at the top
-// Add these animations to your CSS or in a style tag
 const style = document.createElement("style");
 style.textContent = `
 @keyframes bounce-slow {
