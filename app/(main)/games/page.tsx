@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Mic } from "lucide-react";
+import { Mic, Link as LinkIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { Card } from "@/components/ui/card";
@@ -31,7 +31,15 @@ const games = [
     color: "bg-gradient-to-br from-purple-500 to-pink-500",
     comingSoon: false,
   },
-  // Add more games here in the future
+  {
+    id: "word-chain",
+    title: "Word Chain Game",
+    description: "Connect words in a chain and see how long you can go!",
+    icon: LinkIcon,
+    href: "/games/word-chain",
+    color: "bg-gradient-to-br from-blue-500 to-cyan-500",
+    comingSoon: true,
+  },
 ];
 
 const GamesPage = () => {

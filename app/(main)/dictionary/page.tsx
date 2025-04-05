@@ -639,7 +639,7 @@ export default function DictionaryPage() {
                         >
                           <Button
                             variant="outline"
-                            className="transition-all duration-300"
+                            className="transition-all duration-300 rounded-full"
                             onClick={() => {
                               setSearchTerm(word);
                               searchWord(word);

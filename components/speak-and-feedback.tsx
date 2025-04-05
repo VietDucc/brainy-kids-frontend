@@ -108,7 +108,7 @@ export function SpeakAndFeedback({ category, onBack }: Props) {
     correctAudioRef.current = new Audio("/correct.wav");
     incorrectAudioRef.current = new Audio("/incorrect.wav");
     if (correctAudioRef.current) {
-      correctAudioRef.current.volume = 0.3;
+      correctAudioRef.current.volume = 0.8;
     }
   }, []);
 
@@ -194,7 +194,7 @@ export function SpeakAndFeedback({ category, onBack }: Props) {
   const startListening = () => {
     setResult(null);
     setSpokenText("");
-    setIsListening(true);
+    setIsListening(!isListening);
 
     if (recognitionRef.current) {
       try {
@@ -405,7 +405,6 @@ export function SpeakAndFeedback({ category, onBack }: Props) {
                 <div className="w-full space-y-4 py-8">
                   <Button
                     onClick={startListening}
-                    disabled={isListening}
                     variant={isListening ? "destructive" : "default"}
                     className="w-full h-16 text-lg rounded-full transition-all"
                   >
