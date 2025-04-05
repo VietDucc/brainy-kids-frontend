@@ -167,17 +167,12 @@ export default function WordChainGame() {
     }
   }, [isPlaying, gameOver, currentWord]);
 
-  // Timer effect
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
     if (isPlaying && !gameOver && timeLeft > 0) {
       timer = setInterval(() => {
         setTimeLeft((prev) => {
-          // Play warning sound when time is running low
-          if (prev === 4 && soundEnabled) {
-            playSound("timer");
-          }
           return prev - 1;
         });
       }, 1000);
@@ -186,7 +181,7 @@ export default function WordChainGame() {
     }
 
     return () => clearInterval(timer);
-  }, [isPlaying, timeLeft, gameOver]);
+  }, [isPlaying, timeLeft, gameOver, difficulty, soundEnabled]);
 
   // Handle game over
   const handleGameOver = (message: string) => {
@@ -370,25 +365,27 @@ export default function WordChainGame() {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-3 md:p-4">
-      <Card className="border border-border/40 shadow-md overflow-hidden">
-        <CardHeader className="p-3 md:p-4 bg-muted/30 space-y-1 pb-3 border-b border-border/20">
+      <Card className="border-2 border-primary/30 shadow-lg overflow-hidden bg-gradient-to-b from-background/95 to-background/90">
+        <CardHeader className="p-3 md:p-4 bg-gradient-to-r from-primary/10 to-primary/5 space-y-1 pb-3 border-b-2 border-primary/20">
           <div className="flex justify-between items-center">
             <CardTitle className="text-xl md:text-2xl font-bold text-foreground">
-              Word Chain Game
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
+                Word Chain Game
+              </span>
               <span className="block text-xs md:text-sm font-normal text-muted-foreground mt-1">
                 Connect words using the last letter of the previous word
               </span>
             </CardTitle>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="h-8 w-8"
+              className="h-8 w-8 rounded-full"
             >
               {soundEnabled ? (
-                <Volume2 className="h-4 w-4" />
+                <Volume2 className="h-4 w-4 text-primary" />
               ) : (
-                <VolumeX className="h-4 w-4" />
+                <VolumeX className="h-4 w-4 text-primary" />
               )}
             </Button>
           </div>
@@ -396,8 +393,8 @@ export default function WordChainGame() {
         <CardContent className="p-3 md:p-4 space-y-4">
           {!isPlaying && !gameOver ? (
             <div className="text-center space-y-4">
-              <div className="bg-primary/5 rounded-lg p-3 md:p-4">
-                <h2 className="text-lg font-semibold text-primary mb-2">
+              <div className="bg-primary/5 rounded-lg p-3 md:p-4 border border-primary/10 shadow-sm">
+                <h2 className="text-lg font-bold text-primary mb-2">
                   Ready to play?
                 </h2>
                 <p className="text-sm text-muted-foreground">
@@ -406,9 +403,11 @@ export default function WordChainGame() {
                 </p>
               </div>
 
-              <div className="space-y-2 max-w-sm mx-auto">
-                <h3 className="text-sm font-medium text-foreground">
-                  Select Difficulty:
+              <div className="space-y-2 max-w-sm mx-auto p-3 bg-muted/20 rounded-lg">
+                <h3 className="text-sm font-medium text-foreground flex items-center justify-center gap-1">
+                  <span className="inline-block h-2 w-2 bg-primary rounded-full mr-1"></span>
+                  Select Difficulty
+                  <span className="inline-block h-2 w-2 bg-primary rounded-full ml-1"></span>
                 </h3>
                 <Select
                   value={difficulty}
@@ -416,17 +415,26 @@ export default function WordChainGame() {
                     setDifficulty(value)
                   }
                 >
-                  <SelectTrigger className="w-full bg-background/50 border-border text-sm h-9">
+                  <SelectTrigger className="w-full bg-background/80 border-primary/20 text-sm h-9 rounded-md">
                     <SelectValue placeholder="Select difficulty" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="easy">
+                    <SelectItem
+                      value="easy"
+                      className="text-emerald-500 font-medium"
+                    >
                       Easy (15s per turn, hints allowed)
                     </SelectItem>
-                    <SelectItem value="medium">
+                    <SelectItem
+                      value="medium"
+                      className="text-amber-500 font-medium"
+                    >
                       Medium (10s per turn, hints allowed)
                     </SelectItem>
-                    <SelectItem value="hard">
+                    <SelectItem
+                      value="hard"
+                      className="text-rose-500 font-medium"
+                    >
                       Hard (7s per turn, no hints)
                     </SelectItem>
                   </SelectContent>
@@ -434,9 +442,9 @@ export default function WordChainGame() {
               </div>
 
               {highScore > 0 && (
-                <div className="flex justify-center items-center gap-2 text-primary py-2 rounded-lg">
-                  <Trophy className="h-4 w-4" />
-                  <span className="text-sm font-semibold">
+                <div className="flex justify-center items-center gap-2 text-primary py-2 rounded-lg bg-primary/5 border border-primary/10">
+                  <Trophy className="h-5 w-5 text-amber-500" />
+                  <span className="text-base font-bold">
                     High Score: {highScore}
                   </span>
                 </div>
@@ -444,39 +452,42 @@ export default function WordChainGame() {
 
               <Button
                 onClick={startGame}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 text-sm px-6 py-2 h-auto rounded-md shadow-sm hover:shadow transition-all"
+                className="text-base font-bold px-8 py-2 h-auto rounded-full transition-all hover:scale-105 mt-2"
               >
                 Start Game
               </Button>
             </div>
           ) : gameOver ? (
             <div className="text-center space-y-4">
-              <div className="space-y-2">
-                <h2 className="text-xl font-bold text-destructive">
+              <div className="space-y-2 animate-bounce-slow">
+                <h2 className="text-xl font-bold text-destructive dark:text-red-500">
                   Game Over
                 </h2>
                 <p className="text-sm text-muted-foreground">{message}</p>
               </div>
 
-              <div className="bg-muted/30 p-3 rounded-lg space-y-2">
-                <h3 className="text-base font-semibold text-foreground">
+              <div className="bg-muted/30 p-4 rounded-lg space-y-2 border border-muted shadow-sm">
+                <h3 className="text-base font-bold text-foreground flex items-center justify-center gap-2">
+                  <Star className="h-5 w-5 text-amber-500" />
                   Final Score: {score}
+                  <Star className="h-5 w-5 text-amber-500" />
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Words in chain: {wordChain.length}
+                  Words in chain:{" "}
+                  <span className="font-medium">{wordChain.length}</span>
                 </p>
 
                 {highScore === score && score > 0 && (
-                  <div className="mt-2 text-primary flex justify-center items-center gap-2 bg-primary/10 p-2 rounded-lg">
-                    <Trophy className="h-4 w-4" />
-                    <span className="text-sm font-medium">New High Score!</span>
+                  <div className="mt-2 text-primary flex justify-center items-center gap-2 bg-primary/10 p-2 rounded-lg border border-primary/20 animate-pulse">
+                    <Trophy className="h-5 w-5 text-amber-500" />
+                    <span className="text-base font-bold">New High Score!</span>
                   </div>
                 )}
               </div>
 
               {achievements.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold mb-2 text-foreground">
+                <div className="p-3 bg-gradient-to-r from-primary/5 to-background rounded-lg border border-primary/10">
+                  <h3 className="text-sm font-bold mb-2 text-foreground">
                     Achievements:
                   </h3>
                   <div className="flex flex-wrap justify-center gap-2">
@@ -484,9 +495,9 @@ export default function WordChainGame() {
                       <Badge
                         key={index}
                         variant="secondary"
-                        className="py-1 px-2 text-xs"
+                        className="py-1 px-3 text-xs bg-primary/10 border border-primary/20"
                       >
-                        <Trophy className="w-3 h-3 mr-1" />
+                        <Trophy className="w-3 h-3 mr-2 text-amber-500" />
                         {achievement}
                       </Badge>
                     ))}
@@ -496,7 +507,7 @@ export default function WordChainGame() {
 
               <Button
                 onClick={startGame}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 text-sm px-6 py-2 h-auto rounded-md shadow-sm hover:shadow transition-all mt-2"
+                className="text-base font-bold px-8 py-2 h-auto rounded-full shadow-md hover:shadow-lg transition-all hover:scale-105 mt-4"
               >
                 Play Again
               </Button>
@@ -504,25 +515,25 @@ export default function WordChainGame() {
           ) : (
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="flex items-center gap-2 bg-muted/20 p-2 rounded-md">
-                  <Star className="text-primary h-4 w-4" />
-                  <span className="font-medium">Score: {score}</span>
+                <div className="flex items-center gap-2 bg-muted/20 p-2 rounded-md border border-primary/10 shadow-sm">
+                  <Star className="text-amber-500 h-4 w-4" />
+                  <span className="font-bold">Score: {score}</span>
                 </div>
-                <div className="flex items-center gap-2 justify-center bg-muted/20 p-2 rounded-md">
-                  <Heart className="text-destructive h-4 w-4" />
-                  <span className="font-medium">Lives: 1</span>
+                <div className="flex items-center gap-2 justify-center bg-muted/20 p-2 rounded-md border border-primary/10 shadow-sm">
+                  <Heart className="text-rose-500 h-4 w-4" />
+                  <span className="font-bold">Lives: 1</span>
                 </div>
-                <div className="flex items-center gap-2 justify-end bg-muted/20 p-2 rounded-md">
+                <div className="flex items-center gap-2 justify-end bg-muted/20 p-2 rounded-md border border-primary/10 shadow-sm">
                   <Clock
                     className={`h-4 w-4 ${
                       timeLeft <= 5
-                        ? "text-destructive animate-pulse"
+                        ? "text-rose-500 animate-pulse"
                         : "text-muted-foreground"
                     }`}
                   />
                   <span
-                    className={`font-medium ${
-                      timeLeft <= 5 ? "text-destructive" : ""
+                    className={`font-bold ${
+                      timeLeft <= 5 ? "text-rose-500" : ""
                     }`}
                   >
                     {timeLeft}s
@@ -531,16 +542,16 @@ export default function WordChainGame() {
               </div>
 
               <div className="grid gap-4 md:grid-cols-5">
-                <div className="md:col-span-2 bg-primary/5 p-3 rounded-md space-y-2">
-                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <div className="md:col-span-2 bg-primary/5 p-3 rounded-md space-y-2 border border-primary/20 shadow-sm">
+                  <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                     Current word:
-                    <span className="ml-1 text-primary font-bold">
+                    <span className="ml-1 text-primary font-bold bg-primary/10 px-2 py-0.5 rounded">
                       {currentWord}
                     </span>
                   </h3>
                   <p className="text-xs text-muted-foreground">
                     Next word must start with:{" "}
-                    <span className="text-base font-bold text-primary inline-block px-2 py-1 bg-primary/10 rounded-md mt-1">
+                    <span className="text-base font-bold text-primary inline-block px-3 py-1 bg-primary/10 rounded-md mt-1 border border-primary/20 shadow-sm animate-pulse-slow">
                       {currentWord.charAt(currentWord.length - 1)}
                     </span>
                   </p>
@@ -555,7 +566,7 @@ export default function WordChainGame() {
                         value={inputWord}
                         onChange={(e) => setInputWord(e.target.value)}
                         placeholder="Type your word..."
-                        className="flex-1 h-9 text-sm"
+                        className="flex-1 h-10 text-sm border-primary/20 bg-background/80"
                         disabled={!isPlaying || isLoading || gameOver}
                       />
                       <Button
@@ -566,12 +577,12 @@ export default function WordChainGame() {
                           isLoading ||
                           gameOver
                         }
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 w-9 p-0"
+                        className="hover:bg-primary/90 h-10 w-10 p-0 rounded-full"
                       >
                         {isLoading ? (
-                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          <RefreshCw className="h-5 w-5 animate-spin" />
                         ) : (
-                          <Check className="h-4 w-4" />
+                          <Check className="h-5 w-5" />
                         )}
                       </Button>
                     </div>
@@ -584,23 +595,25 @@ export default function WordChainGame() {
                         size="sm"
                         onClick={getHint}
                         disabled={showHint || !isPlaying || gameOver}
-                        className="text-primary border-primary text-xs h-7"
+                        className="text-xs h-8 rounded-full"
                       >
-                        <Lightbulb className="h-3 w-3 mr-1" />
+                        <Lightbulb className="h-3 w-3 mr-1 text-amber-500" />
                         Get Hint (-2 pts)
                       </Button>
 
                       {showHint && hint && (
-                        <div className="flex items-center gap-2 bg-background/50 p-1 rounded-md">
+                        <div className="flex items-center gap-2 bg-background/80 p-2 rounded-md border border-primary/20">
                           <span className="text-xs text-muted-foreground">
                             Try:{" "}
-                            <strong className="text-primary">{hint}</strong>
+                            <strong className="text-primary font-bold">
+                              {hint}
+                            </strong>
                           </span>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={useHint}
-                            className="h-6 text-xs p-0 px-2"
+                            className="h-6 text-xs p-0 px-2 text-primary hover:text-primary/80"
                           >
                             Use
                           </Button>
@@ -611,11 +624,12 @@ export default function WordChainGame() {
                 </div>
               </div>
 
-              <div className="bg-muted/10 p-2 rounded-md">
-                <h3 className="text-xs font-medium text-muted-foreground mb-2">
+              <div className="bg-muted/10 p-3 rounded-md border border-primary/10 shadow-sm">
+                <h3 className="text-xs font-bold text-muted-foreground mb-2 flex items-center gap-1">
+                  <ChevronRight className="h-3 w-3 text-primary" />
                   Chain History:
                 </h3>
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1.5">
                   <AnimatePresence>
                     {wordChain.map((word, index) => (
                       <motion.div
@@ -627,11 +641,11 @@ export default function WordChainGame() {
                       >
                         <Badge
                           variant="secondary"
-                          className="py-1 px-2 text-xs bg-primary/5 hover:bg-primary/10 transition-colors"
+                          className="py-1 px-2 text-xs bg-primary/5 hover:bg-primary/10 transition-colors border border-primary/20"
                         >
                           {word}
                           {index < wordChain.length - 1 && (
-                            <ChevronRight className="ml-1 h-3 w-3 inline" />
+                            <ChevronRight className="ml-1 h-3 w-3 inline text-primary" />
                           )}
                         </Badge>
                       </motion.div>
@@ -643,29 +657,27 @@ export default function WordChainGame() {
               {message && (
                 <Alert
                   variant={isError ? "destructive" : "default"}
-                  className="text-xs py-2 px-3"
+                  className="text-xs py-2 px-3 border border-primary/10"
                 >
                   <AlertCircle className="h-3 w-3 mr-1" />
-                  <AlertDescription className="text-xs">
+                  <AlertDescription className="text-xs font-medium">
                     {message}
                   </AlertDescription>
                 </Alert>
               )}
 
               {achievements.length > 0 && (
-                <div className="bg-muted/10 p-2 rounded-md">
+                <div className="bg-primary/5 p-2 rounded-md border border-primary/20 shadow-sm">
                   <div className="flex items-center gap-2 mb-1">
-                    <Trophy className="text-primary h-3 w-3" />
-                    <h3 className="text-xs font-medium">
-                      Recent Achievements:
-                    </h3>
+                    <Trophy className="text-amber-500 h-3 w-3" />
+                    <h3 className="text-xs font-bold">Recent Achievements:</h3>
                   </div>
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-1.5">
                     {achievements.slice(-3).map((achievement, index) => (
                       <Badge
                         key={index}
                         variant="outline"
-                        className="text-xs py-0.5 px-2 border-primary/10"
+                        className="text-xs py-0.5 px-2 border-primary/20 bg-background/60"
                       >
                         {achievement}
                       </Badge>
@@ -679,4 +691,35 @@ export default function WordChainGame() {
       </Card>
     </div>
   );
+}
+
+// Add this to the styles at the top
+// Add these animations to your CSS or in a style tag
+const style = document.createElement("style");
+style.textContent = `
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+`;
+if (typeof document !== "undefined") {
+  document.head.appendChild(style);
 }
