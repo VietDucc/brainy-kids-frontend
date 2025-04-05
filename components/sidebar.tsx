@@ -42,7 +42,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
           iconSrc="/dictionary.svg"
         />
         <SidebarItem label="Games" href="/games" iconSrc="/game.png" />
-        <SidebarItem label="Videos" href="/videos" iconSrc="/video.png" />
+        <SidebarItem label="Videos" href="/videos" iconSrc="/video.svg" />
       </div>
 
       <div className="py-4">
