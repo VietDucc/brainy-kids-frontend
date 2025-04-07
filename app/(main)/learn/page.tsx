@@ -77,11 +77,17 @@ const LearnPage = () => {
   const [completedLessonId, setCompletedLessonId] = useState<number[]>();
   const { userId } = useAuth();
   const [loadingLessonId, setLoadingLessonId] = useState<number | null>(null);
+  const { getToken } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
+      const token = await getToken({ template: "jwt-clerk" });
       try {
-        const userProgressResponse = await fetch("/api/user-progress", {});
+        const userProgressResponse = await fetch("/api/user-progress", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!userProgressResponse.ok) {
           throw new Error("Failed to fetch user progress");
         }
@@ -120,7 +126,11 @@ const LearnPage = () => {
           setCompletedLessonId(lessonIds);
         }
         const courseId = userProgress.activeCourse.id;
-        const unitsResponse = await fetch(`/api/units/${courseId}`, {});
+        const unitsResponse = await fetch(`/api/units/${courseId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!unitsResponse.ok) {
           throw new Error("Failed to fetch course units");
         }
