@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { api } from "../config";
-import { cookies } from "next/headers";
-
+import { auth } from "@clerk/nextjs/server";
 export async function POST(req: Request) {
   try {
+    const { userId, getToken } = await auth();
+    const token = await getToken({ template: "jwt-clerk" });
     const body = await req.json();
-    const token = (await cookies()).get("token")?.value;
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     console.log("[LESSON_PROGRESS_POST] Request body:", body);
 
     const response = await fetch(`${api.lessonProgress}`, {

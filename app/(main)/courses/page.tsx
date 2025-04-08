@@ -11,17 +11,12 @@ const CoursesPage = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { getToken } = useAuth();
-
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const token = await getToken({ template: "jwt-clerk" });
+        const token = await getToken();
         console.log("token", token);
-        const response = await fetch("/api/courses", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch("/api/courses");
         if (!response.ok) throw new Error("Failed to fetch courses");
         const data = await response.json();
         setCourses(data);

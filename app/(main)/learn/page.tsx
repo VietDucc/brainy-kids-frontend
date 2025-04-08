@@ -83,11 +83,7 @@ const LearnPage = () => {
     const fetchData = async () => {
       const token = await getToken({ template: "jwt-clerk" });
       try {
-        const userProgressResponse = await fetch("/api/user-progress", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const userProgressResponse = await fetch("/api/user-progress");
         if (!userProgressResponse.ok) {
           throw new Error("Failed to fetch user progress");
         }
