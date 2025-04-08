@@ -1,19 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "../../config";
-import { auth } from "@clerk/nextjs/server";
+import { cookies } from "next/headers";
+
 export const dynamic = "force-dynamic"; // Use Next.js dynamic configuration
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { lessonId: string } }
 ) {
-  try {
-    const { userId, getToken } = await auth();
-    const token = await getToken({ template: "jwt-clerk" });
+  const token = (await cookies()).get("token")?.value;
 
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  try {
     const lessonId = parseInt(params.lessonId, 10);
     if (isNaN(lessonId)) {
       return NextResponse.json({ error: "Invalid lesson ID" }, { status: 400 });
@@ -24,7 +21,6 @@ export async function GET(
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch lesson ${lessonId}`);
