@@ -38,7 +38,7 @@ const games = [
     icon: LinkIcon,
     href: "/games/word-chain",
     color: "bg-gradient-to-br from-blue-500 to-cyan-500",
-    comingSoon: true,
+    comingSoon: false,
   },
 ];
 

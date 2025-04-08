@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-
+import { auth } from "@clerk/nextjs/server";
 const sampleDictionary = [
   {
     word: "hello",
@@ -55,6 +55,11 @@ const sampleDictionary = [
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const word = searchParams.get("word")
+  const {  getToken } = await auth();
+  const token = await getToken({ template: "jwt-clerk" });
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   if (!word) {
     return NextResponse.json(sampleDictionary)
