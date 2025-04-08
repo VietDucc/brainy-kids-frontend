@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "../../config";
 
-export const dynamic = "force-dynamic"; // Use Next.js dynamic configuration
+import { auth } from "@clerk/nextjs/server";
+
+export const dynamic = "force-dynamic"; 
 
 export async function GET(
   request: NextRequest,
@@ -9,10 +11,16 @@ export async function GET(
 ) {
   try {
     const courseId = parseInt(params.courseId, 10);
+
+    const { getToken } = await auth();
+    const token = await getToken({ template: "jwt-clerk" });
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     if (isNaN(courseId)) {
       return NextResponse.json({ error: "Invalid course ID" }, { status: 400 });
     }
-    const token = request.headers.get("Authorization")?.split(" ")[1];
+
     const response = await fetch(api.units(courseId), {
       cache: "no-store",
       headers: {

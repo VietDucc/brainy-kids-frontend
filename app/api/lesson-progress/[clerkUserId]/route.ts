@@ -1,7 +1,7 @@
 // api/lesson-progress/[clerkUserId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "../../config";
-import { cookies } from "next/headers";
+import { auth } from "@clerk/nextjs/server";
 
 export const dynamic = "force-dynamic";
 
@@ -9,8 +9,15 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { clerkUserId: string } }
 ) {
+  
   try {
-    const token = (await cookies()).get("token")?.value;
+    const { userId, getToken } = await auth();
+    const token = await getToken({ template: "jwt-clerk" });
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  
     const clerkUserId = params.clerkUserId;
     if (!clerkUserId) {
       // Changed condition from if(userId) to if(!clerkUserId)
@@ -22,6 +29,7 @@ export async function GET(
       headers: {
         Authorization: `Bearer ${token}`,
       },
+     
     });
 
     if (!response.ok) {
