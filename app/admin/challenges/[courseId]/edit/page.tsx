@@ -483,7 +483,7 @@ export default function EditChallengePage() {
                 </Select>
                 <p className="text-sm text-yellow-600 flex items-center gap-1">
                   <Sparkles className="h-3 w-3" />
-                  Publish when you're ready for students to see it!
+                  Publish when you&apos;re ready for students to see it!
                 </p>
               </div>
             </div>
