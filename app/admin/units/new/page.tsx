@@ -1,54 +1,57 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Mock data for courses
 const courses = [
   { id: "1", title: "Basic English for Kids" },
   { id: "2", title: "Intermediate English" },
-  { id: "3", title: "Advanced Vocabulary" },\
-    },
-  { id: "2", title: "Intermediate English" },
   { id: "3", title: "Advanced Vocabulary" },
   { id: "4", title: "English Grammar Basics" },
   { id: "5", title: "Conversation Practice" },
-]
+];
 
 export default function NewUnitPage() {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     courseId: "",
     status: "draft",
-  })
+  });
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     // Simulate API call
     setTimeout(() => {
-      setIsLoading(false)
-      router.push("/admin/units")
-    }, 1000)
+      setIsLoading(false);
+      router.push("/admin/units");
+    }, 1000);
 
-    console.log(formData)
-  }
+    console.log(formData);
+  };
 
   return (
     <div className="space-y-6">
@@ -72,7 +75,9 @@ export default function NewUnitPage() {
                 onChange={(e) => handleChange("title", e.target.value)}
                 required
               />
-              <p className="text-sm text-muted-foreground">This is the title of your unit.</p>
+              <p className="text-sm text-muted-foreground">
+                This is the title of your unit.
+              </p>
             </div>
 
             <div className="space-y-2">
@@ -85,13 +90,18 @@ export default function NewUnitPage() {
                 onChange={(e) => handleChange("description", e.target.value)}
                 required
               />
-              <p className="text-sm text-muted-foreground">Provide a detailed description of your unit.</p>
+              <p className="text-sm text-muted-foreground">
+                Provide a detailed description of your unit.
+              </p>
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="courseId">Course</Label>
-                <Select value={formData.courseId} onValueChange={(value) => handleChange("courseId", value)}>
+                <Select
+                  value={formData.courseId}
+                  onValueChange={(value) => handleChange("courseId", value)}
+                >
                   <SelectTrigger id="courseId">
                     <SelectValue placeholder="Select a course" />
                   </SelectTrigger>
@@ -103,12 +113,17 @@ export default function NewUnitPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-sm text-muted-foreground">The course this unit belongs to.</p>
+                <p className="text-sm text-muted-foreground">
+                  The course this unit belongs to.
+                </p>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <Select value={formData.status} onValueChange={(value) => handleChange("status", value)}>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleChange("status", value)}
+                >
                   <SelectTrigger id="status">
                     <SelectValue placeholder="Select a status" />
                   </SelectTrigger>
@@ -117,7 +132,9 @@ export default function NewUnitPage() {
                     <SelectItem value="published">Published</SelectItem>
                   </SelectContent>
                 </Select>
-                <p className="text-sm text-muted-foreground">Set the visibility status of your unit.</p>
+                <p className="text-sm text-muted-foreground">
+                  Set the visibility status of your unit.
+                </p>
               </div>
             </div>
 
@@ -125,7 +142,11 @@ export default function NewUnitPage() {
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? "Saving..." : "Save Unit"}
               </Button>
-              <Button type="button" variant="outline" onClick={() => router.push("/admin/units")}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push("/admin/units")}
+              >
                 Cancel
               </Button>
             </div>
@@ -133,6 +154,5 @@ export default function NewUnitPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-

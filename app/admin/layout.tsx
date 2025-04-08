@@ -1,12 +1,22 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { BookOpen, Layers, FileText, Award, LayoutDashboard, Users, Settings, LogOut, Star } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  BookOpen,
+  Layers,
+  FileText,
+  Award,
+  LayoutDashboard,
+  Users,
+  Settings,
+  LogOut,
+  Star,
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,14 +24,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 export default function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const routes = [
     {
@@ -73,14 +83,17 @@ export default function AdminLayout({
       color: "bg-gray-100 text-gray-600",
       hoverColor: "hover:bg-gray-100 hover:text-gray-600",
     },
-  ]
+  ];
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       {/* Sidebar */}
       <div className="hidden w-64 flex-col bg-white border-r rounded-r-3xl shadow-lg md:flex">
         <div className="flex h-16 items-center border-b px-6">
-          <Link href="/admin" className="flex items-center gap-2 font-bold text-xl">
+          <Link
+            href="/admin"
+            className="flex items-center gap-2 font-bold text-xl"
+          >
             <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-2 rounded-full">
               <Star className="h-6 w-6 text-white" />
             </div>
@@ -95,9 +108,9 @@ export default function AdminLayout({
               <Link
                 key={route.href}
                 href={route.href}
-                className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-all ${route.hoverColor} ${
-                  pathname === route.href ? route.color : "text-gray-500"
-                }`}
+                className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-all ${
+                  route.hoverColor
+                } ${pathname === route.href ? route.color : "text-gray-500"}`}
               >
                 <route.icon className="h-5 w-5" />
                 <span className="font-semibold">{route.title}</span>
@@ -108,9 +121,15 @@ export default function AdminLayout({
         <div className="border-t p-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="w-full justify-start px-2 rounded-xl">
+              <Button
+                variant="ghost"
+                className="w-full justify-start px-2 rounded-xl"
+              >
                 <Avatar className="h-8 w-8 mr-2">
-                  <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Teacher" />
+                  <AvatarImage
+                    src="/placeholder.svg?height=32&width=32"
+                    alt="Teacher"
+                  />
                   <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
                     TE
                   </AvatarFallback>
@@ -142,7 +161,10 @@ export default function AdminLayout({
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Teacher" />
+                    <AvatarImage
+                      src="/placeholder.svg?height=32&width=32"
+                      alt="Teacher"
+                    />
                     <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
                       TE
                     </AvatarFallback>
@@ -168,6 +190,5 @@ export default function AdminLayout({
         <main className="flex-1 p-6">{children}</main>
       </div>
     </div>
-  )
+  );
 }
-

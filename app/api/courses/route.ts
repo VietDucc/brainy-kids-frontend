@@ -1,8 +1,24 @@
 import { NextResponse } from "next/server";
 import { api } from "../config";
-import { cookies } from "next/headers";
+import { auth } from "@clerk/nextjs/server";
+
 export async function GET() {
-  const token = (await cookies()).get("token")?.value;
+  const { userId, getToken } = await auth();
+  
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  
+  const token = await getToken({ template: "jwt-clerk" });
+  
+  
+  console.log("API token from cookie:", token?.substring(0, 10) + "...");
+  
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  
+
   try {
     const response = await fetch(api.courses, {
       cache: "no-store",
@@ -22,3 +38,4 @@ export async function GET() {
     return NextResponse.json([], { status: 500 });
   }
 }
+

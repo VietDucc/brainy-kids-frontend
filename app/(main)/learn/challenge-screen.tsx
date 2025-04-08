@@ -227,7 +227,7 @@ export const ChallengeScreen = ({
             completed: true,
           }),
         }).catch((error) => {
-          console.error("Error saving progress:", error);
+          toast.error("Error saving progress:", error);
         });
       } else {
         onComplete();
