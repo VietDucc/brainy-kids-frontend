@@ -1,156 +1,58 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { useRouter, useParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { BookOpen, Sparkles, ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-// Mock data for courses
-const coursesData = [
-  {
-    id: "1",
-    title: "Animals and Their Sounds",
-    description:
-      "Learn about different animals and the sounds they make. Perfect for young learners to explore the animal kingdom!",
-    level: "beginner",
-    units: 5,
-    status: "published",
-    createdAt: "2023-06-01T12:00:00Z",
-    emoji: "🦁",
-  },
-  {
-    id: "2",
-    title: "Colors and Shapes Fun",
-    description: "Discover the wonderful world of colors and shapes through interactive lessons and games.",
-    level: "beginner",
-    units: 8,
-    status: "published",
-    createdAt: "2023-07-15T10:30:00Z",
-    emoji: "🌈",
-  },
-  {
-    id: "3",
-    title: "Numbers and Counting",
-    description: "Learn to count and recognize numbers through fun activities and games.",
-    level: "beginner",
-    units: 6,
-    status: "draft",
-    createdAt: "2023-08-20T14:45:00Z",
-    emoji: "🔢",
-  },
-  {
-    id: "4",
-    title: "Family Members",
-    description: "Learn vocabulary related to family members and relationships.",
-    level: "beginner",
-    units: 4,
-    status: "published",
-    createdAt: "2023-09-05T09:15:00Z",
-    emoji: "👨‍👩‍👧‍👦",
-  },
-  {
-    id: "5",
-    title: "Food and Fruits",
-    description: "Explore different types of food and fruits with colorful illustrations and fun activities.",
-    level: "beginner",
-    units: 7,
-    status: "published",
-    createdAt: "2023-10-10T11:20:00Z",
-    emoji: "🍎",
-  },
-]
+import { BookOpen, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function EditCoursePage() {
-  const router = useRouter()
-  const params = useParams()
-  const courseId = params.courseId as string
-  const [isLoading, setIsLoading] = useState(false)
-  const [isFetching, setIsFetching] = useState(true)
+  const router = useRouter();
+  const params = useParams();
+  const courseId = params.courseId as string;
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
-    level: "",
-    status: "",
-    emoji: "🦁",
-  })
-
-  const emojis = [
-    "🦁",
-    "🐘",
-    "🦒",
-    "🦓",
-    "🐯",
-    "🦊",
-    "🐶",
-    "🐱",
-    "🐰",
-    "🐻",
-    "🐼",
-    "🐨",
-    "🦄",
-    "🐢",
-    "🐬",
-    "🐙",
-    "🦋",
-    "🌈",
-    "🌞",
-    "🌟",
-    "🍎",
-    "🍓",
-    "🥕",
-    "🚂",
-    "✈️",
-    "🚀",
-    "⚽",
-    "🎨",
-    "🎭",
-    "🎵",
-  ]
+    imageSrc: "",
+  });
 
   useEffect(() => {
-    // Simulate API fetch
-    setIsFetching(true)
-    setTimeout(() => {
-      const course = coursesData.find((c) => c.id === courseId)
-      if (course) {
-        setFormData({
-          title: course.title,
-          description: course.description,
-          level: course.level,
-          status: course.status,
-          emoji: course.emoji,
-        })
-      }
-      setIsFetching(false)
-    }, 500)
-  }, [courseId])
+    try {
+      const fetchCourse = async () => {
+        const course = await fetch(`/api/courses/${courseId}`);
+        const data = await course.json();
+        setFormData(data);
+      };
+      fetchCourse();
+    } catch (error) {
+      console.error("Error fetching course:", error);
+    }
+  }, [courseId]);
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
-    // Simulate API call
     setTimeout(() => {
-      setIsLoading(false)
-      router.push("/admin/courses")
-    }, 1000)
+      setIsLoading(false);
+      router.push("/admin/courses");
+    }, 1000);
 
-    console.log(formData)
-  }
+    console.log(formData);
+  };
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
@@ -158,13 +60,18 @@ export default function EditCoursePage() {
           <p className="text-xl font-medium text-blue-600">Loading course...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" asChild className="rounded-full hover:bg-blue-50 hover:text-blue-600">
+        <Button
+          variant="ghost"
+          size="icon"
+          asChild
+          className="rounded-full hover:bg-blue-50 hover:text-blue-600"
+        >
           <Link href="/admin/courses">
             <ArrowLeft className="h-5 w-5" />
             <span className="sr-only">Back to courses</span>
@@ -174,7 +81,9 @@ export default function EditCoursePage() {
           <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
             Edit Course 🎨
           </h1>
-          <p className="text-gray-600 mt-2">Update this fun learning course for children</p>
+          <p className="text-gray-600 mt-2">
+            Update this fun learning course for children
+          </p>
         </div>
       </div>
 
@@ -191,26 +100,6 @@ export default function EditCoursePage() {
                 Course Title
               </Label>
               <div className="flex gap-3">
-                <div className="flex-shrink-0">
-                  <Select value={formData.emoji} onValueChange={(value) => handleChange("emoji", value)}>
-                    <SelectTrigger className="w-16 h-16 text-3xl flex items-center justify-center p-0 border-2 border-blue-200 rounded-xl">
-                      <SelectValue placeholder="🦁" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-60 rounded-xl">
-                      <div className="grid grid-cols-5 gap-1 p-2">
-                        {emojis.map((emoji) => (
-                          <SelectItem
-                            key={emoji}
-                            value={emoji}
-                            className="flex items-center justify-center text-2xl cursor-pointer h-10 w-10 rounded-lg hover:bg-blue-50"
-                          >
-                            {emoji}
-                          </SelectItem>
-                        ))}
-                      </div>
-                    </SelectContent>
-                  </Select>
-                </div>
                 <Input
                   id="title"
                   placeholder="Enter a fun course title"
@@ -220,88 +109,41 @@ export default function EditCoursePage() {
                   className="flex-1 border-2 border-blue-200 rounded-xl text-lg"
                 />
               </div>
-              <p className="text-sm text-blue-600 flex items-center gap-1">
-                <Sparkles className="h-3 w-3" />
-                Choose a fun emoji and give your course an exciting name!
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description" className="text-gray-700">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                placeholder="What will children learn in this course? Make it sound fun and exciting!"
-                className="min-h-32 border-2 border-blue-200 rounded-xl"
-                value={formData.description}
-                onChange={(e) => handleChange("description", e.target.value)}
-                required
-              />
-              <p className="text-sm text-blue-600 flex items-center gap-1">
-                <Sparkles className="h-3 w-3" />
-                Describe what children will learn in a way that sounds exciting!
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="level" className="text-gray-700">
-                  Difficulty Level
-                </Label>
-                <Select value={formData.level} onValueChange={(value) => handleChange("level", value)}>
-                  <SelectTrigger id="level" className="border-2 border-blue-200 rounded-xl">
-                    <SelectValue placeholder="Select a level" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="beginner" className="rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">🌱</span> Beginner (Ages 3-5)
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="intermediate" className="rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">🌿</span> Intermediate (Ages 6-8)
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="advanced" className="rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">🌳</span> Advanced (Ages 9-12)
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-blue-600 flex items-center gap-1">
-                  <Sparkles className="h-3 w-3" />
-                  Choose the right level for your target age group!
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="status" className="text-gray-700">
-                  Status
-                </Label>
-                <Select value={formData.status} onValueChange={(value) => handleChange("status", value)}>
-                  <SelectTrigger id="status" className="border-2 border-blue-200 rounded-xl">
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="draft" className="rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">✏️</span> Draft - Still working on it
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="published" className="rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">🚀</span> Published - Ready for learning!
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-blue-600 flex items-center gap-1">
-                  <Sparkles className="h-3 w-3" />
-                  Publish when you're ready for students to see it!
-                </p>
+              <div className="flex gap-3 items-center">
+                {formData.imageSrc ? (
+                  <Image
+                    src={formData.imageSrc}
+                    alt="Course Image"
+                    width={100}
+                    height={100}
+                    className="rounded-xl object-cover"
+                    onError={(e) => {
+                      // Fallback khi ảnh lỗi
+                      const imgElement = e.target as HTMLImageElement;
+                      imgElement.src = "/placeholder-image.jpg"; // Thay thế bằng ảnh placeholder của bạn
+                      imgElement.alt = "Image not found";
+                    }}
+                  />
+                ) : (
+                  <div className="w-[100px] h-[100px] rounded-xl bg-gray-100 flex items-center justify-center">
+                    <BookOpen className="h-8 w-8 text-gray-400" />
+                  </div>
+                )}
+                <div className="flex-1 space-y-2">
+                  <Label htmlFor="imageSrc" className="text-gray-700">
+                    Thumbnail URL
+                  </Label>
+                  <Input
+                    id="imageSrc"
+                    placeholder="Enter the image URL"
+                    value={formData.imageSrc}
+                    onChange={(e) => handleChange("imageSrc", e.target.value)}
+                    className="border-2 border-blue-200 rounded-xl"
+                  />
+                  <p className="text-sm text-gray-500">
+                    Enter a valid image URL to see the preview
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -326,6 +168,5 @@ export default function EditCoursePage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-

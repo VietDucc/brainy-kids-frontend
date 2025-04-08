@@ -121,7 +121,13 @@ export default function AdminLayout({
                       className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-all ${
                         route.hoverColor
                       } ${
-                        pathname === route.href ? route.color : "text-gray-500"
+                        (
+                          route.href === "/admin"
+                            ? pathname === "/admin"
+                            : pathname.startsWith(route.href)
+                        )
+                          ? route.color
+                          : "text-gray-500"
                       }`}
                     >
                       <route.icon className="h-5 w-5" />
@@ -199,7 +205,15 @@ export default function AdminLayout({
                 href={route.href}
                 className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-all ${
                   route.hoverColor
-                } ${pathname === route.href ? route.color : "text-gray-500"}`}
+                } ${
+                  (
+                    route.href === "/admin"
+                      ? pathname === "/admin"
+                      : pathname.startsWith(route.href)
+                  )
+                    ? route.color
+                    : "text-gray-500"
+                }`}
               >
                 <route.icon className="h-5 w-5" />
                 <span className="font-semibold">{route.title}</span>

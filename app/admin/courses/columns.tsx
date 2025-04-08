@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import type { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import type { ColumnDef } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,17 +10,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Pencil, Trash, Eye } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Pencil, Trash, Eye } from "lucide-react";
 
 export type Course = {
-  id: string
-  title: string
-  level: string
-  units: number
-  status: "published" | "draft"
-  createdAt: string
-}
+  id: string;
+  title: string;
+  imageSrc: string;
+};
 
 export const columns: ColumnDef<Course>[] = [
   {
@@ -39,26 +36,26 @@ export const columns: ColumnDef<Course>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string
+      const status = row.getValue("status") as string;
       return (
         <Badge variant={status === "published" ? "default" : "secondary"}>
           {status.charAt(0).toUpperCase() + status.slice(1)}
         </Badge>
-      )
+      );
     },
   },
   {
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"))
-      return <div>{date.toLocaleDateString()}</div>
+      const date = new Date(row.getValue("createdAt"));
+      return <div>{date.toLocaleDateString()}</div>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const course = row.original
+      const course = row.original;
 
       return (
         <DropdownMenu>
@@ -85,8 +82,7 @@ export const columns: ColumnDef<Course>[] = [
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
-
+];

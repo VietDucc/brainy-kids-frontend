@@ -4,6 +4,7 @@ const API_BASE_URL =
 
 export const api = {
   courses: `${API_BASE_URL}/api/courses`,
+  courseById: (courseId: number) => `${API_BASE_URL}/api/courses/${courseId}`,
   units: (courseId: number) => `${API_BASE_URL}/api/units/${courseId}`,
   lessons: (lessonId: number) =>
     `${API_BASE_URL}/api/lessons/lesson/${lessonId}`,

@@ -1,76 +1,85 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter, useParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Pencil, Trash, BookOpen, Layers, FileText } from "lucide-react"
-import Link from "next/link"
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ArrowLeft,
+  Pencil,
+  Trash,
+  BookOpen,
+  Layers,
+  FileText,
+} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { Course } from "@/types/courses";
+import { UnitType } from "@/types/learn";
 
 // Mock data for courses
-const coursesData = [
-  {
-    id: "1",
-    title: "Animals and Their Sounds",
-    description:
-      "Learn about different animals and the sounds they make. Perfect for young learners to explore the animal kingdom!",
-    level: "beginner",
-    units: 5,
-    status: "published",
-    createdAt: "2023-06-01T12:00:00Z",
-    emoji: "🦁",
-    unitsList: [
-      { id: "1", title: "Farm Animals", lessons: 5 },
-      { id: "2", title: "Wild Animals", lessons: 4 },
-      { id: "3", title: "Ocean Animals", lessons: 3 },
-      { id: "4", title: "Insects", lessons: 4 },
-      { id: "5", title: "Birds", lessons: 3 },
-    ],
-  },
-  {
-    id: "2",
-    title: "Colors and Shapes Fun",
-    description: "Discover the wonderful world of colors and shapes through interactive lessons and games.",
-    level: "beginner",
-    units: 8,
-    status: "published",
-    createdAt: "2023-07-15T10:30:00Z",
-    emoji: "🌈",
-    unitsList: [
-      { id: "3", title: "Primary Colors", lessons: 6 },
-      { id: "4", title: "Shapes All Around", lessons: 3 },
-    ],
-  },
-]
 
 export default function ViewCoursePage() {
-  const router = useRouter()
-  const params = useParams()
-  const courseId = params.courseId as string
-  const [isFetching, setIsFetching] = useState(true)
-  const [course, setCourse] = useState<any>(null)
+  const router = useRouter();
+  const params = useParams();
+  const courseId = params.courseId as string;
+  const [course, setCourse] = useState<Course>();
+  const [units, setUnits] = useState<UnitType[]>([]);
+  const [isCourseLoading, setIsCourseLoading] = useState(false);
+  const [isUnitsLoading, setIsUnitsLoading] = useState(false);
 
+  const getCourse = async (courseId: string) => {
+    try {
+      setIsCourseLoading(true);
+      const res = await fetch(`/api/courses/${courseId}`);
+      return res.json();
+    } catch (error) {
+      console.error("Error fetching course:", error);
+    } finally {
+      setIsCourseLoading(false);
+    }
+  };
+  const getUnits = async (courseId: string) => {
+    try {
+      setIsUnitsLoading(true);
+      const res = await fetch(`/api/units/${courseId}`);
+      return res.json();
+    } catch (error) {
+      console.error("Error fetching units:", error);
+    } finally {
+      setIsUnitsLoading(false);
+    }
+  };
   useEffect(() => {
-    // Simulate API fetch
-    setIsFetching(true)
-    setTimeout(() => {
-      const foundCourse = coursesData.find((c) => c.id === courseId)
-      setCourse(foundCourse || null)
-      setIsFetching(false)
-    }, 500)
-  }, [courseId])
+    const fetchData = async () => {
+      const courseData = await getCourse(courseId);
+      const unitsData = await getUnits(courseId);
+      setCourse(courseData);
+      setUnits(unitsData);
+    };
+    fetchData();
+  }, [courseId]);
 
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this course?")) {
-      // Simulate API call
       setTimeout(() => {
-        router.push("/admin/courses")
-      }, 500)
+        router.push("/admin/courses");
+      }, 500);
     }
-  }
+  };
 
-  if (isFetching) {
+  const handleEditClick = () => {
+    if (course?.id && course?.title) {
+      const params = new URLSearchParams();
+      params.append("title", course.title);
+      if (course.imageSrc) {
+        params.append("imageSrc", course.imageSrc);
+      }
+      router.push(`/admin/courses/${course.id}/edit?${params.toString()}`);
+    }
+  };
+
+  if (!course) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
@@ -78,7 +87,7 @@ export default function ViewCoursePage() {
           <p className="text-xl font-medium text-blue-600">Loading course...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!course) {
@@ -92,14 +101,19 @@ export default function ViewCoursePage() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" asChild className="rounded-full hover:bg-blue-50 hover:text-blue-600">
+          <Button
+            variant="ghost"
+            size="icon"
+            asChild
+            className="rounded-full hover:bg-blue-50 hover:text-blue-600"
+          >
             <Link href="/admin/courses">
               <ArrowLeft className="h-5 w-5" />
               <span className="sr-only">Back to courses</span>
@@ -107,9 +121,8 @@ export default function ViewCoursePage() {
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
-              {course.emoji} {course.title}
+              {course.title}
             </h1>
-            <p className="text-gray-600 mt-2">Course Details</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -117,11 +130,12 @@ export default function ViewCoursePage() {
             variant="outline"
             asChild
             className="rounded-xl border-2 border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+            onClick={handleEditClick}
           >
-            <Link href={`/admin/courses/${course.id}/edit`} className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Pencil className="h-4 w-4" />
               Edit Course
-            </Link>
+            </div>
           </Button>
           <Button
             variant="outline"
@@ -143,43 +157,17 @@ export default function ViewCoursePage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <Image
+                  src={course.imageSrc}
+                  alt={course.title}
+                  width={100}
+                  height={100}
+                  className="rounded-lg"
+                />
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700">Description</h3>
-                  <p className="mt-2 text-gray-600">{course.description}</p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Level</h3>
-                    <div className="mt-1 flex items-center gap-2">
-                      {course.level === "beginner" && <span className="text-lg">🌱</span>}
-                      {course.level === "intermediate" && <span className="text-lg">🌿</span>}
-                      {course.level === "advanced" && <span className="text-lg">🌳</span>}
-                      <span className="font-medium capitalize">{course.level}</span>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Status</h3>
-                    <Badge
-                      variant={course.status === "published" ? "default" : "secondary"}
-                      className={`mt-1 rounded-full ${
-                        course.status === "published"
-                          ? "bg-blue-100 text-blue-600 hover:bg-blue-200"
-                          : "bg-amber-100 text-amber-600 hover:bg-amber-200"
-                      }`}
-                    >
-                      {course.status === "published" ? "Published ✓" : "Draft ✎"}
-                    </Badge>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Created</h3>
-                    <p className="mt-1 font-medium">{new Date(course.createdAt).toLocaleDateString()}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Units</h3>
-                    <p className="mt-1 font-medium">{course.units} units</p>
-                  </div>
+                  <h3 className="text-lg font-semibold text-gray-700">Title</h3>
+                  <p className="mt-2 text-gray-600">{course.title}</p>
                 </div>
               </div>
             </CardContent>
@@ -192,23 +180,37 @@ export default function ViewCoursePage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              {course.unitsList && course.unitsList.length > 0 ? (
+              {isUnitsLoading ? (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="animate-spin text-4xl mb-2">🔄</div>
+                  <h3 className="text-lg font-medium text-gray-700">
+                    Loading units...
+                  </h3>
+                </div>
+              ) : units.length > 0 ? (
                 <div className="space-y-4">
-                  {course.unitsList.map((unit: any) => (
+                  {units.map((unit: UnitType) => (
                     <div
                       key={unit.id}
                       className="flex items-center justify-between p-4 rounded-xl border-2 border-purple-100 hover:border-purple-200 hover:bg-purple-50 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                          {unit.emoji || "📚"}
+                          📚
                         </div>
                         <div>
                           <h3 className="font-medium">{unit.title}</h3>
-                          <p className="text-sm text-gray-500">{unit.lessons} lessons</p>
+                          <p className="text-sm text-gray-500">
+                            {unit.lessons.length} lessons
+                          </p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm" asChild className="rounded-lg hover:bg-purple-100">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        asChild
+                        className="rounded-lg hover:bg-purple-100"
+                      >
                         <Link href={`/admin/units/${unit.id}`}>View Unit</Link>
                       </Button>
                     </div>
@@ -217,10 +219,17 @@ export default function ViewCoursePage() {
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <div className="text-4xl mb-2">📚</div>
-                  <h3 className="text-lg font-medium text-gray-700">No units yet</h3>
-                  <p className="text-gray-500 mb-4">Start creating units for this course</p>
+                  <h3 className="text-lg font-medium text-gray-700">
+                    No units yet
+                  </h3>
+                  <p className="text-gray-500 mb-4">
+                    Start creating units for this course
+                  </p>
                   <Button asChild>
-                    <Link href="/admin/units/new" className="flex items-center gap-2">
+                    <Link
+                      href="/admin/units/new"
+                      className="flex items-center gap-2"
+                    >
                       Add First Unit
                     </Link>
                   </Button>
@@ -240,19 +249,26 @@ export default function ViewCoursePage() {
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">📚</div>
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">
+                    📚
+                  </div>
                   <div>
                     <p className="text-sm text-blue-600">Total Units</p>
-                    <p className="text-xl font-bold">{course.units}</p>
+                    <p className="text-xl font-bold">{units.length}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50">
-                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-xl">📝</div>
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-xl">
+                    📝
+                  </div>
                   <div>
                     <p className="text-sm text-green-600">Total Lessons</p>
                     <p className="text-xl font-bold">
-                      {course.unitsList?.reduce((acc: number, unit: any) => acc + unit.lessons, 0) || 0}
+                      {units.reduce(
+                        (acc, unit) => acc + unit.lessons.length,
+                        0
+                      )}
                     </p>
                   </div>
                 </div>
@@ -263,17 +279,18 @@ export default function ViewCoursePage() {
                   </div>
                   <div>
                     <p className="text-sm text-purple-600">Total Challenges</p>
-                    <p className="text-xl font-bold">24</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-yellow-50">
-                  <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-xl">
-                    👧
-                  </div>
-                  <div>
-                    <p className="text-sm text-yellow-600">Active Students</p>
-                    <p className="text-xl font-bold">42</p>
+                    <p className="text-xl font-bold">
+                      {units.reduce(
+                        (acc, unit) =>
+                          acc +
+                          unit.lessons.reduce(
+                            (lessonAcc, lesson) =>
+                              lessonAcc + lesson.challenges.length,
+                            0
+                          ),
+                        0
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -293,7 +310,10 @@ export default function ViewCoursePage() {
                   variant="ghost"
                   asChild
                 >
-                  <Link href="/admin/units/new" className="flex items-center gap-2">
+                  <Link
+                    href="/admin/units/new"
+                    className="flex items-center gap-2"
+                  >
                     <Layers className="h-4 w-4" />
                     Add New Unit
                   </Link>
@@ -304,7 +324,10 @@ export default function ViewCoursePage() {
                   variant="ghost"
                   asChild
                 >
-                  <Link href="/admin/lessons/new" className="flex items-center gap-2">
+                  <Link
+                    href="/admin/lessons/new"
+                    className="flex items-center gap-2"
+                  >
                     <FileText className="h-4 w-4" />
                     Add New Lesson
                   </Link>
@@ -315,7 +338,10 @@ export default function ViewCoursePage() {
                   variant="ghost"
                   asChild
                 >
-                  <Link href="/admin/challenges/new" className="flex items-center gap-2">
+                  <Link
+                    href="/admin/challenges/new"
+                    className="flex items-center gap-2"
+                  >
                     <BookOpen className="h-4 w-4" />
                     Add New Challenge
                   </Link>
@@ -326,6 +352,5 @@ export default function ViewCoursePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
