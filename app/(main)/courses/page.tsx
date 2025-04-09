@@ -10,6 +10,7 @@ const CoursesPage = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { getToken } = useAuth();
+
   useEffect(() => {
     const fetchCourses = async () => {
       try {
