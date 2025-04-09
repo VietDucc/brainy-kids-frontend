@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +16,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Course } from "@/types/courses";
 import { UnitType } from "@/types/learn";
-
+import Loading from "@/app/loading";
 // Mock data for courses
 
 export default function ViewCoursePage() {
@@ -25,18 +25,14 @@ export default function ViewCoursePage() {
   const courseId = params.courseId as string;
   const [course, setCourse] = useState<Course>();
   const [units, setUnits] = useState<UnitType[]>([]);
-  const [isCourseLoading, setIsCourseLoading] = useState(false);
   const [isUnitsLoading, setIsUnitsLoading] = useState(false);
 
   const getCourse = async (courseId: string) => {
     try {
-      setIsCourseLoading(true);
       const res = await fetch(`/api/courses/${courseId}`);
       return res.json();
     } catch (error) {
       console.error("Error fetching course:", error);
-    } finally {
-      setIsCourseLoading(false);
     }
   };
   const getUnits = async (courseId: string) => {
@@ -80,14 +76,7 @@ export default function ViewCoursePage() {
   };
 
   if (!course) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-bounce text-5xl">🔄</div>
-          <p className="text-xl font-medium text-blue-600">Loading course...</p>
-        </div>
-      </div>
-    );
+    return <Loading text="course" />;
   }
 
   if (!course) {
@@ -147,210 +136,212 @@ export default function ViewCoursePage() {
           </Button>
         </div>
       </div>
-
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
-          <Card className="border-none shadow-md rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500">
-              <CardTitle className="text-white flex items-center gap-2">
-                <BookOpen className="h-5 w-5" /> Course Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <Image
-                  src={course.imageSrc}
-                  alt={course.title}
-                  width={100}
-                  height={100}
-                  className="rounded-lg"
-                />
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-700">Title</h3>
-                  <p className="mt-2 text-gray-600">{course.title}</p>
+      <Suspense fallback={<Loading text="course" />}>
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="md:col-span-2 space-y-6">
+            <Card className="border-none shadow-md rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500">
+                <CardTitle className="text-white flex items-center gap-2">
+                  <BookOpen className="h-5 w-5" /> Course Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <Image
+                    src={course.imageSrc}
+                    alt={course.title}
+                    width={100}
+                    height={100}
+                    className="rounded-lg"
+                  />
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-700">
+                      Title
+                    </h3>
+                    <p className="mt-2 text-gray-600">{course.title}</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card className="border-none shadow-md rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-purple-500 to-blue-500">
-              <CardTitle className="text-white flex items-center gap-2">
-                <Layers className="h-5 w-5" /> Units in this Course
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              {isUnitsLoading ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="animate-spin text-4xl mb-2">🔄</div>
-                  <h3 className="text-lg font-medium text-gray-700">
-                    Loading units...
-                  </h3>
-                </div>
-              ) : units.length > 0 ? (
-                <div className="space-y-4">
-                  {units.map((unit: UnitType) => (
-                    <div
-                      key={unit.id}
-                      className="flex items-center justify-between p-4 rounded-xl border-2 border-purple-100 hover:border-purple-200 hover:bg-purple-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                          📚
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{unit.title}</h3>
-                          <p className="text-sm text-gray-500">
-                            {unit.lessons.length} lessons
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        asChild
-                        className="rounded-lg hover:bg-purple-100"
+            <Card className="border-none shadow-md rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-500 to-blue-500">
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Layers className="h-5 w-5" /> Units in this Course
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                {isUnitsLoading ? (
+                  <Loading text="units" />
+                ) : units.length > 0 ? (
+                  <div className="space-y-4">
+                    {units.map((unit: UnitType) => (
+                      <div
+                        key={unit.id}
+                        className="flex items-center justify-between p-4 rounded-xl border-2 border-purple-100 hover:border-purple-200 hover:bg-purple-50 transition-colors"
                       >
-                        <Link href={`/admin/units/${unit.id}`}>View Unit</Link>
-                      </Button>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
+                            📚
+                          </div>
+                          <div>
+                            <h3 className="font-medium">{unit.title}</h3>
+                            <p className="text-sm text-gray-500">
+                              {unit.lessons.length} lessons
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          className="rounded-lg hover:bg-purple-100"
+                        >
+                          <Link href={`/admin/units/${unit.id}`}>
+                            View Unit
+                          </Link>
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <div className="text-4xl mb-2">📚</div>
+                    <h3 className="text-lg font-medium text-gray-700">
+                      No units yet
+                    </h3>
+                    <p className="text-gray-500 mb-4">
+                      Start creating units for this course
+                    </p>
+                    <Button asChild>
+                      <Link
+                        href="/admin/units/new"
+                        className="flex items-center gap-2"
+                      >
+                        Add First Unit
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="space-y-6">
+            <Card className="border-none shadow-md rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-green-500 to-blue-500">
+                <CardTitle className="text-white flex items-center gap-2">
+                  <FileText className="h-5 w-5" /> Quick Stats
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">
+                      📚
                     </div>
-                  ))}
+                    <div>
+                      <p className="text-sm text-blue-600">Total Units</p>
+                      <p className="text-xl font-bold">{units.length}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50">
+                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-xl">
+                      📝
+                    </div>
+                    <div>
+                      <p className="text-sm text-green-600">Total Lessons</p>
+                      <p className="text-xl font-bold">
+                        {units.reduce(
+                          (acc, unit) => acc + unit.lessons.length,
+                          0
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-purple-50">
+                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
+                      🎮
+                    </div>
+                    <div>
+                      <p className="text-sm text-purple-600">
+                        Total Challenges
+                      </p>
+                      <p className="text-xl font-bold">
+                        {units.reduce(
+                          (acc, unit) =>
+                            acc +
+                            unit.lessons.reduce(
+                              (lessonAcc, lesson) =>
+                                lessonAcc + lesson.challenges.length,
+                              0
+                            ),
+                          0
+                        )}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="text-4xl mb-2">📚</div>
-                  <h3 className="text-lg font-medium text-gray-700">
-                    No units yet
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    Start creating units for this course
-                  </p>
-                  <Button asChild>
+              </CardContent>
+            </Card>
+
+            <Card className="border-none shadow-md rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500">
+                <CardTitle className="text-white flex items-center gap-2">
+                  <BookOpen className="h-5 w-5" /> Actions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-3">
+                  <Button
+                    className="w-full justify-start rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100"
+                    variant="ghost"
+                    asChild
+                  >
                     <Link
                       href="/admin/units/new"
                       className="flex items-center gap-2"
                     >
-                      Add First Unit
+                      <Layers className="h-4 w-4" />
+                      Add New Unit
+                    </Link>
+                  </Button>
+
+                  <Button
+                    className="w-full justify-start rounded-xl bg-green-50 text-green-600 hover:bg-green-100"
+                    variant="ghost"
+                    asChild
+                  >
+                    <Link
+                      href="/admin/lessons/new"
+                      className="flex items-center gap-2"
+                    >
+                      <FileText className="h-4 w-4" />
+                      Add New Lesson
+                    </Link>
+                  </Button>
+
+                  <Button
+                    className="w-full justify-start rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100"
+                    variant="ghost"
+                    asChild
+                  >
+                    <Link
+                      href="/admin/challenges/new"
+                      className="flex items-center gap-2"
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      Add New Challenge
                     </Link>
                   </Button>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-
-        <div className="space-y-6">
-          <Card className="border-none shadow-md rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-green-500 to-blue-500">
-              <CardTitle className="text-white flex items-center gap-2">
-                <FileText className="h-5 w-5" /> Quick Stats
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">
-                    📚
-                  </div>
-                  <div>
-                    <p className="text-sm text-blue-600">Total Units</p>
-                    <p className="text-xl font-bold">{units.length}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50">
-                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-xl">
-                    📝
-                  </div>
-                  <div>
-                    <p className="text-sm text-green-600">Total Lessons</p>
-                    <p className="text-xl font-bold">
-                      {units.reduce(
-                        (acc, unit) => acc + unit.lessons.length,
-                        0
-                      )}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-purple-50">
-                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                    🎮
-                  </div>
-                  <div>
-                    <p className="text-sm text-purple-600">Total Challenges</p>
-                    <p className="text-xl font-bold">
-                      {units.reduce(
-                        (acc, unit) =>
-                          acc +
-                          unit.lessons.reduce(
-                            (lessonAcc, lesson) =>
-                              lessonAcc + lesson.challenges.length,
-                            0
-                          ),
-                        0
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-none shadow-md rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500">
-              <CardTitle className="text-white flex items-center gap-2">
-                <BookOpen className="h-5 w-5" /> Actions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-3">
-                <Button
-                  className="w-full justify-start rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100"
-                  variant="ghost"
-                  asChild
-                >
-                  <Link
-                    href="/admin/units/new"
-                    className="flex items-center gap-2"
-                  >
-                    <Layers className="h-4 w-4" />
-                    Add New Unit
-                  </Link>
-                </Button>
-
-                <Button
-                  className="w-full justify-start rounded-xl bg-green-50 text-green-600 hover:bg-green-100"
-                  variant="ghost"
-                  asChild
-                >
-                  <Link
-                    href="/admin/lessons/new"
-                    className="flex items-center gap-2"
-                  >
-                    <FileText className="h-4 w-4" />
-                    Add New Lesson
-                  </Link>
-                </Button>
-
-                <Button
-                  className="w-full justify-start rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100"
-                  variant="ghost"
-                  asChild
-                >
-                  <Link
-                    href="/admin/challenges/new"
-                    className="flex items-center gap-2"
-                  >
-                    <BookOpen className="h-4 w-4" />
-                    Add New Challenge
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      </Suspense>
     </div>
   );
 }

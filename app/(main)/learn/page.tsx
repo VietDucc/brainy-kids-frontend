@@ -8,13 +8,13 @@ import { StickyWrapper } from "@/components/sticky-wrapper";
 import { UserProgress } from "@/components/user-progress";
 import { Header } from "./header";
 import { LessonCard } from "./lesson-card";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ChallengeScreen } from "./challenge-screen";
 import { transformLessonData } from "@/utils/transform-lesson-data";
 import { LessonType } from "@/types/learn";
 import { useAuth } from "@clerk/nextjs";
-// Định nghĩa các kiểu dữ liệu dựa trên API response
+import Loading from "@/app/loading";
+
 interface ChallengeOption {
   id: number;
   textOption: string;
@@ -145,17 +145,7 @@ const LearnPage = () => {
   }, [searchParams]);
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center flex-col gap-4">
-        <div className="relative w-20 h-20">
-          <div className="absolute inset-0 rounded-full border-4 border-primary border-opacity-20"></div>
-          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin"></div>
-        </div>
-        <p className="text-slate-600 dark:text-slate-300 font-medium animate-pulse">
-          Đang tải bài học...
-        </p>
-      </div>
-    );
+    return <Loading text="courses" />;
   }
 
   if (error) {
@@ -292,16 +282,7 @@ const LearnPage = () => {
   };
 
   if (isLoadingLesson) {
-    return (
-      <div className="fixed inset-0 bg-white dark:bg-gray-950 z-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-lg font-medium text-slate-700 dark:text-slate-300">
-            Loading lesson...
-          </p>
-        </div>
-      </div>
-    );
+    return <Loading text="lesson" />;
   }
 
   if (error) {

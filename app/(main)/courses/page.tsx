@@ -4,9 +4,8 @@ import { Course } from "@/types/courses";
 import { List } from "./list";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
-
+import Loading from "@/app/loading";
 const CoursesPage = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,12 +29,7 @@ const CoursesPage = () => {
     fetchCourses();
   }, []);
 
-  if (isLoading)
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin" />
-      </div>
-    );
+  if (isLoading) return <Loading text="courses" />;
 
   return (
     <div className="mx-auto h-full max-w-[1200px] px-3 py-6">
