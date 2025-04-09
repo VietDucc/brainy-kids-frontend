@@ -21,6 +21,7 @@ import {
 import { Course } from "./columns";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
+
 import {
   AlertDialog,
   AlertDialogAction,
