@@ -20,13 +20,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Course } from "./columns";
 import Image from "next/image";
-import { toast } from "sonner";
-
+import { useToast } from "@/hooks/use-toast";
 // Mock data for courses
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -37,7 +37,10 @@ export default function CoursesPage() {
         setCourses(data);
       } catch (error) {
         console.error("Error fetching courses:", error);
-        toast.error("Error fetching courses");
+        toast({
+          title: "Error fetching courses",
+          description: "Please try again later",
+        });
       } finally {
         setLoading(false);
       }
@@ -45,8 +48,24 @@ export default function CoursesPage() {
     fetchCourses();
   }, []);
 
-  const handleDelete = (id: string) => {
-    setCourses(courses.filter((course) => course.id !== id));
+  const handleDelete = async (courseId: string) => {
+    try {
+      await fetch(`/api/courses/${courseId}`, {
+        method: "DELETE",
+      });
+
+      toast({
+        variant: "success",
+        title: "Course deleted successfully",
+      });
+      setCourses(courses.filter((course) => course.id !== courseId));
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      toast({
+        variant: "error",
+        title: "Error deleting course",
+      });
+    }
   };
 
   const columns = [
