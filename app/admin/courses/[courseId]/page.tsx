@@ -16,7 +16,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Course } from "@/types/courses";
 import { UnitType } from "@/types/learn";
-
+import Loading from "@/app/loading";
 // Mock data for courses
 
 export default function ViewCoursePage() {
@@ -25,18 +25,14 @@ export default function ViewCoursePage() {
   const courseId = params.courseId as string;
   const [course, setCourse] = useState<Course>();
   const [units, setUnits] = useState<UnitType[]>([]);
-  const [isCourseLoading, setIsCourseLoading] = useState(false);
   const [isUnitsLoading, setIsUnitsLoading] = useState(false);
 
   const getCourse = async (courseId: string) => {
     try {
-      setIsCourseLoading(true);
       const res = await fetch(`/api/courses/${courseId}`);
       return res.json();
     } catch (error) {
       console.error("Error fetching course:", error);
-    } finally {
-      setIsCourseLoading(false);
     }
   };
   const getUnits = async (courseId: string) => {
@@ -80,14 +76,7 @@ export default function ViewCoursePage() {
   };
 
   if (!course) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-bounce text-5xl">🔄</div>
-          <p className="text-xl font-medium text-blue-600">Loading course...</p>
-        </div>
-      </div>
-    );
+    return <Loading text="course" />;
   }
 
   if (!course) {
@@ -147,7 +136,6 @@ export default function ViewCoursePage() {
           </Button>
         </div>
       </div>
-
       <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">
           <Card className="border-none shadow-md rounded-2xl overflow-hidden">
@@ -181,12 +169,7 @@ export default function ViewCoursePage() {
             </CardHeader>
             <CardContent className="p-6">
               {isUnitsLoading ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="animate-spin text-4xl mb-2">🔄</div>
-                  <h3 className="text-lg font-medium text-gray-700">
-                    Loading units...
-                  </h3>
-                </div>
+                <Loading text="units" />
               ) : units.length > 0 ? (
                 <div className="space-y-4">
                   {units.map((unit: UnitType) => (

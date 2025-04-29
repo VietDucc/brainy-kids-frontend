@@ -1,14 +1,13 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import ClerkLoaded, { ClerkLoading, ClerkProvider } from '@clerk/nextjs';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Loader2 } from 'lucide-react';
-import ChatbotPopup from '@/components/chatbot/Chatbotpopup';
 
+import type React from "react";
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ClerkLoaded, ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "@/components/ui/toaster";
+const inter = Inter({ subsets: ["latin"] });
 
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'KidsLearn - Nền tảng học tập tương tác cho trẻ em',
@@ -28,14 +27,9 @@ export default function RootLayout({ children }: {
             enableSystem
             disableTransitionOnChange
           >
-            <ClerkLoading>
-              <div className="flex h-screen w-full items-center justify-center">
-                <Loader2 className="h-10 w-10 animate-spin" />
-              </div>
-            </ClerkLoading>
-            {children}
-              <ChatbotPopup/>
-            
+
+            <Toaster />
+            <ClerkLoaded>{children}</ClerkLoaded>
           </ThemeProvider>
         </body>
       </html>

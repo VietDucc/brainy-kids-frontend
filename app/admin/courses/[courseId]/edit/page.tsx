@@ -12,52 +12,109 @@ import { Label } from "@/components/ui/label";
 import { BookOpen, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function EditCoursePage() {
   const router = useRouter();
   const params = useParams();
   const courseId = params.courseId as string;
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
     imageSrc: "",
   });
+  const { toast } = useToast();
 
   useEffect(() => {
-    try {
-      const fetchCourse = async () => {
+    const fetchCourse = async () => {
+      try {
         const course = await fetch(`/api/courses/${courseId}`);
         const data = await course.json();
         setFormData(data);
-      };
-      fetchCourse();
-    } catch (error) {
-      console.error("Error fetching course:", error);
-    }
-  }, [courseId]);
+      } catch (error) {
+        console.error("Error fetching course:", error);
+        toast({
+          variant: "error",
+          title: "Error loading course",
+          description: "Failed to load course data. Please try again.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCourse();
+  }, [courseId, toast]);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const response = await fetch(`/api/courses/${courseId}`, {
+        method: "PUT",
+        body: JSON.stringify(formData),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update course");
+      }
+      toast({
+        variant: "success",
+        title: "Course updated successfully",
+      });
       router.push("/admin/courses");
-    }, 1000);
-
-    console.log(formData);
+    } catch (error) {
+      console.error("Error updating course:", error);
+      toast({
+        variant: "error",
+        title: "Error updating course",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-bounce text-5xl">🔄</div>
-          <p className="text-xl font-medium text-blue-600">Loading course...</p>
+      <div className="space-y-8">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-10 w-10 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-9 w-64" />
+            <Skeleton className="h-5 w-80" />
+          </div>
+        </div>
+
+        <div className="border-none shadow-md rounded-2xl overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-6">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-6 w-40 bg-white/50" />
+            </div>
+          </div>
+          <div className="p-6 space-y-6 bg-white">
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-24" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+            <div className="space-y-2">
+              <div className="flex gap-3 items-center">
+                <Skeleton className="h-[100px] w-[100px] rounded-xl" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-5 w-28" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-4 w-56" />
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-4 pt-4">
+              <Skeleton className="h-[60px] w-[180px] rounded-xl" />
+              <Skeleton className="h-[60px] w-[120px] rounded-xl" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -71,6 +128,7 @@ export default function EditCoursePage() {
           size="icon"
           asChild
           className="rounded-full hover:bg-blue-50 hover:text-blue-600"
+          disabled={isLoading}
         >
           <Link href="/admin/courses">
             <ArrowLeft className="h-5 w-5" />
@@ -79,7 +137,7 @@ export default function EditCoursePage() {
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
-            Edit Course 🎨
+            Edit Course 🎨 {formData.title}
           </h1>
           <p className="text-gray-600 mt-2">
             Update this fun learning course for children
@@ -101,6 +159,7 @@ export default function EditCoursePage() {
               </Label>
               <div className="flex gap-3">
                 <Input
+                  disabled={isLoading}
                   id="title"
                   placeholder="Enter a fun course title"
                   value={formData.title}
@@ -118,9 +177,8 @@ export default function EditCoursePage() {
                     height={100}
                     className="rounded-xl object-cover"
                     onError={(e) => {
-                      // Fallback khi ảnh lỗi
                       const imgElement = e.target as HTMLImageElement;
-                      imgElement.src = "/placeholder-image.jpg"; // Thay thế bằng ảnh placeholder của bạn
+                      imgElement.src = "/placeholder-image.jpg";
                       imgElement.alt = "Image not found";
                     }}
                   />
@@ -134,6 +192,7 @@ export default function EditCoursePage() {
                     Thumbnail URL
                   </Label>
                   <Input
+                    disabled={isLoading}
                     id="imageSrc"
                     placeholder="Enter the image URL"
                     value={formData.imageSrc}
@@ -158,6 +217,7 @@ export default function EditCoursePage() {
               <Button
                 type="button"
                 variant="outline"
+                disabled={isLoading}
                 onClick={() => router.push("/admin/courses")}
                 className="rounded-xl border-2 border-gray-200 px-6 py-6"
               >
