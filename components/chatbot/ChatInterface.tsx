@@ -72,88 +72,68 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const sendMessageToBot = async (newMessage: string, intent?: string) => {
     const conversationContext = buildConversationContext();
     const contextPrompt = conversationContext
-      ? `Previous conversation:\n${conversationContext}\n\nBased on this context, `
+      ? `Previous chat:\n${conversationContext}\n\n`
       : "";
 
     let prompt = "";
     if (intent === "synonyms") {
-      prompt = `${contextPrompt}You are a friendly English teacher. For the word "${newMessage}":
-1. List 4-5 synonyms in English with emoji and example sentences
-2. List 2-3 antonyms in English with emoji and example sentences
-3. Provide a brief Vietnamese explanation for each word
-Format your response like this:
-**Synonyms** 🎯
-1. [word] 😊 - [Vietnamese meaning]
-   Example: [English sentence]
-2. ...
+      prompt = `${contextPrompt}As a friendly teacher talking to a child, give a simple response:
+1. Give 3 common synonyms for "${newMessage}" with fun emoji
+2. Give 2 antonyms with emoji
+3. Use very simple example sentences a child would understand
+4. Add short Vietnamese meaning
 
-**Antonyms** 🔄
-1. [word] 😔 - [Vietnamese meaning]
-   Example: [English sentence]
-2. ...`;
+Keep it fun and brief! Format like:
+
+Similar words:
+• happy 😊 (vui vẻ) - The puppy is happy!
+• [2 more words...]
+
+Opposite words:
+• sad 😢 (buồn) - I was sad when it rained
+• [1 more word...]`;
     } else if (intent === "examples") {
-      prompt = `${contextPrompt}You are a friendly English teacher. Please:
-1. Write 2-3 example sentences in English using "${newMessage}"
-2. Highlight the key words with **
-3. Add relevant emoji
-4. Provide Vietnamese translation for each sentence
-Format like this:
-1. [English sentence] 😊
-   → [Vietnamese translation]
-2. ...`;
+      prompt = `${contextPrompt}As a friendly teacher talking to a child:
+1. Write 2 very simple English sentences using "${newMessage}"
+2. Use situations a child would understand (like family, school, toys, animals)
+3. Add emoji and Vietnamese meaning
+
+Format like:
+1. 🎈 I like to play with my toys!
+   → Em thích chơi với đồ chơi!
+2. [next sentence...]`;
     } else if (intent === "translate") {
       const targetLang = newMessage.toLowerCase().startsWith("dịch sang")
         ? "en"
         : "vi";
-      // const textToTranslate = newMessage.substring(newMessage.indexOf(" ") + 1);
-      prompt = `${contextPrompt}You are a friendly English teacher. Please:
-1. Translate the text to ${targetLang === "en" ? "English" : "Vietnamese"}
-2. Highlight key phrases with **
-3. Add relevant emoji
-4. Explain any important vocabulary or grammar points
-5. If translating to English, provide pronunciation tips
+      prompt = `${contextPrompt}As a friendly teacher talking to a child:
+1. Translate this to simple ${targetLang === "en" ? "English" : "Vietnamese"}
+2. Use words a child would understand
+3. Add 1-2 emoji that match the meaning
 
-Format like this:
-**Translation** 🌐
-[Translated text]
-
-**Explanation** 📝
-[Explanation in Vietnamese]
-
-${
-  targetLang === "en" ? "**Pronunciation Tips** 🗣️\n[Tips in Vietnamese]" : ""
-}`;
+Just give:
+• The translation
+• Short explanation of key words
+• No complex grammar points`;
     } else if (intent === "grammar") {
-      prompt = `${contextPrompt}You are a friendly English teacher. For the text "${newMessage}", please:
-1. Identify any grammar issues
-2. Provide corrections in English
-3. Explain the grammar rules in Vietnamese
-4. Give additional example sentences
+      prompt = `${contextPrompt}As a friendly teacher talking to a child:
+1. Find the main grammar point in: "${newMessage}"
+2. Show the correct way in a simple sentence
+3. Explain in very basic terms with emoji
 
-Format like this:
-**Original Text** 📝
-[Original text]
-
-**Corrections** ✍️
-[Corrected text]
-
-**Explanation** 📚
-[Vietnamese explanation]
-
-**Examples** 💡
-1. [English example]
-   → [Vietnamese translation]
-2. ...`;
+Keep it super simple! Just show:
+• What needs fixing
+• The correct way
+• A quick tip in Vietnamese`;
     } else {
-      prompt = `${contextPrompt}You are a friendly English teacher for children. For the question "${newMessage}":
-1. Answer primarily in English, using simple and clear language
-2. Add Vietnamese translations for key points
-3. Use emoji to make it engaging
-4. Highlight important words with **
-5. If relevant, provide example sentences
-6. Connect your answer with the previous conversation if applicable
+      prompt = `${contextPrompt}You're a friendly English teacher talking to a young child. For "${newMessage}":
+1. Answer in 2-3 short, simple English sentences
+2. Use basic words a child knows
+3. Add Vietnamese meaning
+4. Include 1-2 fun emoji
+5. If giving examples, use topics like: family, toys, animals, food, or school
 
-Format your response with clear sections and emoji. Make it fun and educational!`;
+Keep everything brief and fun! No complex explanations.`;
     }
 
     try {
@@ -173,7 +153,7 @@ Format your response with clear sections and emoji. Make it fun and educational!
       setMessages((prevMessages) => [
         ...prevMessages,
         {
-          text: "Sorry, I encountered an error. Let's try again! 😅\nXin lỗi, đã có lỗi xảy ra. Hãy thử lại nhé!",
+          text: "Oops! Let's try again! 😅\nÚi! Hãy thử lại nhé!",
           sender: "bot",
           icon: "😅",
         },
