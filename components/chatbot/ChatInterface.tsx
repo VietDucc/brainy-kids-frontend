@@ -158,6 +158,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 </div>
               )}
             </div>
+            {/* {msg.sender === "user" && (
+              <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                  You
+                </span>
+              </div>
+            )} */}
           </div>
         ))}
         {isLoading && (
