@@ -126,7 +126,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   return (
     <div className="flex flex-col h-full">
       <div
-        className="flex-grow overflow-y-auto p-4 space-y-4"
+        className="flex-grow overflow-y-auto p-4 space-y-4 dark:bg-gray-900"
         ref={chatContainerRef}
       >
         {messages.map((msg, index) => (
@@ -145,7 +145,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                 msg.sender === "user"
                   ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-br-none"
-                  : "bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm"
+                  : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-none shadow-sm"
               }`}
             >
               {msg.sender === "user" ? (
@@ -153,14 +153,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   {msg.text}
                 </p>
               ) : (
-                <div className="text-sm leading-relaxed prose prose-sm max-w-none prose-p:my-1 prose-strong:text-blue-600 prose-strong:font-semibold">
+                <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-strong:text-blue-600 dark:prose-strong:text-blue-400 prose-strong:font-semibold">
                   <ReactMarkdown>{msg.text}</ReactMarkdown>
                 </div>
               )}
             </div>
             {msg.sender === "user" && (
-              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                <span className="text-sm font-medium text-gray-600">You</span>
+              <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                  You
+                </span>
               </div>
             )}
           </div>
@@ -170,7 +172,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
               AI
             </div>
-            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 rounded-bl-none shadow-sm">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 rounded-bl-none shadow-sm">
               <div className="flex space-x-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce opacity-75" />
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100 opacity-75" />
@@ -181,14 +183,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         )}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 bg-white border-t border-gray-100">
+      <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <input
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Ask me anything about English..."
-            className="flex-grow px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+            className="flex-grow px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all text-sm placeholder:text-gray-500 dark:placeholder:text-gray-400"
             disabled={isLoading}
           />
           <button
