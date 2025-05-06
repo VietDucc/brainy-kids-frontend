@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 interface Message {
   text: string;
   sender: "user" | "bot";
+  icon?: string;
 }
 
 interface ChatInterfaceProps {
@@ -41,22 +42,118 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     return formattedText;
   };
 
+  const getIcon = (intent?: string) => {
+    switch (intent) {
+      case "synonyms":
+        return "🔤";
+      case "examples":
+        return "📝";
+      case "translate":
+        return "🌐";
+      case "grammar":
+        return "✍️";
+      default:
+        return "🤖";
+    }
+  };
+
+  const buildConversationContext = () => {
+    const recentMessages = messages.slice(-5);
+    if (recentMessages.length === 0) return "";
+
+    return recentMessages
+      .map(
+        (msg) =>
+          `${msg.sender === "user" ? "Người dùng" : "Trợ lý"}: ${msg.text}`
+      )
+      .join("\n");
+  };
+
   const sendMessageToBot = async (newMessage: string, intent?: string) => {
+    const conversationContext = buildConversationContext();
+    const contextPrompt = conversationContext
+      ? `Previous conversation:\n${conversationContext}\n\nBased on this context, `
+      : "";
+
     let prompt = "";
     if (intent === "synonyms") {
-      prompt = `Find synonyms and antonyms for the word "${newMessage}" in English. Format the response with ** for important words.`;
+      prompt = `${contextPrompt}You are a friendly English teacher. For the word "${newMessage}":
+1. List 4-5 synonyms in English with emoji and example sentences
+2. List 2-3 antonyms in English with emoji and example sentences
+3. Provide a brief Vietnamese explanation for each word
+Format your response like this:
+**Synonyms** 🎯
+1. [word] 😊 - [Vietnamese meaning]
+   Example: [English sentence]
+2. ...
+
+**Antonyms** 🔄
+1. [word] 😔 - [Vietnamese meaning]
+   Example: [English sentence]
+2. ...`;
     } else if (intent === "examples") {
-      prompt = `Write an example (a sentence or short paragraph) using or related to "${newMessage}" in English. Format the response with ** for important words.`;
+      prompt = `${contextPrompt}You are a friendly English teacher. Please:
+1. Write 2-3 example sentences in English using "${newMessage}"
+2. Highlight the key words with **
+3. Add relevant emoji
+4. Provide Vietnamese translation for each sentence
+Format like this:
+1. [English sentence] 😊
+   → [Vietnamese translation]
+2. ...`;
     } else if (intent === "translate") {
       const targetLang = newMessage.toLowerCase().startsWith("dịch sang")
         ? "en"
         : "vi";
-      const textToTranslate = newMessage.substring(newMessage.indexOf(" ") + 1);
-      prompt = `Translate the following text to ${targetLang}. Format the response with ** for important words: "${textToTranslate}"`;
+      // const textToTranslate = newMessage.substring(newMessage.indexOf(" ") + 1);
+      prompt = `${contextPrompt}You are a friendly English teacher. Please:
+1. Translate the text to ${targetLang === "en" ? "English" : "Vietnamese"}
+2. Highlight key phrases with **
+3. Add relevant emoji
+4. Explain any important vocabulary or grammar points
+5. If translating to English, provide pronunciation tips
+
+Format like this:
+**Translation** 🌐
+[Translated text]
+
+**Explanation** 📝
+[Explanation in Vietnamese]
+
+${
+  targetLang === "en" ? "**Pronunciation Tips** 🗣️\n[Tips in Vietnamese]" : ""
+}`;
     } else if (intent === "grammar") {
-      prompt = `Check the grammar in the following text and provide suggestions (if any) in English. Format the response with ** for important words: "${newMessage}"`;
+      prompt = `${contextPrompt}You are a friendly English teacher. For the text "${newMessage}", please:
+1. Identify any grammar issues
+2. Provide corrections in English
+3. Explain the grammar rules in Vietnamese
+4. Give additional example sentences
+
+Format like this:
+**Original Text** 📝
+[Original text]
+
+**Corrections** ✍️
+[Corrected text]
+
+**Explanation** 📚
+[Vietnamese explanation]
+
+**Examples** 💡
+1. [English example]
+   → [Vietnamese translation]
+2. ...`;
     } else {
-      prompt = `You are a friendly English learning assistant. Please respond to the following user question in a clear and concise way. Format the response with ** for important words and concepts: "${newMessage}"`;
+      prompt = `${contextPrompt}You are a friendly English teacher for children. For the question "${newMessage}":
+1. Answer primarily in English, using simple and clear language
+2. Add Vietnamese translations for key points
+3. Use emoji to make it engaging
+4. Highlight important words with **
+5. If relevant, provide example sentences
+6. Connect your answer with the previous conversation if applicable
+
+Format your response with clear sections and emoji. Make it fun and educational!`;
     }
 
     try {
@@ -65,15 +162,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const formattedResponse = formatBotResponse(botResponseText);
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: formattedResponse, sender: "bot" },
+        {
+          text: formattedResponse,
+          sender: "bot",
+          icon: getIcon(intent),
+        },
       ]);
     } catch (error) {
       console.error("Error calling Gemini API:", error);
       setMessages((prevMessages) => [
         ...prevMessages,
         {
-          text: "Sorry, I encountered an error. Please try again.",
+          text: "Sorry, I encountered an error. Let's try again! 😅\nXin lỗi, đã có lỗi xảy ra. Hãy thử lại nhé!",
           sender: "bot",
+          icon: "😅",
         },
       ]);
     } finally {
@@ -137,8 +239,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             } items-end space-x-2`}
           >
             {msg.sender === "bot" && (
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
-                AI
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-base">
+                {msg.icon || "🤖"}
               </div>
             )}
             <div
@@ -169,8 +271,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         ))}
         {isLoading && (
           <div className="flex justify-start items-end space-x-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
-              AI
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-base">
+              🤔
             </div>
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 rounded-bl-none shadow-sm">
               <div className="flex space-x-2">
@@ -189,7 +291,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Ask me anything about English..."
+            placeholder="Hãy hỏi mình bất cứ điều gì về tiếng Anh nhé! 😊"
             className="flex-grow px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all text-sm placeholder:text-gray-500 dark:placeholder:text-gray-400"
             disabled={isLoading}
           />
