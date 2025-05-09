@@ -1,3 +1,4 @@
+// app/api/config.ts
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   "http://duc-spring.ngodat0103.live:8080/demo";
@@ -15,4 +16,5 @@ export const api = {
   lessonProgress: `${API_BASE_URL}/lesson-progress`,
   getLessonProgress: (clerkUserId: string) =>
     `${API_BASE_URL}/lesson-progress/${clerkUserId}`,
+  leaderboard: `${API_BASE_URL}/api/leaderboard`,
 };
