@@ -278,7 +278,6 @@ export function SpeakAndFeedback({ category, onBack }: Props) {
           )}
 
           <div className="flex-1 flex flex-col items-center justify-between min-h-[500px] w-full max-w-2xl mx-auto">
-            {/* Progress bar */}
             <div className="w-full">
               <Progress value={progress} className="h-2" />
             </div>
@@ -315,7 +314,6 @@ export function SpeakAndFeedback({ category, onBack }: Props) {
               </motion.div>
             ) : (
               <>
-                {/* Main content */}
                 <div className="flex-1 flex flex-col items-center justify-center w-full space-y-8 py-8">
                   <div className="text-center">
                     <h2 className="text-xl font-medium text-muted-foreground mb-2">
@@ -353,7 +351,6 @@ export function SpeakAndFeedback({ category, onBack }: Props) {
                     </div>
                   </div>
 
-                  {/* Feedback area */}
                   <AnimatePresence mode="wait">
                     {result && (
                       <motion.div
@@ -401,7 +398,6 @@ export function SpeakAndFeedback({ category, onBack }: Props) {
                   </AnimatePresence>
                 </div>
 
-                {/* Controls */}
                 <div className="w-full space-y-4 py-8">
                   <Button
                     onClick={startListening}

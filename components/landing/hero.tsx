@@ -18,7 +18,6 @@ const Hero = () => {
       id="hero"
       className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-background py-8 sm:py-12 md:py-20 lg:py-28 px-4 sm:px-6 md:px-8 lg:px-12"
     >
-      {/* Animated background elements - only render on client */}
       {isClient && (
         <div className="absolute inset-0 overflow-hidden">
           {[...Array(3)].map((_, i) => (
@@ -69,9 +68,7 @@ const Hero = () => {
             </motion.div>
           ))}
 
-          {/* Rocket animation at bottom of hero */}
           <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none">
-            {/* First rocket - faster */}
             <motion.div
               className="absolute -left-20 bottom-0"
               animate={{
@@ -101,7 +98,6 @@ const Hero = () => {
                   strokeWidth={1.5}
                 />
 
-                {/* Rocket trail */}
                 <motion.div
                   className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-12 origin-top rounded-full"
                   style={{
@@ -119,7 +115,6 @@ const Hero = () => {
                   }}
                 />
 
-                {/* Rocket particles */}
                 {[...Array(6)].map((_, i) => (
                   <motion.div
                     key={`particle-${i}`}
@@ -147,7 +142,6 @@ const Hero = () => {
               </div>
             </motion.div>
 
-            {/* Second rocket - slower, different path */}
             <motion.div
               className="absolute -left-20 bottom-5"
               animate={{
@@ -179,7 +173,6 @@ const Hero = () => {
                   strokeWidth={1.5}
                 />
 
-                {/* Rocket trail */}
                 <motion.div
                   className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-8 origin-top rounded-full"
                   style={{
@@ -197,7 +190,6 @@ const Hero = () => {
                   }}
                 />
 
-                {/* Rocket particles */}
                 {[...Array(4)].map((_, i) => (
                   <motion.div
                     key={`particle-small-${i}`}
@@ -222,7 +214,6 @@ const Hero = () => {
               </div>
             </motion.div>
 
-            {/* Third rocket - tiny, very fast */}
             <motion.div
               className="absolute -left-10 bottom-10 hidden sm:block"
               animate={{
@@ -243,7 +234,6 @@ const Hero = () => {
                   strokeWidth={1.5}
                 />
 
-                {/* Rocket trail */}
                 <motion.div
                   className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-5 origin-top rounded-full"
                   style={{

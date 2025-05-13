@@ -273,7 +273,7 @@ export default function DictionaryPage() {
               </motion.div>
             </div>
 
-            {/* Recent searches */}
+            {/*search gần đây */}
             <AnimatePresence>
               {recentSearches.length > 0 && (
                 <motion.div
@@ -342,7 +342,7 @@ export default function DictionaryPage() {
             </div>
           )}
 
-          {/* Results */}
+          {/* Kết quả */}
           <AnimatePresence>
             {!isLoading && entries.length > 0 && (
               <motion.div
@@ -495,7 +495,7 @@ export default function DictionaryPage() {
                           value={meaning.partOfSpeech}
                           className="space-y-6"
                         >
-                          {/* Definitions */}
+                          {/* Định nghĩa từ */}
                           <motion.div
                             className="space-y-4"
                             variants={containerVariants}
@@ -530,7 +530,7 @@ export default function DictionaryPage() {
                                     </motion.p>
                                   )}
 
-                                  {/* Synonyms & Antonyms */}
+                                  {/* từ đồng nghĩa và từ trái nghĩa */}
                                   <div className="flex flex-wrap gap-4 mt-3 pl-6">
                                     {def.synonyms.length > 0 && (
                                       <div>
@@ -591,7 +591,7 @@ export default function DictionaryPage() {
             )}
           </AnimatePresence>
 
-          {/* Empty state */}
+          {/* trạng thái empty */}
           <AnimatePresence>
             {!isLoading && entries.length === 0 && !error && (
               <MotionCard

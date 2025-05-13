@@ -38,7 +38,6 @@ const FeatureCard = ({
       }}
       className="group relative flex flex-col items-center space-y-2 sm:space-y-3 overflow-hidden rounded-xl sm:rounded-2xl border border-border bg-card p-3 sm:p-4 md:p-6 shadow-sm transition-all"
     >
-      {/* Colored gradient background */}
       <div
         className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-5"
         style={{
@@ -46,7 +45,6 @@ const FeatureCard = ({
         }}
       />
 
-      {/* Icon container */}
       <motion.div
         className={`relative flex h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 items-center justify-center rounded-lg sm:rounded-xl shadow-sm`}
         style={{
@@ -75,7 +73,6 @@ const FeatureCard = ({
           />
         </motion.div>
 
-        {/* Decorative dots */}
         <div
           className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full"
           style={{ backgroundColor: color }}
@@ -86,7 +83,6 @@ const FeatureCard = ({
         ></div>
       </motion.div>
 
-      {/* Content */}
       <div className="z-10 flex flex-col items-center space-y-0.5 sm:space-y-1 text-center">
         <h3
           className="text-sm sm:text-base md:text-lg font-bold"
@@ -99,7 +95,6 @@ const FeatureCard = ({
         </p>
       </div>
 
-      {/* Sparkle decoration */}
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
         whileInView={{ scale: 1, opacity: 1 }}
@@ -118,7 +113,6 @@ const FeatureCard = ({
         />
       </motion.div>
 
-      {/* Bottom decoration */}
       <div
         className="absolute bottom-0 left-0 right-0 h-0.5 sm:h-1 transition-transform duration-300 group-hover:scale-100"
         style={{
@@ -168,7 +162,6 @@ const Feature = () => {
       id="features"
       className="py-10 sm:py-14 md:py-20 lg:py-28 bg-gradient-to-b from-background to-primary/5 relative overflow-hidden"
     >
-      {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.svg
           className="absolute top-0 left-0 text-primary/5 w-36 sm:w-48 md:w-64 h-36 sm:h-48 md:h-64 -translate-x-1/4 -translate-y-1/4"

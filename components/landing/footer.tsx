@@ -19,10 +19,8 @@ const Footer = () => {
 
   return (
     <footer className="relative border-t bg-background overflow-hidden">
-      {/* Decorative elements */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full">
-          {/* Grid pattern */}
           <svg
             width="100%"
             height="100%"
@@ -48,15 +46,12 @@ const Footer = () => {
           </svg>
         </div>
 
-        {/* Decorative circles */}
         <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-primary/5"></div>
         <div className="absolute -bottom-32 -left-32 w-64 h-64 rounded-full bg-primary/5"></div>
       </div>
 
-      {/* Main footer content */}
       <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12 px-4">
-          {/* Logo and description */}
           <div className="md:col-span-4 space-y-4">
             <motion.div
               className="flex items-center gap-2"
@@ -112,10 +107,8 @@ const Footer = () => {
             </motion.div>
           </div>
 
-          {/* Navigation links */}
           <div className="md:col-span-8">
             <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-              {/* Product links */}
               <motion.div
                 className="space-y-3"
                 initial={{ opacity: 0, y: 20 }}
@@ -161,7 +154,6 @@ const Footer = () => {
                 </nav>
               </motion.div>
 
-              {/* Company links */}
               <motion.div
                 className="space-y-3"
                 initial={{ opacity: 0, y: 20 }}
@@ -195,7 +187,6 @@ const Footer = () => {
                 </nav>
               </motion.div>
 
-              {/* Support links */}
               <motion.div
                 className="space-y-3 col-span-2 sm:col-span-1"
                 initial={{ opacity: 0, y: 20 }}
@@ -239,7 +230,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Copyright section */}
       <div className="border-t py-6 relative">
         <div className="container mx-auto max-w-7xl px-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -280,7 +270,6 @@ const Footer = () => {
               </Link>
             </motion.div>
 
-            {/* Social media icons */}
             <motion.div
               className="flex gap-3"
               initial={{ opacity: 0 }}

@@ -74,7 +74,6 @@ export function ModeToggle() {
                       repeatType: "reverse",
                     }}
                   >
-                    {/* Sun rays */}
                     {[...Array(8)].map((_, i) => (
                       <motion.div
                         key={i}
@@ -118,7 +117,6 @@ export function ModeToggle() {
             )}
           </AnimatePresence>
 
-          {/* Dark mode elements */}
           <AnimatePresence>
             {isDark && (
               <>
@@ -129,7 +127,6 @@ export function ModeToggle() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {/* Moon */}
                   <motion.div
                     className="absolute top-1 right-1 h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-yellow-100"
                     animate={{
@@ -189,7 +186,6 @@ export function ModeToggle() {
                     />
                   ))}
 
-                  {/* Shooting star */}
                   {isHovered && (
                     <motion.div
                       className="absolute h-0.5 w-2 sm:h-1 sm:w-3 bg-white rounded-full"

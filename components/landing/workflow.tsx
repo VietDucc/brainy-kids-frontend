@@ -37,7 +37,6 @@ const WorkFlow = () => {
     },
   ];
 
-  // Predefined positions for background elements to avoid randomness
   const bgElements = [
     { x: "10%", y: "20%", size: 80, color: "hsl(var(--primary))", delay: 0 },
     { x: "85%", y: "15%", size: 100, color: "#FFD166", delay: 1 },
@@ -56,12 +55,9 @@ const WorkFlow = () => {
       id="how-it-works"
       className="relative py-10 sm:py-14 md:py-20 lg:py-28 overflow-hidden"
     >
-      {/* Creative Background */}
       <div className="absolute inset-0 -z-10">
-        {/* Main gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-background/50 via-background/80 to-background/50"></div>
 
-        {/* Animated circles - only render on client */}
         {isClient &&
           bgElements.map((el, i) => (
             <motion.div
@@ -91,7 +87,6 @@ const WorkFlow = () => {
             />
           ))}
 
-        {/* Path connecting workflow steps */}
         <svg
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-40 hidden md:block"
           viewBox="0 0 800 100"
@@ -107,7 +102,6 @@ const WorkFlow = () => {
             transition={{ duration: 2, ease: "easeInOut" }}
           />
 
-          {/* Animated dot traveling along the path */}
           <motion.circle
             cx="0"
             cy="0"
@@ -126,7 +120,6 @@ const WorkFlow = () => {
           </motion.circle>
         </svg>
 
-        {/* Decorative elements */}
         <div className="absolute top-10 left-10 text-primary/20">
           <motion.div
             animate={{ rotate: 360 }}
@@ -256,7 +249,6 @@ const WorkFlow = () => {
                     className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7"
                     style={{ color: step.color }}
                   />
-                  {/* Decorative dots */}
                   <motion.div
                     className="absolute right-0 top-0 sm:-top-1 sm:-right-1 h-2 w-2 sm:h-3 sm:w-3 rounded-full"
                     style={{ backgroundColor: step.color }}

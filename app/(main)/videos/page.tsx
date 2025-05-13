@@ -61,10 +61,8 @@ export default function VideosPage() {
   return (
     <main className="min-h-screen pb-10 px-8 md:px-0">
       <div className="max-w-7xl mx-auto space-y-10">
-        {/* Search and Filter Section */}
         <Card className="bg-background/80 backdrop-blur-sm border-border overflow-hidden">
           <CardContent className="p-4 md:p-6">
-            {/* Search Bar and Filter Toggle */}
             <div className="flex gap-3 items-center">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -97,7 +95,6 @@ export default function VideosPage() {
               )}
             </div>
 
-            {/* Expandable Filter Section */}
             <AnimatePresence>
               {isFilterOpen && (
                 <motion.div
@@ -108,7 +105,6 @@ export default function VideosPage() {
                   className="overflow-hidden"
                 >
                   <div className="pt-5 border-t mt-5 space-y-5 border-border/30">
-                    {/* Categories */}
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <h3 className="text-sm font-medium text-muted-foreground">
@@ -146,7 +142,6 @@ export default function VideosPage() {
                       </div>
                     </div>
 
-                    {/* Difficulty Levels */}
                     <div className="space-y-3 pb-2">
                       <div className="flex items-center justify-between">
                         <h3 className="text-sm font-medium text-muted-foreground">
@@ -190,7 +185,7 @@ export default function VideosPage() {
           </CardContent>
         </Card>
 
-        {/* Video Grid */}
+        {/* Video */}
         <motion.div
           variants={container}
           initial="hidden"

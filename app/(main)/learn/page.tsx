@@ -14,6 +14,14 @@ import { transformLessonData } from "@/utils/transform-lesson-data";
 import { LessonType } from "@/types/learn";
 import { useAuth } from "@clerk/nextjs";
 import Loading from "@/app/loading";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { BookOpen, PenSquare } from "lucide-react";
 
 interface ChallengeOption {
   id: number;
@@ -77,6 +85,8 @@ const LearnPage = () => {
   const [completedLessonId, setCompletedLessonId] = useState<number[]>();
   const { userId } = useAuth();
   const [loadingLessonId, setLoadingLessonId] = useState<number | null>(null);
+  const [showLearningOptions, setShowLearningOptions] = useState(false);
+  const [selectedLessonId, setSelectedLessonId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -211,20 +221,25 @@ const LearnPage = () => {
   };
 
   const handleLessonClick = async (lessonId: number) => {
+    setSelectedLessonId(lessonId);
+    setShowLearningOptions(true);
+  };
+
+  const handleStartChallenge = async () => {
+    if (!selectedLessonId) return;
+
     try {
       setIsLoadingLesson(true);
-      setLoadingLessonId(lessonId);
+      setLoadingLessonId(selectedLessonId);
       setError(null);
-      const response = await fetch(`/api/lessons/${lessonId}`);
+      const response = await fetch(`/api/lessons/${selectedLessonId}`);
 
       if (!response.ok) {
-        throw new Error(`Failed to load lesson ${lessonId}`);
+        throw new Error(`Failed to load lesson ${selectedLessonId}`);
       }
 
       const data = await response.json();
-      console.log("API response:", data);
-
-      const lessonData = transformLessonData(data, lessonId);
+      const lessonData = transformLessonData(data, selectedLessonId);
 
       if (!lessonData.challenges || lessonData.challenges.length === 0) {
         setError("This lesson doesn't have any challenges yet.");
@@ -238,7 +253,13 @@ const LearnPage = () => {
     } finally {
       setIsLoadingLesson(false);
       setLoadingLessonId(null);
+      setShowLearningOptions(false);
     }
+  };
+
+  const handleStartVocabulary = () => {
+    if (!selectedLessonId) return;
+    router.push(`/vocab?lessonId=${selectedLessonId}`);
   };
 
   const handleBackToUnits = () => {
@@ -379,77 +400,105 @@ const LearnPage = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row-reverse gap-[48px] px-6">
-      <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgressData.activeCourse}
-          hearts={userProgressData.hearts}
-          points={userProgressData.points}
-          hasActiveSubscription={false}
-        />
-      </StickyWrapper>
-      <FeedWrapper>
-        <Header title={userProgressData.activeCourse.title} />
-        <div className="space-y-8 mt-8">
-          {units.length > 0 ? (
-            units.map((unit) => (
-              <div key={unit.id} className="space-y-3">
-                <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">
-                  {unit.title}
-                </h3>
-                {unit.description && (
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    {unit.description}
-                  </p>
-                )}
-                <div className="grid grid-cols-1 gap-4">
-                  {unit.lessons && unit.lessons.length > 0 ? (
-                    unit.lessons.map((lesson) => {
-                      const status = getLessonStatus(lesson);
-                      const challengesCount = lesson.challenges?.length || 0;
-                      const statusDescription = getLessonStatusDescription(
-                        status,
-                        lesson.orderIndex,
-                        challengesCount
-                      );
-                      const isCurrentLessonLoading =
-                        loadingLessonId === lesson.id;
+    <>
+      <Dialog open={showLearningOptions} onOpenChange={setShowLearningOptions}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl font-bold">
+              Chọn phương pháp học
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 mt-4">
+            <Button
+              onClick={handleStartVocabulary}
+              className="flex items-center gap-2 py-6"
+            >
+              <BookOpen className="h-5 w-5" />
+              Học từ vựng
+            </Button>
+            <Button
+              onClick={handleStartChallenge}
+              className="flex items-center gap-2 py-6"
+            >
+              <PenSquare className="h-5 w-5" />
+              Làm bài tập
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-                      return (
-                        <LessonCard
-                          key={lesson.id}
-                          id={lesson.id}
-                          title={lesson.title}
-                          description={statusDescription}
-                          status={status}
-                          icon={getLessonIcon(lesson)}
-                          onClick={
-                            status !== "locked"
-                              ? () => handleLessonClick(lesson.id)
-                              : undefined
-                          }
-                          isLoading={isCurrentLessonLoading}
-                        />
-                      );
-                    })
-                  ) : (
-                    <p className="text-sm italic text-slate-500 dark:text-slate-400">
-                      No lessons available in this unit yet.
+      <div className="flex flex-col lg:flex-row-reverse gap-[48px] px-6">
+        <StickyWrapper>
+          <UserProgress
+            activeCourse={userProgressData.activeCourse}
+            hearts={userProgressData.hearts}
+            points={userProgressData.points}
+            hasActiveSubscription={false}
+          />
+        </StickyWrapper>
+        <FeedWrapper>
+          <Header title={userProgressData.activeCourse.title} />
+          <div className="space-y-8 mt-8">
+            {units.length > 0 ? (
+              units.map((unit) => (
+                <div key={unit.id} className="space-y-3">
+                  <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200">
+                    {unit.title}
+                  </h3>
+                  {unit.description && (
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      {unit.description}
                     </p>
                   )}
+                  <div className="grid grid-cols-1 gap-4">
+                    {unit.lessons && unit.lessons.length > 0 ? (
+                      unit.lessons.map((lesson) => {
+                        const status = getLessonStatus(lesson);
+                        const challengesCount = lesson.challenges?.length || 0;
+                        const statusDescription = getLessonStatusDescription(
+                          status,
+                          lesson.orderIndex,
+                          challengesCount
+                        );
+                        const isCurrentLessonLoading =
+                          loadingLessonId === lesson.id;
+
+                        return (
+                          <LessonCard
+                            key={lesson.id}
+                            id={lesson.id}
+                            title={lesson.title}
+                            description={statusDescription}
+                            status={status}
+                            icon={getLessonIcon(lesson)}
+                            onClick={
+                              status !== "locked"
+                                ? () => handleLessonClick(lesson.id)
+                                : undefined
+                            }
+                            isLoading={isCurrentLessonLoading}
+                          />
+                        );
+                      })
+                    ) : (
+                      <p className="text-sm italic text-slate-500 dark:text-slate-400">
+                        No lessons available in this unit yet.
+                      </p>
+                    )}
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10">
+                <p className="text-slate-500 dark:text-slate-400">
+                  No units available for this course yet.
+                </p>
               </div>
-            ))
-          ) : (
-            <div className="flex flex-col items-center justify-center py-10">
-              <p className="text-slate-500 dark:text-slate-400">
-                No units available for this course yet.
-              </p>
-            </div>
-          )}
-        </div>
-      </FeedWrapper>
-    </div>
+            )}
+          </div>
+        </FeedWrapper>
+      </div>
+    </>
   );
 };
 

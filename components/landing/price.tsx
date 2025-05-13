@@ -88,11 +88,9 @@ const Pricing = () => {
       id="pricing"
       className="relative py-12 sm:py-16 md:py-24 lg:py-32 overflow-hidden"
     >
-      {/* Background */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-primary/5"></div>
 
-        {/* Decorative elements - only render on client side */}
         {isClient && (
           <>
             <motion.div
@@ -133,7 +131,6 @@ const Pricing = () => {
               </svg>
             </motion.div>
 
-            {/* Floating coins with fixed positions */}
             {coinPositions.map((coin, i) => (
               <motion.div
                 key={i}
@@ -158,7 +155,6 @@ const Pricing = () => {
               />
             ))}
 
-            {/* Blob shapes */}
             <motion.div
               className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/5"
               initial={{ scale: 1, rotate: 0 }}
@@ -226,7 +222,6 @@ const Pricing = () => {
             </motion.p>
           </div>
 
-          {/* Billing toggle */}
           <motion.div
             className="mt-6 inline-flex items-center rounded-full border-2 border-border p-1 bg-card/50"
             initial={{ opacity: 0, y: 20 }}
@@ -260,18 +255,14 @@ const Pricing = () => {
           </motion.div>
         </motion.div>
 
-        {/* Pricing cards - improved responsive layout */}
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
           {plans.map((plan, index) => {
-            // Determine if this is the popular plan
             const isPopular = plan.popular;
 
-            // On small screens, we want the popular plan to be full width and centered
             const smallScreenClass = isPopular
               ? "sm:col-span-2 sm:mx-auto sm:max-w-md"
               : "";
 
-            // On large screens, all plans should be equal width
             const largeScreenClass = isPopular
               ? "lg:col-span-1 lg:-mt-6 lg:mb-6 lg:pt-8 lg:pb-8"
               : "lg:col-span-1";
@@ -287,7 +278,7 @@ const Pricing = () => {
                 style={{
                   height: "100%",
                   padding: "1.25rem",
-                  width: "100%", // Ensure full width within grid cell
+                  width: "100%",
                 }}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -304,14 +295,12 @@ const Pricing = () => {
                 onMouseEnter={() => setHoveredPlan(index)}
                 onMouseLeave={() => setHoveredPlan(null)}
               >
-                {/* Popular badge */}
                 {plan.popular && (
                   <div className="absolute -top-3 left-0 right-0 mx-auto w-fit rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
                     Phổ biến nhất
                   </div>
                 )}
 
-                {/* Plan icon */}
                 <div
                   className="mb-3 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full"
                   style={{ backgroundColor: `${plan.color}20` }}
@@ -322,7 +311,6 @@ const Pricing = () => {
                   />
                 </div>
 
-                {/* Plan name and description */}
                 <h3
                   className="text-lg sm:text-xl font-bold"
                   style={{ color: plan.color }}
@@ -333,7 +321,6 @@ const Pricing = () => {
                   {plan.description}
                 </p>
 
-                {/* Price with animation */}
                 <div className="my-4 min-h-[60px]">
                   <div className="flex items-baseline">
                     <motion.span
@@ -373,7 +360,6 @@ const Pricing = () => {
                   )}
                 </div>
 
-                {/* Features with fixed height container */}
                 <div
                   className="mb-4 flex-grow overflow-y-auto overflow-x-hidden"
                   style={{ maxHeight: "180px" }}
@@ -414,7 +400,6 @@ const Pricing = () => {
                   </ul>
                 </div>
 
-                {/* CTA button */}
                 <div className="mt-auto pt-2">
                   <Button
                     className="relative w-full overflow-hidden group rounded-xl"
@@ -441,7 +426,6 @@ const Pricing = () => {
                   </Button>
                 </div>
 
-                {/* Decorative elements */}
                 {plan.popular && (
                   <motion.div
                     className="absolute -right-2 -top-2"
@@ -464,7 +448,6 @@ const Pricing = () => {
           })}
         </div>
 
-        {/* Special layout for tablet view - reorder cards to put popular in middle */}
         <style jsx global>{`
           @media (min-width: 640px) and (max-width: 1023px) {
             .grid > div:nth-child(2):not(:last-child) {
@@ -473,7 +456,6 @@ const Pricing = () => {
           }
         `}</style>
 
-        {/* Mobile guidance */}
         <p className="text-center text-xs text-muted-foreground mt-4 lg:hidden">
           Vuốt để xem tất cả các gói
         </p>

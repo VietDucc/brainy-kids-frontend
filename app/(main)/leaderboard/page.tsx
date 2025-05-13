@@ -172,14 +172,14 @@ export default function LeaderboardPage() {
           </motion.p>
         </header>
 
-        {/* Top 3 Podium */}
+        {/* Top 3 */}
         <motion.div
           className="flex justify-between items-end gap-4 mb-12"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          {/* Second Place */}
+          {/* 2 */}
           {topThree[1] && (
             <div className="flex-1">
               <PodiumPosition
@@ -194,7 +194,7 @@ export default function LeaderboardPage() {
             </div>
           )}
 
-          {/* First Place */}
+          {/* 1 */}
           {topThree[0] && (
             <div className="flex-1 z-10">
               <PodiumPosition
@@ -210,7 +210,7 @@ export default function LeaderboardPage() {
             </div>
           )}
 
-          {/* Third Place */}
+          {/* 3 */}
           {topThree[2] && (
             <div className="flex-1">
               <PodiumPosition
@@ -226,7 +226,7 @@ export default function LeaderboardPage() {
           )}
         </motion.div>
 
-        {/* Rest of Leaderboard */}
+        {/* còn lại */}
         <motion.div
           className="bg-white rounded-lg border border-gray-200"
           initial={{ y: 20, opacity: 0 }}
@@ -235,7 +235,7 @@ export default function LeaderboardPage() {
         >
           <div className="p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-6">
-              All Learners
+              Tất cả người học
             </h2>
 
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">

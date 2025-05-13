@@ -279,7 +279,6 @@ export default function VideoPlayer({
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
 
-        {/* Video title overlay - top */}
         <div
           className={cn(
             "absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-background/70 to-transparent z-20",
@@ -322,13 +321,11 @@ export default function VideoPlayer({
           }}
         />
 
-        {/* Overlay for pause/play on click */}
         <div
           className="absolute inset-0 cursor-pointer z-10"
           onClick={handlePlayPause}
         />
 
-        {/* Play button overlay when paused */}
         {!playing && !loading && (
           <div className="absolute inset-0 flex items-center justify-center z-15 pointer-events-none">
             <div className="bg-background/40 p-5 rounded-full">
@@ -337,14 +334,12 @@ export default function VideoPlayer({
           </div>
         )}
 
-        {/* Controls - Always visible on mobile, visible on hover for desktop */}
         <div
           className={cn(
             "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 to-transparent p-4 transition-opacity duration-300 z-30",
             controlsVisible || !playing ? "opacity-100" : "opacity-0"
           )}
         >
-          {/* Progress bar */}
           <Slider
             max={1}
             step={0.001}
@@ -355,7 +350,6 @@ export default function VideoPlayer({
             className="cursor-pointer mb-3"
           />
 
-          {/* Time and controls */}
           <div className="flex justify-between items-center">
             <div className="flex space-x-2">
               <Button
@@ -398,13 +392,11 @@ export default function VideoPlayer({
               </Button>
             </div>
 
-            {/* Time display */}
             <span className="text-xs font-medium text-primary">
               {formatTime(currentTime)} / {formatTime(duration)}
             </span>
 
             <div className="flex items-center space-x-2">
-              {/* Volume control */}
               <div className="hidden sm:flex items-center space-x-2">
                 <Button
                   variant="ghost"
@@ -425,7 +417,6 @@ export default function VideoPlayer({
                 </div>
               </div>
 
-              {/* Fullscreen button */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -439,7 +430,6 @@ export default function VideoPlayer({
         </div>
       </div>
 
-      {/* Subtitle container - always visible */}
       <SubtitleDisplay
         englishText={currentEnglishSubtitle}
         vietnameseText={currentVietnameseSubtitle}

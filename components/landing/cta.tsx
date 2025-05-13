@@ -7,11 +7,9 @@ import { Sparkles, ArrowRight, BookOpen } from "lucide-react";
 const CTA = () => {
   return (
     <section className="relative py-12 sm:py-16 md:py-24 lg:py-32 overflow-hidden w-full">
-      {/* Creative Background */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5"></div>
 
-        {/* Decorative elements */}
         <motion.div
           className="absolute -top-10 sm:-top-20 -right-10 sm:-right-20 h-40 sm:h-64 w-40 sm:w-64 rounded-full bg-primary/10"
           animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
@@ -24,7 +22,6 @@ const CTA = () => {
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Floating shapes */}
         {[...Array(3)].map((_, i) => (
           <motion.div
             key={i}
@@ -48,7 +45,6 @@ const CTA = () => {
           />
         ))}
 
-        {/* Animated stars */}
         {[...Array(2)].map((_, i) => (
           <motion.div
             key={`star-${i}`}
@@ -83,7 +79,6 @@ const CTA = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          {/* Decorative corner elements */}
           <div className="absolute top-0 left-0 h-16 sm:h-20 w-16 sm:w-20 overflow-hidden hidden sm:block">
             <div className="absolute top-0 left-0 h-3 sm:h-4 w-3 sm:w-4 rounded-full bg-primary/20 transform -translate-x-1/2 -translate-y-1/2"></div>
             <div className="absolute top-0 left-0 h-12 sm:h-16 w-12 sm:w-16 border-t-3 sm:border-t-4 border-l-3 sm:border-l-4 border-primary/20 rounded-tl-3xl"></div>
@@ -95,7 +90,6 @@ const CTA = () => {
           </div>
 
           <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6 text-center relative z-10">
-            {/* Icon */}
             <motion.div
               className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-primary/10 text-primary"
               initial={{ scale: 0, rotate: -20 }}
@@ -111,7 +105,6 @@ const CTA = () => {
               <BookOpen className="h-6 w-6 sm:h-8 sm:w-8" />
             </motion.div>
 
-            {/* Heading */}
             <motion.div
               className="space-y-2"
               initial={{ opacity: 0, y: 10 }}
@@ -128,7 +121,6 @@ const CTA = () => {
               </p>
             </motion.div>
 
-            {/* Buttons */}
             <motion.div
               className="flex flex-col gap-3 min-[400px]:flex-row w-full sm:w-auto"
               initial={{ opacity: 0, y: 10 }}
@@ -170,7 +162,6 @@ const CTA = () => {
               </motion.div>
             </motion.div>
 
-            {/* Trust badges */}
             <motion.div
               className="mt-4 sm:mt-6 md:mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-6"
               initial={{ opacity: 0 }}

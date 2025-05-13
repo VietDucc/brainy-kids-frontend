@@ -121,7 +121,6 @@ const Header = () => {
     >
       <div className="container mx-auto max-w-7xl">
         <div className="flex h-14 sm:h-18 items-center justify-between py-2 sm:py-4 px-4">
-          {/* Logo with animated elements */}
           <Link
             href="/"
             className="flex items-center gap-1.5 sm:gap-2 group relative"
@@ -157,13 +156,11 @@ const Header = () => {
               </motion.div>
             </div>
 
-            {/* Logo text with gradient effect */}
             <div className="relative">
               <span className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight text-foreground">
                 Kids<span className="text-primary font-light">Learn</span>
               </span>
 
-              {/* Animated underline on hover */}
               <motion.div
                 className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/80 to-primary/30 rounded-full origin-left"
                 initial={{ scaleX: 0 }}
@@ -172,11 +169,9 @@ const Header = () => {
               />
             </div>
 
-            {/* Decorative element */}
             <div className="absolute -z-10 inset-0 rounded-full bg-primary/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </Link>
 
-          {/* Desktop Navigation - only show on large screens */}
           <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
@@ -195,7 +190,6 @@ const Header = () => {
                   <span>{item.label}</span>
                 </div>
 
-                {/* Animated highlight */}
                 {hoverItem === item.id && (
                   <motion.div
                     layoutId="navBubble"
@@ -211,7 +205,6 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Mode toggle - always visible */}
             <ModeToggle />
             <div className="flex gap-x-3">
               <ClerkLoading>
@@ -228,14 +221,12 @@ const Header = () => {
                       variant="outline"
                     >
                       <span className="mr-1">Đăng nhập</span>
-                      {/* Animated arrow on hover */}
                     </Button>
                   </SignInButton>
                 </SignedOut>
               </ClerkLoaded>
             </div>
 
-            {/* Trial button - only visible on large screens */}
             {!isSignedIn && (
               <SignUpButton mode="modal">
                 <Button
@@ -254,7 +245,6 @@ const Header = () => {
                     <Star className="h-3.5 w-3.5 text-yellow-300 group-hover:text-yellow-100" />
                   </motion.div>
 
-                  {/* Animated arrow on hover */}
                   <motion.div
                     className="absolute right-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
                     transition={{ duration: 0.2 }}
@@ -265,7 +255,6 @@ const Header = () => {
               </SignUpButton>
             )}
 
-            {/* Mobile menu button - visible on all screens except large */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
                 <Button
@@ -281,7 +270,6 @@ const Header = () => {
                 side="right"
                 className="w-full sm:w-80 p-0 overflow-y-auto"
               >
-                {/* Menu Header with close button */}
                 <div className="bg-primary/10 backdrop-blur-md p-3 flex items-center justify-between sticky top-0 z-10 ">
                   <div className="flex items-center">
                     <div className="bg-primary/20 rounded-full p-1.5 ">
@@ -303,7 +291,6 @@ const Header = () => {
                   </Button>
                 </div>
 
-                {/* Menu Content - optimized spacing */}
                 <div className="p-4 pb-20">
                   <nav className="flex flex-col gap-1">
                     <Link
@@ -322,7 +309,6 @@ const Header = () => {
                     </Link>
 
                     {navItems.map((item, index) => {
-                      // Different colors for each nav item
                       const colors = [
                         {
                           bg: "bg-green-100 dark:bg-green-900/30",
@@ -390,7 +376,6 @@ const Header = () => {
                     </Link>
                   </nav>
 
-                  {/* Premium badge */}
                   <div className="mt-6 mb-4 bg-gradient-to-r from-amber-100/80 to-amber-50/80 dark:from-amber-900/20 dark:to-amber-800/20 rounded-lg p-3 border border-amber-200/50 dark:border-amber-700/30">
                     <div className="flex items-start gap-3">
                       <div className="bg-amber-200 dark:bg-amber-700/50 rounded-full p-1.5 mt-0.5">
@@ -408,14 +393,12 @@ const Header = () => {
                     </div>
                   </div>
 
-                  {/* Divider - reduced spacing */}
                   <div className="my-4 border-t border-border relative">
                     <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-background px-3">
                       <Star className="h-4 w-4 text-yellow-400" />
                     </div>
                   </div>
 
-                  {/* CTA Button - reduced height */}
                   <Button className="w-full rounded-lg py-4 h-auto group bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary border-none shadow-md shadow-primary/20">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-bold mb-0.5 flex items-center gap-1.5">
@@ -471,13 +454,11 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Progress bar */}
       <motion.div
         className="h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/60 origin-left"
         style={{ scaleX: scrollYProgress }}
       />
 
-      {/* Animated rocket following the progress bar */}
       <motion.div
         className="absolute bottom-0 h-6 pointer-events-none z-10"
         style={{
@@ -487,7 +468,6 @@ const Header = () => {
       >
         <Rocket size={14} className="text-primary transform -rotate-90" />
 
-        {/* Rocket trail */}
         <motion.div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 w-1 h-6 origin-top"
           style={{

@@ -79,7 +79,6 @@ const StatCard = ({
         transition: { duration: 0.2 },
       }}
     >
-      {/* Gradient background */}
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -87,7 +86,6 @@ const StatCard = ({
         }}
       />
 
-      {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-24 h-24 -mt-8 -mr-8">
         <div
           className="absolute w-full h-full rounded-full opacity-20"
@@ -102,10 +100,8 @@ const StatCard = ({
         />
       </div>
 
-      {/* Content */}
       <div className="relative flex flex-col h-full p-6 sm:p-8">
         <div className="flex items-start justify-between mb-6">
-          {/* Icon with animated background */}
           <motion.div
             className="relative flex h-14 w-14 items-center justify-center rounded-xl"
             style={{ backgroundColor: `${color}20` }}
@@ -114,7 +110,6 @@ const StatCard = ({
           >
             <Icon className="h-7 w-7" style={{ color }} />
 
-            {/* Animated particles */}
             {[...Array(3)].map((_, i) => (
               <motion.div
                 key={i}
@@ -136,7 +131,6 @@ const StatCard = ({
             ))}
           </motion.div>
 
-          {/* Sparkle decoration */}
           <motion.div
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -146,7 +140,6 @@ const StatCard = ({
           </motion.div>
         </div>
 
-        {/* Value with animated counting */}
         <motion.div
           className="relative text-4xl sm:text-5xl font-bold mb-2"
           style={{ color }}
@@ -158,7 +151,6 @@ const StatCard = ({
           <CountUp end={value} suffix={suffix} />
         </motion.div>
 
-        {/* Label */}
         <motion.p
           className="text-base sm:text-lg font-medium text-foreground/80"
           initial={{ opacity: 0 }}
@@ -169,7 +161,6 @@ const StatCard = ({
           {label}
         </motion.p>
 
-        {/* Animated underline */}
         <motion.div
           className="absolute bottom-0 left-0 h-1 rounded-full"
           style={{ backgroundColor: color }}
@@ -214,14 +205,12 @@ const Stat = () => {
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5"></div>
 
-        {/* Decorative elements */}
         <motion.div
           className="absolute top-0 left-0 w-full h-full overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          {/* Grid pattern */}
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern
@@ -242,7 +231,6 @@ const Stat = () => {
             <rect width="100%" height="100%" fill="url(#grid)" />
           </svg>
 
-          {/* Floating shapes */}
           {[...Array(6)].map((_, i) => (
             <motion.div
               key={i}

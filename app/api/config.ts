@@ -17,4 +17,5 @@ export const api = {
   getLessonProgress: (clerkUserId: string) =>
     `${API_BASE_URL}/lesson-progress/${clerkUserId}`,
   leaderboard: `${API_BASE_URL}/api/leaderboard`,
+  vocab: (lessonId: number) => `${API_BASE_URL}/api/vocabulary/lesson/${lessonId}`,
 };

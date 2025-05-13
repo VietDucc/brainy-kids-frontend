@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["picsum.photos", "www.example.com","i3.ytimg.com", "th.bing.com"],
+    domains: ["picsum.photos", "www.example.com","i3.ytimg.com", "th.bing.com", "images.unsplash.com", "imgur.com"],
   },
   eslint: {
     // Tắt kiểm tra ESLint khi build

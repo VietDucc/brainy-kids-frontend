@@ -84,13 +84,10 @@ const Feedback = () => {
       id="testimonials"
       className="relative py-10 sm:py-16 md:py-24 lg:py-28 overflow-hidden"
     >
-      {/* Background */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background/80"></div>
 
-        {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-          {/* Floating stars */}
           {[...Array(10)].map((_, i) => (
             <motion.div
               key={i}
@@ -115,7 +112,6 @@ const Feedback = () => {
             </motion.div>
           ))}
 
-          {/* Decorative quotes */}
           <motion.div
             className="absolute top-10 left-10 text-primary/10 hidden sm:block"
             animate={{ rotate: [0, 10, 0, -10, 0] }}
@@ -132,7 +128,6 @@ const Feedback = () => {
             <Quote size={60} />
           </motion.div>
 
-          {/* Decorative circles */}
           <motion.div
             className="absolute -top-20 -right-20 h-60 w-60 sm:h-80 sm:w-80 rounded-full bg-yellow-200 opacity-20"
             animate={{ scale: [1, 1.1, 1], rotate: [0, 10, 0] }}
@@ -191,7 +186,6 @@ const Feedback = () => {
           </div>
         </motion.div>
 
-        {/* Testimonial Carousel */}
         <div className="relative mx-auto max-w-4xl sm:max-w-5xl px-4 sm:px-8">
           <div className="relative h-[300px] sm:h-[350px] md:h-[400px] overflow-visible">
             <AnimatePresence mode="popLayout">
@@ -227,7 +221,6 @@ const Feedback = () => {
                           : "none",
                     }}
                   >
-                    {/* Quote mark - moved outside the card with higher z-index */}
                     <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 rounded-full bg-background p-1 sm:p-2 shadow-md z-20">
                       <div
                         className="flex h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 items-center justify-center rounded-full"
@@ -237,7 +230,6 @@ const Feedback = () => {
                       </div>
                     </div>
 
-                    {/* Rating stars */}
                     <div className="mb-2 sm:mb-4 flex text-yellow-400">
                       {[...Array(testimonial.rating)].map((_, i) => (
                         <motion.div
@@ -251,14 +243,12 @@ const Feedback = () => {
                       ))}
                     </div>
 
-                    {/* Testimonial content */}
                     <div className="flex-grow">
                       <p className="text-xs sm:text-sm md:text-base italic text-foreground">
                         &quot;{testimonial.content}&quot;
                       </p>
                     </div>
 
-                    {/* Author info */}
                     <div className="mt-3 sm:mt-4 md:mt-6 flex items-center space-x-3 sm:space-x-4">
                       <div
                         className="relative h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 overflow-hidden rounded-full border-2"
@@ -288,7 +278,6 @@ const Feedback = () => {
                       </div>
                     </div>
 
-                    {/* Decorative elements */}
                     <div
                       className="absolute bottom-0 left-0 right-0 h-1 sm:h-1.5 rounded-b-xl sm:rounded-b-2xl"
                       style={{ backgroundColor: testimonial.color }}
@@ -299,7 +288,6 @@ const Feedback = () => {
             </AnimatePresence>
           </div>
 
-          {/* Navigation buttons */}
           <div className="mt-4 sm:mt-6 md:mt-8 flex justify-center gap-2 sm:gap-4">
             <motion.button
               className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background shadow-md text-primary hover:bg-primary/10"
@@ -309,8 +297,6 @@ const Feedback = () => {
             >
               <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </motion.button>
-
-            {/* Pagination dots */}
             <div className="flex items-center gap-1 sm:gap-2">
               {testimonials.map((_, index) => (
                 <motion.button
