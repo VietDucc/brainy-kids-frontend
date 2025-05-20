@@ -56,7 +56,10 @@ export const Card = ({
       >
         <div className="absolute inset-0 bg-gradient-to-b from-blue-200 to-purple-200 dark:from-blue-800 dark:to-purple-900 rounded-full opacity-30 blur-md"></div>
         <Image
-          src={imageSrc}
+          src={
+            (imageSrc !== "string" && imageSrc) ||
+            "/images/course-placeholder.jpg"
+          }
           alt={title}
           height={90}
           width={110}

@@ -1,156 +1,225 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { PlusCircle, Pencil, Trash, Eye, MoreHorizontal, Sparkles } from "lucide-react"
-import { DataTable } from "../components/data-table"
-import { Badge } from "@/components/ui/badge"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import {
+  PlusCircle,
+  Pencil,
+  Trash,
+  Eye,
+  MoreHorizontal,
+  Sparkles,
+} from "lucide-react";
+import { DataTable } from "../components/data-table";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
-// Mock data for challenges
-const challengesData = [
-  {
-    id: "1",
-    title: "Animal Sounds Quiz",
-    type: "multiple-choice",
-    lessonTitle: "Farm Animals",
-    unitTitle: "Animals",
-    status: "published",
-    createdAt: "2023-06-06T14:00:00Z",
-    emoji: "🐮",
-  },
-  {
-    id: "2",
-    title: "Match Colors with Objects",
-    type: "matching",
-    lessonTitle: "Primary Colors",
-    unitTitle: "Colors and Shapes",
-    status: "published",
-    createdAt: "2023-06-06T15:30:00Z",
-    emoji: "🌈",
-  },
-  {
-    id: "3",
-    title: "Complete the Sentence",
-    type: "fill-in-blanks",
-    lessonTitle: "Simple Sentences",
-    unitTitle: "Basic Grammar",
-    status: "published",
-    createdAt: "2023-06-07T11:45:00Z",
-    emoji: "📝",
-  },
-  {
-    id: "4",
-    title: "Say the Word",
-    type: "speaking",
-    lessonTitle: "Pronunciation",
-    unitTitle: "Speaking Skills",
-    status: "draft",
-    createdAt: "2023-06-08T16:15:00Z",
-    emoji: "🗣️",
-  },
-  {
-    id: "5",
-    title: "Listen and Choose",
-    type: "listening",
-    lessonTitle: "Sound Recognition",
-    unitTitle: "Listening Skills",
-    status: "published",
-    createdAt: "2023-06-09T10:20:00Z",
-    emoji: "👂",
-  },
-]
+interface Challenge {
+  id: number;
+  type: string;
+  imgSrc: string | null;
+  question: string;
+  orderChallenge: number;
+  unitTitle?: string;
+  lessonTitle?: string;
+  challengesOption: {
+    id: number;
+    textOption: string;
+    correct: boolean;
+    imageSrc: string | null;
+    audioSrc: string | null;
+  }[];
+}
+
+interface Lesson {
+  id: number;
+  title: string;
+  challenges: Challenge[];
+}
+
+interface Unit {
+  id: number;
+  title: string;
+  lessons: Lesson[];
+}
+
+type Column = {
+  header: string;
+  accessorKey: keyof Challenge;
+  cell?: (item: Challenge) => React.ReactNode;
+};
 
 export default function ChallengesPage() {
-  const [challenges, setChallenges] = useState(challengesData)
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const courseId = 1;
+  const router = useRouter();
 
-  const handleDelete = (id: string) => {
-    setChallenges(challenges.filter((challenge) => challenge.id !== id))
-  }
+  useEffect(() => {
+    setLoading(true);
+    const fetchChallenges = async () => {
+      try {
+        const response = await fetch(`/api/units/${courseId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch units");
+        }
+        const unitsData: Unit[] = await response.json();
+
+        // Extract all challenges from units and lessons
+        const allChallenges = unitsData.flatMap((unit) =>
+          unit.lessons.flatMap((lesson) =>
+            lesson.challenges.map((challenge) => ({
+              ...challenge,
+              unitTitle: unit.title,
+              lessonTitle: lesson.title,
+            }))
+          )
+        );
+
+        setChallenges(allChallenges);
+      } catch (error) {
+        console.error("Error fetching challenges:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to fetch challenges",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchChallenges();
+  }, [toast, courseId]);
+
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`/api/challenges/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete challenge");
+      }
+
+      setChallenges((prevChallenges) =>
+        prevChallenges.filter((challenge) => challenge.id !== id)
+      );
+
+      toast({
+        title: "Success",
+        description: "Challenge deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting challenge:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete challenge",
+      });
+    }
+  };
 
   const getTypeColor = (type: string) => {
     const colors = {
-      "multiple-choice": "bg-blue-100 text-blue-600 border-blue-200",
-      matching: "bg-purple-100 text-purple-600 border-purple-200",
-      "fill-in-blanks": "bg-green-100 text-green-600 border-green-200",
-      speaking: "bg-orange-100 text-orange-600 border-orange-200",
-      listening: "bg-pink-100 text-pink-600 border-pink-200",
-    }
-    return colors[type as keyof typeof colors] || "bg-gray-100 text-gray-600 border-gray-200"
-  }
+      SELECT: "bg-blue-100 text-blue-600 border-blue-200",
+      ASSIST: "bg-purple-100 text-purple-600 border-purple-200",
+      FILL_IN_BLANK: "bg-green-100 text-green-600 border-green-200",
+      SPEAKING: "bg-orange-100 text-orange-600 border-orange-200",
+      LISTENING: "bg-pink-100 text-pink-600 border-pink-200",
+    };
+    return (
+      colors[type as keyof typeof colors] ||
+      "bg-gray-100 text-gray-600 border-gray-200"
+    );
+  };
 
-  const columns = [
+  const columns: Column[] = [
     {
-      header: "Challenge",
-      accessorKey: "title" as const,
-      cell: (challenge: (typeof challenges)[0]) => (
+      header: "Question",
+      accessorKey: "question",
+      cell: (challenge) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">
-            {challenge.emoji}
-          </div>
-          <span className="font-medium">{challenge.title}</span>
+          {challenge.imgSrc && (
+            <Image
+              src={challenge.imgSrc}
+              alt="Question"
+              width={40}
+              height={40}
+              className="rounded-full object-cover"
+            />
+          )}
+          <span className="font-medium">{challenge.question}</span>
         </div>
       ),
     },
     {
       header: "Type",
-      accessorKey: "type" as const,
-      cell: (challenge: (typeof challenges)[0]) => (
-        <Badge variant="outline" className={`rounded-full ${getTypeColor(challenge.type)}`}>
-          {challenge.type
-            .split("-")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ")}
+      accessorKey: "type",
+      cell: (challenge) => (
+        <Badge
+          variant="outline"
+          className={`rounded-full ${getTypeColor(challenge.type)}`}
+        >
+          {challenge.type.replace(/_/g, " ")}
         </Badge>
       ),
+    },
+    {
+      header: "Unit",
+      accessorKey: "unitTitle",
     },
     {
       header: "Lesson",
-      accessorKey: "lessonTitle" as const,
+      accessorKey: "lessonTitle",
     },
     {
-      header: "Status",
-      accessorKey: "status" as const,
-      cell: (challenge: (typeof challenges)[0]) => (
-        <Badge
-          variant={challenge.status === "published" ? "default" : "secondary"}
-          className={`rounded-full ${
-            challenge.status === "published"
-              ? "bg-blue-100 text-blue-600 hover:bg-blue-200"
-              : "bg-amber-100 text-amber-600 hover:bg-amber-200"
-          }`}
-        >
-          {challenge.status === "published" ? "Published ✓" : "Draft ✎"}
-        </Badge>
-      ),
+      header: "Order",
+      accessorKey: "orderChallenge",
     },
     {
       header: "Actions",
-      accessorKey: "id" as const,
-      cell: (challenge: (typeof challenges)[0]) => (
+      accessorKey: "id",
+      cell: (challenge) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-blue-50">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-blue-50"
+            >
               <MoreHorizontal className="h-4 w-4" />
               <span className="sr-only">Actions</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="rounded-xl">
-            <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
-              <Link href={`/admin/challenges/${challenge.id}`} className="flex items-center">
-                <Eye className="mr-2 h-4 w-4 text-blue-500" />
-                <span>Preview Challenge</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
-              <Link href={`/admin/challenges/${challenge.id}/edit`} className="flex items-center">
-                <Pencil className="mr-2 h-4 w-4 text-amber-500" />
-                <span>Edit Challenge</span>
-              </Link>
-            </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => handleDelete(challenge.id)}
+              onClick={() => router.push(`/admin/challenges/${challenge.id}`)}
+              className="rounded-lg cursor-pointer"
+            >
+              <Eye className="mr-2 h-4 w-4 text-blue-500" />
+              <span>Detail Challenge</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => {
+                if (
+                  window.confirm(
+                    "Are you sure you want to delete this challenge?"
+                  )
+                ) {
+                  handleDelete(challenge.id);
+                }
+              }}
               className="rounded-lg cursor-pointer text-red-500 focus:text-red-500 focus:bg-red-50"
             >
               <Trash className="mr-2 h-4 w-4" />
@@ -160,7 +229,7 @@ export default function ChallengesPage() {
         </DropdownMenu>
       ),
     },
-  ]
+  ];
 
   return (
     <div className="space-y-8">
@@ -169,13 +238,18 @@ export default function ChallengesPage() {
           <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
             Fun Challenges 🎮
           </h1>
-          <p className="text-gray-600 mt-2">Create interactive activities to make learning enjoyable</p>
+          <p className="text-gray-600 mt-2">
+            Create interactive activities to make learning enjoyable
+          </p>
         </div>
         <Button
           asChild
           className="rounded-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-md"
         >
-          <Link href="/admin/challenges/new" className="flex items-center gap-2 px-6">
+          <Link
+            href="/admin/challenges/new"
+            className="flex items-center gap-2 px-6"
+          >
             <PlusCircle className="h-4 w-4" />
             <span>Create New Challenge</span>
           </Link>
@@ -187,9 +261,8 @@ export default function ChallengesPage() {
           <Sparkles className="h-5 w-5 text-amber-500" />
           <h2 className="text-xl font-semibold">All Challenges</h2>
         </div>
-        <DataTable columns={columns} data={challenges} />
+        <DataTable columns={columns} data={challenges} loading={loading} />
       </div>
     </div>
-  )
+  );
 }
-

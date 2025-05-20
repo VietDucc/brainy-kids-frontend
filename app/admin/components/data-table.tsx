@@ -30,9 +30,8 @@ export function DataTable<T>({ data, columns, loading }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const pageSize = 5;
 
-  // Filter data based on search term
   const filteredData = data.filter((item) => {
-    return Object.values(item as Record<string, any>).some((value) => {
+    return Object.values(item as Record<string, string>).some((value) => {
       if (typeof value === "string") {
         return value.toLowerCase().includes(searchTerm.toLowerCase());
       }
@@ -40,7 +39,6 @@ export function DataTable<T>({ data, columns, loading }: DataTableProps<T>) {
     });
   });
 
-  // Paginate data
   const paginatedData = filteredData.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize

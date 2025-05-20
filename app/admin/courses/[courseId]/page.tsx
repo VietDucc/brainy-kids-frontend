@@ -1,94 +1,239 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  ArrowLeft,
+  ChevronRight,
+  Plus,
+  MoreHorizontal,
   Pencil,
   Trash,
-  BookOpen,
-  Layers,
-  FileText,
 } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { Course } from "@/types/courses";
-import { UnitType } from "@/types/learn";
-import Loading from "@/app/loading";
-// Mock data for courses
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { UnitEditForm } from "./components/UnitEditForm";
+import { LessonEditForm } from "./components/LessonEditForm";
 
-export default function ViewCoursePage() {
-  const router = useRouter();
+interface Challenge {
+  id: number;
+  type: string;
+  question: string;
+  orderChallenge: number;
+}
+
+interface Lesson {
+  id: number;
+  title: string;
+  difficulty: string | null;
+  orderIndex: number;
+  challenges: Challenge[];
+}
+
+interface Unit {
+  id: number;
+  title: string;
+  description: string;
+  orderUnit: number;
+  lessons: Lesson[];
+}
+
+interface DeleteConfirmation {
+  type: "unit" | "lesson" | "challenge";
+  id: number;
+  unitId?: number;
+  lessonId?: number;
+  name: string;
+}
+
+interface EditState {
+  type: "unit" | "lesson";
+  id: number;
+  data: any;
+}
+
+export default function CourseDetailPage() {
   const params = useParams();
   const courseId = params.courseId as string;
-  const [course, setCourse] = useState<Course>();
-  const [units, setUnits] = useState<UnitType[]>([]);
-  const [isUnitsLoading, setIsUnitsLoading] = useState(false);
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deleteConfirmation, setDeleteConfirmation] =
+    useState<DeleteConfirmation | null>(null);
+  const [editingItem, setEditingItem] = useState<EditState | null>(null);
+  const { toast } = useToast();
 
-  const getCourse = async (courseId: string) => {
-    try {
-      const res = await fetch(`/api/courses/${courseId}`);
-      return res.json();
-    } catch (error) {
-      console.error("Error fetching course:", error);
-    }
-  };
-  const getUnits = async (courseId: string) => {
-    try {
-      setIsUnitsLoading(true);
-      const res = await fetch(`/api/units/${courseId}`);
-      return res.json();
-    } catch (error) {
-      console.error("Error fetching units:", error);
-    } finally {
-      setIsUnitsLoading(false);
-    }
-  };
   useEffect(() => {
-    const fetchData = async () => {
-      const courseData = await getCourse(courseId);
-      const unitsData = await getUnits(courseId);
-      setCourse(courseData);
-      setUnits(unitsData);
+    const fetchUnits = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/units/${courseId}`);
+        const data = await response.json();
+        setUnits(data);
+      } catch (error) {
+        console.error("Error fetching units:", error);
+        toast({
+          title: "Error fetching units",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     };
-    fetchData();
+    fetchUnits();
   }, [courseId]);
 
-  const handleDelete = () => {
-    if (confirm("Are you sure you want to delete this course?")) {
-      setTimeout(() => {
-        router.push("/admin/courses");
-      }, 500);
+  const getDifficultyColor = (difficulty: string | null) => {
+    switch (difficulty?.toUpperCase()) {
+      case "EASY":
+        return "bg-green-100 text-green-800";
+      case "MEDIUM":
+        return "bg-yellow-100 text-yellow-800";
+      case "HARD":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const handleEditClick = () => {
-    if (course?.id && course?.title) {
-      const params = new URLSearchParams();
-      params.append("title", course.title);
-      if (course.imageSrc) {
-        params.append("imageSrc", course.imageSrc);
+  const handleDelete = async () => {
+    if (!deleteConfirmation) return;
+
+    try {
+      let endpoint = "";
+      switch (deleteConfirmation.type) {
+        case "unit":
+          endpoint = `/api/units/${deleteConfirmation.id}`;
+          break;
+        case "lesson":
+          endpoint = `/api/lessons/${deleteConfirmation.id}`;
+          break;
+        case "challenge":
+          endpoint = `/api/challenges/${deleteConfirmation.id}`;
+          break;
       }
-      router.push(`/admin/courses/${course.id}/edit?${params.toString()}`);
+
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Delete failed");
+
+      setUnits((prevUnits) => {
+        switch (deleteConfirmation.type) {
+          case "unit":
+            return prevUnits.filter(
+              (unit) => unit.id !== deleteConfirmation.id
+            );
+          case "lesson":
+            return prevUnits.map((unit) => {
+              if (unit.id === deleteConfirmation.unitId) {
+                return {
+                  ...unit,
+                  lessons: unit.lessons.filter(
+                    (lesson) => lesson.id !== deleteConfirmation.id
+                  ),
+                };
+              }
+              return unit;
+            });
+          case "challenge":
+            return prevUnits.map((unit) => {
+              if (unit.id === deleteConfirmation.unitId) {
+                return {
+                  ...unit,
+                  lessons: unit.lessons.map((lesson) => {
+                    if (lesson.id === deleteConfirmation.lessonId) {
+                      return {
+                        ...lesson,
+                        challenges: lesson.challenges.filter(
+                          (challenge) => challenge.id !== deleteConfirmation.id
+                        ),
+                      };
+                    }
+                    return lesson;
+                  }),
+                };
+              }
+              return unit;
+            });
+          default:
+            return prevUnits;
+        }
+      });
+
+      toast({
+        title: `${deleteConfirmation.type} deleted successfully`,
+        variant: "success",
+      });
+    } catch (error) {
+      console.error(`Error deleting ${deleteConfirmation.type}:`, error);
+      toast({
+        title: `Error deleting ${deleteConfirmation.type}`,
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteConfirmation(null);
     }
   };
 
-  if (!course) {
-    return <Loading text="course" />;
-  }
-
-  if (!course) {
+  if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="text-5xl">😢</div>
-          <p className="text-xl font-medium text-gray-600">Course not found</p>
-          <Button asChild className="mt-4">
-            <Link href="/admin/courses">Back to Courses</Link>
-          </Button>
+      <div className="space-y-6">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-32" />
+          <ChevronRight className="h-4 w-4 text-gray-400" />
+          <Skeleton className="h-8 w-48" />
         </div>
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="animate-pulse">
+            <CardHeader>
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-32" />
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   }
@@ -97,243 +242,287 @@ export default function ViewCoursePage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            asChild
-            className="rounded-full hover:bg-blue-50 hover:text-blue-600"
+          <Link
+            href="/admin/courses"
+            className="text-sm text-gray-600 hover:text-gray-900"
           >
-            <Link href="/admin/courses">
-              <ArrowLeft className="h-5 w-5" />
-              <span className="sr-only">Back to courses</span>
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
-              {course.title}
-            </h1>
-          </div>
+            Courses
+          </Link>
+          <ChevronRight className="h-4 w-4 text-gray-400" />
+          <h1 className="text-xl font-semibold">Course Structure</h1>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            asChild
-            className="rounded-xl border-2 border-blue-200 hover:bg-blue-50 hover:text-blue-600"
-            onClick={handleEditClick}
-          >
-            <div className="flex items-center gap-2">
-              <Pencil className="h-4 w-4" />
-              Edit Course
-            </div>
-          </Button>
-          <Button
-            variant="outline"
-            className="rounded-xl border-2 border-red-200 hover:bg-red-50 hover:text-red-600"
-            onClick={handleDelete}
-          >
-            <Trash className="h-4 w-4 mr-2" />
-            Delete Course
-          </Button>
-        </div>
+        <Button asChild>
+          <Link href={`/admin/courses/${courseId}/units/new`}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add New Unit
+          </Link>
+        </Button>
       </div>
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
-          <Card className="border-none shadow-md rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500">
-              <CardTitle className="text-white flex items-center gap-2">
-                <BookOpen className="h-5 w-5" /> Course Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <Image
-                  src={course.imageSrc}
-                  alt={course.title}
-                  width={100}
-                  height={100}
-                  className="rounded-lg"
-                />
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-700">Title</h3>
-                  <p className="mt-2 text-gray-600">{course.title}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card className="border-none shadow-md rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-purple-500 to-blue-500">
-              <CardTitle className="text-white flex items-center gap-2">
-                <Layers className="h-5 w-5" /> Units in this Course
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              {isUnitsLoading ? (
-                <Loading text="units" />
-              ) : units.length > 0 ? (
-                <div className="space-y-4">
-                  {units.map((unit: UnitType) => (
-                    <div
-                      key={unit.id}
-                      className="flex items-center justify-between p-4 rounded-xl border-2 border-purple-100 hover:border-purple-200 hover:bg-purple-50 transition-colors"
+      <div className="grid gap-6">
+        {units.map((unit) => (
+          <Card key={unit.id}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="space-y-1">
+                <CardTitle className="text-xl">
+                  Unit {unit.orderUnit}: {unit.title}
+                </CardTitle>
+                <CardDescription>{unit.description}</CardDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="text-blue-500"
+                >
+                  <Link
+                    href={`/admin/courses/${courseId}/units/${unit.id}/lessons/new`}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Lesson
+                  </Link>
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setEditingItem({
+                          type: "unit",
+                          id: unit.id,
+                          data: {
+                            title: unit.title,
+                            description: unit.description,
+                            orderUnit: unit.orderUnit,
+                          },
+                        })
+                      }
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                          📚
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Edit Unit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        setDeleteConfirmation({
+                          type: "unit",
+                          id: unit.id,
+                          name: unit.title,
+                        })
+                      }
+                      className="text-red-500 focus:text-red-500"
+                    >
+                      <Trash className="mr-2 h-4 w-4" />
+                      Delete Unit
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                {unit.lessons.map((lesson) => (
+                  <AccordionItem key={lesson.id} value={`lesson-${lesson.id}`}>
+                    <AccordionTrigger className="hover:no-underline">
+                      <div className="flex items-center gap-4">
+                        <span>
+                          Lesson {lesson.orderIndex}: {lesson.title}
+                        </span>
+                        <Badge
+                          className={getDifficultyColor(lesson.difficulty)}
+                        >
+                          {lesson.difficulty || "No Difficulty"}
+                        </Badge>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="flex items-center justify-between pt-4">
+                        <div className="space-y-1">
+                          <div className="text-sm text-gray-500">
+                            {lesson.challenges.length} Challenges
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-medium">{unit.title}</h3>
-                          <p className="text-sm text-gray-500">
-                            {unit.lessons.length} lessons
-                          </p>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            asChild
+                            className="text-blue-500"
+                          >
+                            <Link
+                              href={`/admin/courses/${courseId}/units/${unit.id}/lessons/${lesson.id}/challenges/new`}
+                            >
+                              <Plus className="h-4 w-4 mr-2" />
+                              Add Challenge
+                            </Link>
+                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  setEditingItem({
+                                    type: "lesson",
+                                    id: lesson.id,
+                                    data: {
+                                      title: lesson.title,
+                                      difficulty: lesson.difficulty || "EASY",
+                                      orderIndex: lesson.orderIndex,
+                                    },
+                                  })
+                                }
+                              >
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Edit Lesson
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  setDeleteConfirmation({
+                                    type: "lesson",
+                                    id: lesson.id,
+                                    unitId: unit.id,
+                                    name: lesson.title,
+                                  })
+                                }
+                                className="text-red-500 focus:text-red-500"
+                              >
+                                <Trash className="mr-2 h-4 w-4" />
+                                Delete Lesson
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        asChild
-                        className="rounded-lg hover:bg-purple-100"
-                      >
-                        <Link href={`/admin/units/${unit.id}`}>View Unit</Link>
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="text-4xl mb-2">📚</div>
-                  <h3 className="text-lg font-medium text-gray-700">
-                    No units yet
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    Start creating units for this course
-                  </p>
-                  <Button asChild>
-                    <Link
-                      href="/admin/units/new"
-                      className="flex items-center gap-2"
-                    >
-                      Add First Unit
-                    </Link>
-                  </Button>
-                </div>
-              )}
+                      <div className="space-y-2">
+                        {lesson.challenges.map((challenge) => (
+                          <div
+                            key={challenge.id}
+                            className="flex items-center justify-between p-4 rounded-lg border"
+                          >
+                            <div className="flex items-center gap-4">
+                              <Badge variant="outline">{challenge.type}</Badge>
+                              <span className="text-sm">
+                                {challenge.question}
+                              </span>
+                            </div>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem asChild>
+                                  <Link
+                                    href={`/admin/courses/${courseId}/units/${unit.id}/lessons/${lesson.id}/challenges/${challenge.id}/edit`}
+                                    className="flex items-center"
+                                  >
+                                    <Pencil className="h-4 w-4 mr-2" />
+                                    Edit Challenge
+                                  </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-red-500 focus:text-red-500"
+                                  onClick={() =>
+                                    setDeleteConfirmation({
+                                      type: "challenge",
+                                      id: challenge.id,
+                                      unitId: unit.id,
+                                      lessonId: lesson.id,
+                                      name: challenge.question,
+                                    })
+                                  }
+                                >
+                                  <Trash className="h-4 w-4 mr-2" />
+                                  Delete Challenge
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </CardContent>
           </Card>
-        </div>
-
-        <div className="space-y-6">
-          <Card className="border-none shadow-md rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-green-500 to-blue-500">
-              <CardTitle className="text-white flex items-center gap-2">
-                <FileText className="h-5 w-5" /> Quick Stats
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">
-                    📚
-                  </div>
-                  <div>
-                    <p className="text-sm text-blue-600">Total Units</p>
-                    <p className="text-xl font-bold">{units.length}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50">
-                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-xl">
-                    📝
-                  </div>
-                  <div>
-                    <p className="text-sm text-green-600">Total Lessons</p>
-                    <p className="text-xl font-bold">
-                      {units.reduce(
-                        (acc, unit) => acc + unit.lessons.length,
-                        0
-                      )}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-purple-50">
-                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">
-                    🎮
-                  </div>
-                  <div>
-                    <p className="text-sm text-purple-600">Total Challenges</p>
-                    <p className="text-xl font-bold">
-                      {units.reduce(
-                        (acc, unit) =>
-                          acc +
-                          unit.lessons.reduce(
-                            (lessonAcc, lesson) =>
-                              lessonAcc + lesson.challenges.length,
-                            0
-                          ),
-                        0
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-none shadow-md rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500">
-              <CardTitle className="text-white flex items-center gap-2">
-                <BookOpen className="h-5 w-5" /> Actions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-3">
-                <Button
-                  className="w-full justify-start rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100"
-                  variant="ghost"
-                  asChild
-                >
-                  <Link
-                    href="/admin/units/new"
-                    className="flex items-center gap-2"
-                  >
-                    <Layers className="h-4 w-4" />
-                    Add New Unit
-                  </Link>
-                </Button>
-
-                <Button
-                  className="w-full justify-start rounded-xl bg-green-50 text-green-600 hover:bg-green-100"
-                  variant="ghost"
-                  asChild
-                >
-                  <Link
-                    href="/admin/lessons/new"
-                    className="flex items-center gap-2"
-                  >
-                    <FileText className="h-4 w-4" />
-                    Add New Lesson
-                  </Link>
-                </Button>
-
-                <Button
-                  className="w-full justify-start rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100"
-                  variant="ghost"
-                  asChild
-                >
-                  <Link
-                    href="/admin/challenges/new"
-                    className="flex items-center gap-2"
-                  >
-                    <BookOpen className="h-4 w-4" />
-                    Add New Challenge
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        ))}
       </div>
+
+      <Dialog
+        open={!!editingItem}
+        onOpenChange={(open) => !open && setEditingItem(null)}
+      >
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>
+              Edit {editingItem?.type === "unit" ? "Unit" : "Lesson"}
+            </DialogTitle>
+          </DialogHeader>
+          {editingItem?.type === "unit" ? (
+            <UnitEditForm
+              unitId={editingItem.id}
+              initialData={editingItem.data}
+              onCancel={() => setEditingItem(null)}
+              onSuccess={(data) => {
+                setUnits((prevUnits) =>
+                  prevUnits.map((unit) =>
+                    unit.id === editingItem.id ? { ...unit, ...data } : unit
+                  )
+                );
+                setEditingItem(null);
+              }}
+            />
+          ) : editingItem?.type === "lesson" ? (
+            <LessonEditForm
+              lessonId={editingItem.id}
+              unitId={1}
+              initialData={editingItem.data}
+              onSuccess={() => {
+                setEditingItem(null);
+              }}
+            />
+          ) : null}
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog
+        open={!!deleteConfirmation}
+        onOpenChange={(open) => !open && setDeleteConfirmation(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the {deleteConfirmation?.type} &quot;
+              {deleteConfirmation?.name}&quot;.
+              {deleteConfirmation?.type === "unit" &&
+                " This will also delete all lessons and challenges within this unit."}
+              {deleteConfirmation?.type === "lesson" &&
+                " This will also delete all challenges within this lesson."}
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Delete {deleteConfirmation?.type}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

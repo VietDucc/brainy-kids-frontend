@@ -22,76 +22,82 @@ import { ChevronLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const courseFormSchema = z.object({
+const unitFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  imageSrc: z.string().url("Must be a valid URL").optional(),
+  orderUnit: z.number().min(0, "Order must be 0 or greater"),
 });
 
-type CourseFormValues = z.infer<typeof courseFormSchema>;
+type UnitFormValues = z.infer<typeof unitFormSchema>;
 
-export default function EditCoursePage() {
+export default function UnitForm() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
+  const isEditing = params.unitId !== "new";
 
-  const form = useForm<CourseFormValues>({
-    resolver: zodResolver(courseFormSchema),
+  const form = useForm<UnitFormValues>({
+    resolver: zodResolver(unitFormSchema),
     defaultValues: {
       title: "",
       description: "",
-      imageSrc: "",
+      orderUnit: 0,
     },
   });
 
   useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        const response = await fetch(`/api/courses/${params.courseId}`);
-        if (!response.ok) throw new Error("Failed to fetch course");
+    if (isEditing) {
+      const fetchUnit = async () => {
+        try {
+          const response = await fetch(`/api/units/${params.unitId}`);
+          const data = await response.json();
+          form.reset({
+            title: data.title,
+            description: data.description,
+            orderUnit: data.orderUnit,
+          });
+        } catch (error) {
+          console.error("Error fetching unit:", error);
+          toast({
+            title: "Error fetching unit",
+            description: "Please try again later",
+            variant: "destructive",
+          });
+        }
+      };
+      fetchUnit();
+    }
+  }, [isEditing, params.unitId]);
 
-        const data = await response.json();
-        form.reset({
-          title: data.title,
-          description: data.description,
-          imageSrc: data.imageSrc || "",
-        });
-      } catch (error) {
-        console.error("Error fetching course:", error);
-        toast({
-          title: "Error fetching course",
-          description: "Please try again later",
-          variant: "destructive",
-        });
-      }
-    };
-
-    fetchCourse();
-  }, [params.courseId]);
-
-  const onSubmit = async (data: CourseFormValues) => {
+  const onSubmit = async (data: UnitFormValues) => {
     try {
-      const response = await fetch(`/api/courses/${params.courseId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        isEditing ? `/api/units/1` : "/api/units/1",
+        {
+          method: isEditing ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...data,
+            courseId: params.courseId,
+          }),
+        }
+      );
 
-      if (!response.ok) throw new Error("Failed to update course");
+      if (!response.ok) throw new Error("Failed to save unit");
 
       toast({
-        title: "Course updated successfully",
+        title: `Unit ${isEditing ? "updated" : "created"} successfully`,
         variant: "success",
       });
 
-      router.push("/admin/courses");
+      router.push(`/admin/courses/${params.courseId}`);
       router.refresh();
     } catch (error) {
-      console.error("Error updating course:", error);
+      console.error("Error saving unit:", error);
       toast({
-        title: "Error updating course",
+        title: `Error ${isEditing ? "updating" : "creating"} unit`,
         description: "Please try again later",
         variant: "destructive",
       });
@@ -108,17 +114,19 @@ export default function EditCoursePage() {
             asChild
             className="rounded-full hover:bg-blue-50"
           >
-            <Link href="/admin/courses">
+            <Link href={`/admin/courses/${params.courseId}`}>
               <ChevronLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <h1 className="text-xl font-semibold">Edit Course</h1>
+          <h1 className="text-xl font-semibold">
+            {isEditing ? "Edit Unit" : "Create New Unit"}
+          </h1>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Course Information</CardTitle>
+          <CardTitle>Unit Information</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -130,10 +138,10 @@ export default function EditCoursePage() {
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter course title" {...field} />
+                      <Input placeholder="Enter unit title" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Give your course a clear and descriptive title
+                      Give your unit a clear and descriptive title
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -148,13 +156,13 @@ export default function EditCoursePage() {
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Enter course description"
+                        placeholder="Enter unit description"
                         {...field}
                         rows={4}
                       />
                     </FormControl>
                     <FormDescription>
-                      Describe what students will learn in this course
+                      Describe what students will learn in this unit
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -163,18 +171,20 @@ export default function EditCoursePage() {
 
               <FormField
                 control={form.control}
-                name="imageSrc"
+                name="orderUnit"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cover Image URL</FormLabel>
+                    <FormLabel>Order</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="https://example.com/image.jpg"
+                        type="number"
+                        min={0}
                         {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
                     <FormDescription>
-                      Provide a URL for the course cover image
+                      Set the order in which this unit appears (0 = first)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -189,7 +199,9 @@ export default function EditCoursePage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Update Course</Button>
+                <Button type="submit">
+                  {isEditing ? "Update Unit" : "Create Unit"}
+                </Button>
               </div>
             </form>
           </Form>

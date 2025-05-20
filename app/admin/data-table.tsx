@@ -1,41 +1,50 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ChevronLeft, ChevronRight, Search } from "lucide-react"
+import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 interface DataTableProps<T> {
-  data: T[]
+  data: T[];
   columns: {
-    header: string
-    accessorKey: keyof T
-    cell?: (item: T) => React.ReactNode
-  }[]
+    header: string;
+    accessorKey: keyof T;
+    cell?: (item: T) => React.ReactNode;
+  }[];
 }
 
 export function DataTable<T>({ data, columns }: DataTableProps<T>) {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [searchTerm, setSearchTerm] = useState("")
-  const pageSize = 5
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const pageSize = 5;
 
-  // Filter data based on search term
   const filteredData = data.filter((item) => {
-    return Object.values(item as Record<string, any>).some((value) => {
+    return Object.values(item as Record<string, string>).some((value) => {
       if (typeof value === "string") {
-        return value.toLowerCase().includes(searchTerm.toLowerCase())
+        return value.toLowerCase().includes(searchTerm.toLowerCase());
       }
-      return false
-    })
-  })
+      return false;
+    });
+  });
 
   // Paginate data
-  const paginatedData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
-  const totalPages = Math.ceil(filteredData.length / pageSize)
+  const totalPages = Math.ceil(filteredData.length / pageSize);
 
   return (
     <div className="space-y-4">
@@ -46,8 +55,8 @@ export function DataTable<T>({ data, columns }: DataTableProps<T>) {
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => {
-              setSearchTerm(e.target.value)
-              setCurrentPage(1)
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
             }}
             className="h-9 w-[250px]"
           />
@@ -64,7 +73,9 @@ export function DataTable<T>({ data, columns }: DataTableProps<T>) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages || totalPages === 0}
           >
             <ChevronRight className="h-4 w-4" />
@@ -86,14 +97,19 @@ export function DataTable<T>({ data, columns }: DataTableProps<T>) {
                 <TableRow key={index}>
                   {columns.map((column) => (
                     <TableCell key={column.header}>
-                      {column.cell ? column.cell(item) : (item[column.accessorKey] as React.ReactNode)}
+                      {column.cell
+                        ? column.cell(item)
+                        : (item[column.accessorKey] as React.ReactNode)}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -107,6 +123,5 @@ export function DataTable<T>({ data, columns }: DataTableProps<T>) {
         </div>
       </div>
     </div>
-  )
+  );
 }
-

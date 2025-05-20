@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import {
   BookOpen,
   Layers,
-  FileText,
+  // FileText,
   Award,
   LayoutDashboard,
   Users,
@@ -57,13 +57,13 @@ export default function AdminLayout({
       color: "bg-purple-100 text-purple-600",
       hoverColor: "hover:bg-purple-100 hover:text-purple-600",
     },
-    {
-      href: "/admin/lessons",
-      icon: FileText,
-      title: "Lessons",
-      color: "bg-green-100 text-green-600",
-      hoverColor: "hover:bg-green-100 hover:text-green-600",
-    },
+    // {
+    //   href: "/admin/lessons",
+    //   icon: FileText,
+    //   title: "Lessons",
+    //   color: "bg-green-100 text-green-600",
+    //   hoverColor: "hover:bg-green-100 hover:text-green-600",
+    // },
     {
       href: "/admin/challenges",
       icon: Award,

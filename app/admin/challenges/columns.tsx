@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import type { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import type { ColumnDef } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,18 +10,23 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Pencil, Trash, Eye } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Pencil, Trash, Eye } from "lucide-react";
 
 export type Challenge = {
-  id: string
-  title: string
-  type: "multiple-choice" | "matching" | "fill-in-blanks" | "speaking" | "listening"
-  lessonTitle: string
-  unitTitle: string
-  status: "published" | "draft"
-  createdAt: string
-}
+  id: string;
+  title: string;
+  type:
+    | "multiple-choice"
+    | "matching"
+    | "fill-in-blanks"
+    | "speaking"
+    | "listening";
+  lessonTitle: string;
+  unitTitle: string;
+  status: "published" | "draft";
+  createdAt: string;
+};
 
 export const columns: ColumnDef<Challenge>[] = [
   {
@@ -32,7 +37,7 @@ export const columns: ColumnDef<Challenge>[] = [
     accessorKey: "type",
     header: "Type",
     cell: ({ row }) => {
-      const type = row.getValue("type") as string
+      const type = row.getValue("type") as string;
       return (
         <Badge variant="outline">
           {type
@@ -40,7 +45,7 @@ export const columns: ColumnDef<Challenge>[] = [
             .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ")}
         </Badge>
-      )
+      );
     },
   },
   {
@@ -55,26 +60,27 @@ export const columns: ColumnDef<Challenge>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string
+      const status = row.getValue("status") as string;
       return (
         <Badge variant={status === "published" ? "default" : "secondary"}>
           {status.charAt(0).toUpperCase() + status.slice(1)}
         </Badge>
-      )
+      );
     },
   },
   {
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"))
-      return <div>{date.toLocaleDateString()}</div>
+      const date = new Date(row.getValue("createdAt"));
+      return <div>{date.toLocaleDateString()}</div>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const challenge = row.original
+      const challenge = row.original;
+      console.log(challenge);
 
       return (
         <DropdownMenu>
@@ -101,8 +107,7 @@ export const columns: ColumnDef<Challenge>[] = [
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
-
+];

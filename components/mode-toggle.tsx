@@ -97,7 +97,6 @@ export function ModeToggle() {
                     ))}
                   </motion.div>
 
-                  {/* Clouds */}
                   <motion.div
                     className="absolute bottom-1 right-1 text-white"
                     animate={{
@@ -139,7 +138,6 @@ export function ModeToggle() {
                       repeatType: "reverse",
                     }}
                   >
-                    {/* Moon craters */}
                     <motion.div
                       className="absolute top-1 left-1 h-1 w-1 rounded-full bg-yellow-200/50"
                       animate={{

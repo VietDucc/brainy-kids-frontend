@@ -5,22 +5,22 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   PlusCircle,
-  Pencil,
   Trash,
   Eye,
   MoreHorizontal,
-  Sparkles,
+  BookOpen,
+  Pencil,
 } from "lucide-react";
-import { DataTable } from "../components/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Course } from "./columns";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 
 import {
   AlertDialog,
@@ -32,12 +32,31 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { CourseEditForm } from "./[courseId]/components/CourseEditForm";
 
-// Mock data for courses
+interface Course {
+  id: string;
+  title: string;
+  imageSrc: string;
+  description: string;
+  progress?: number;
+  totalUnits?: number;
+  totalLessons?: number;
+  totalChallenges?: number;
+}
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+  const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -46,7 +65,17 @@ export default function CoursesPage() {
       try {
         const response = await fetch("/api/courses");
         const data = await response.json();
-        setCourses(data);
+
+        // Transform data to include statistics
+        const coursesWithStats = data.map((course: Course) => ({
+          ...course,
+          progress: Math.floor(Math.random() * 100), // Replace with actual progress
+          totalUnits: 5, // Replace with actual count from units API
+          totalLessons: 15,
+          totalChallenges: 45,
+        }));
+
+        setCourses(coursesWithStats);
       } catch (error) {
         console.error("Error fetching courses:", error);
         toast({
@@ -80,139 +109,18 @@ export default function CoursesPage() {
     }
   };
 
-  const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
-
-  const onDelete = (courseId: string) => {
-    setCourseToDelete(courseId);
-  };
-
-  const confirmDelete = async () => {
-    if (courseToDelete) {
-      await handleDelete(courseToDelete);
-      setCourseToDelete(null);
-    }
-  };
-
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-
-  const handleDropdownAction = (courseId: string, action: () => void) => {
-    action();
-    setOpenDropdown(null);
-  };
-
-  const columns = [
-    {
-      header: "ID",
-      accessorKey: "id" as const,
-      cell: (course: (typeof courses)[0]) => (
-        <div className="flex items-center gap-3">
-          <span className="font-medium">{course.id}</span>
-        </div>
-      ),
-    },
-    {
-      header: "Course",
-      accessorKey: "title" as const,
-      cell: (course: (typeof courses)[0]) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">
-            🚀
-          </div>
-          <span className="font-medium">{course.title}</span>
-        </div>
-      ),
-    },
-
-    {
-      header: "Image",
-      accessorKey: "imageSrc" as const,
-      cell: (course: (typeof courses)[0]) => (
-        <Image
-          src={course.imageSrc}
-          alt={course.title}
-          width={50}
-          height={50}
-          className="rounded-lg"
-        />
-      ),
-    },
-    {
-      header: "Actions",
-      accessorKey: "id" as const,
-      cell: (course: (typeof courses)[0]) => (
-        <DropdownMenu
-          open={openDropdown === course.id}
-          onOpenChange={(open) => setOpenDropdown(open ? course.id : null)}
-        >
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hover:bg-blue-50"
-            >
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Actions</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="rounded-xl">
-            <DropdownMenuItem
-              asChild
-              className="rounded-lg cursor-pointer"
-              onClick={() => setOpenDropdown(null)}
-            >
-              <Link
-                href={`/admin/courses/${course.id}`}
-                className="flex items-center"
-              >
-                <Eye className="mr-2 h-4 w-4 text-blue-500" />
-                <span>View Course</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              asChild
-              className="rounded-lg cursor-pointer"
-              onClick={() => setOpenDropdown(null)}
-            >
-              <Link
-                href={`/admin/courses/${course.id}/edit`}
-                className="flex items-center"
-              >
-                <Pencil className="mr-2 h-4 w-4 text-amber-500" />
-                <span>Edit Course</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={Number(course.id) === 1}
-              onClick={() =>
-                Number(course.id) !== 1 &&
-                handleDropdownAction(course.id, () => onDelete(course.id))
-              }
-              className="rounded-lg cursor-pointer text-red-500 focus:text-red-500 focus:bg-red-50"
-            >
-              <Trash className="mr-2 h-4 w-4" />
-              {Number(course.id) !== 1 ? (
-                <span>Delete Course</span>
-              ) : (
-                <span>Cannot delete default course</span>
-              )}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    },
-  ];
-
   return (
     <>
       <div className="space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
-              Learning Courses 📚
+              Learning Courses
             </h1>
-            <p className="text-gray-600 mt-2">
-              Create and manage fun learning courses for children
-            </p>
+            <div className="flex items-center gap-2 text-gray-600 mt-2">
+              <BookOpen className="h-4 w-4" />
+              <span>Manage and organize your educational content</span>
+            </div>
           </div>
           <Button
             asChild
@@ -228,34 +136,207 @@ export default function CoursesPage() {
           </Button>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border">
-          <div className="flex items-center gap-2 mb-6">
-            <Sparkles className="h-5 w-5 text-amber-500" />
-            <h2 className="text-xl font-semibold">All Courses</h2>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="animate-pulse">
+                <CardHeader className="h-32 bg-gray-100 rounded-t-lg" />
+                <CardContent className="p-6">
+                  <div className="h-6 bg-gray-100 rounded w-3/4 mb-4" />
+                  <div className="h-4 bg-gray-100 rounded w-1/2" />
+                </CardContent>
+              </Card>
+            ))}
           </div>
-          <DataTable columns={columns} data={courses} loading={loading} />
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {courses.map((course) => (
+              <Card
+                key={course.id}
+                className="overflow-hidden hover:shadow-lg transition-shadow duration-300 group flex flex-col"
+              >
+                <Link
+                  href={`/admin/courses/${course.id}`}
+                  className="flex-shrink-0"
+                >
+                  <CardHeader className="relative h-36 p-0">
+                    <Image
+                      src={
+                        (course.imageSrc !== "string" && course.imageSrc) ||
+                        "/images/course-placeholder.jpg"
+                      }
+                      alt={course.title}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/images/course-placeholder.jpg";
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <h3 className="text-lg font-semibold text-white line-clamp-1">
+                        {course.title}
+                      </h3>
+                    </div>
+                  </CardHeader>
+                </Link>
+                <CardContent className="p-3 flex-1 flex flex-col">
+                  <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                    {course.description}
+                  </p>
+
+                  <div className="mt-auto space-y-3">
+                    <div className="grid grid-cols-3 gap-1.5 text-center text-xs">
+                      <div className="flex items-center justify-center gap-1 text-blue-600">
+                        <div className="font-semibold">{course.totalUnits}</div>
+                        <div className="opacity-80">Units</div>
+                      </div>
+                      <div className="flex items-center justify-center gap-1 text-purple-600">
+                        <div className="font-semibold">
+                          {course.totalLessons}
+                        </div>
+                        <div className="opacity-80">Lessons</div>
+                      </div>
+                      <div className="flex items-center justify-center gap-1 text-green-600">
+                        <div className="font-semibold">
+                          {course.totalChallenges}
+                        </div>
+                        <div className="opacity-80">Tasks</div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-600 font-medium">
+                          Progress
+                        </span>
+                        <span className="font-semibold text-blue-600">
+                          {course.progress}%
+                        </span>
+                      </div>
+                      <Progress value={course.progress} className="h-1" />
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <Link
+                        href={`/admin/courses/${course.id}`}
+                        className="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                      >
+                        <Eye className="h-3 w-3" />
+                        View Course
+                      </Link>
+                      <DropdownMenu
+                        open={openDropdownId === course.id}
+                        onOpenChange={(open) => {
+                          setOpenDropdownId(open ? course.id : null);
+                        }}
+                      >
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 rounded-full hover:bg-gray-100"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setEditingCourse(course);
+                              setOpenDropdownId(null);
+                            }}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            <span>Edit Course</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setCourseToDelete(course.id);
+                              setOpenDropdownId(null);
+                            }}
+                            className="text-red-500 focus:text-red-500 cursor-pointer"
+                            disabled={course.id == "1"}
+                          >
+                            <Trash className="mr-2 h-4 w-4" />
+                            <span>
+                              {course.id == "1"
+                                ? "Cannot delete default"
+                                : "Delete"}
+                            </span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
+
+      <Dialog
+        open={!!editingCourse}
+        onOpenChange={(open) => !open && setEditingCourse(null)}
+      >
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit Course</DialogTitle>
+          </DialogHeader>
+          {editingCourse && (
+            <CourseEditForm
+              courseId={editingCourse.id}
+              initialData={{
+                title: editingCourse.title,
+                description: editingCourse.description,
+                imageSrc: editingCourse.imageSrc,
+              }}
+              onCancel={() => setEditingCourse(null)}
+              onSuccess={(data) => {
+                setCourses((prevCourses) =>
+                  prevCourses.map((course) =>
+                    course.id === editingCourse.id
+                      ? { ...course, ...data }
+                      : course
+                  )
+                );
+                setEditingCourse(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog
         open={!!courseToDelete}
-        onOpenChange={(open) => !open && setCourseToDelete(null)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCourseToDelete(null);
+            setOpenDropdownId(null);
+          }
+        }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              Are you sure you want to delete this course?
-            </AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              course and all its associated data.
+              This will permanently delete the course and all its associated
+              units, lessons, and challenges. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-red-500 text-white hover:bg-red-600"
+              onClick={() => {
+                if (courseToDelete) {
+                  handleDelete(courseToDelete);
+                  setCourseToDelete(null);
+                }
+              }}
+              className="bg-red-500 hover:bg-red-600"
             >
               Delete Course
             </AlertDialogAction>

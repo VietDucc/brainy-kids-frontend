@@ -1,7 +1,5 @@
 "use client";
 
-import type React from "react";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -9,48 +7,59 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-// Mock data for courses
-const courses = [
-  { id: "1", title: "Basic English for Kids" },
-  { id: "2", title: "Intermediate English" },
-  { id: "3", title: "Advanced Vocabulary" },
-  { id: "4", title: "English Grammar Basics" },
-  { id: "5", title: "Conversation Practice" },
-];
+import { useToast } from "@/hooks/use-toast";
 
 export default function NewUnitPage() {
   const router = useRouter();
+  const courseId = 1;
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    courseId: "",
-    status: "draft",
+    orderUnit: 0,
   });
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push("/admin/units");
-    }, 1000);
+    try {
+      const response = await fetch(`/api/units/${courseId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          courseId,
+          title: formData.title,
+          description: formData.description,
+          orderUnit: formData.orderUnit,
+        }),
+      });
 
-    console.log(formData);
+      if (!response.ok) {
+        throw new Error("Failed to create unit");
+      }
+
+      toast({
+        variant: "success",
+        title: "Unit created successfully",
+      });
+      router.push("/admin/units");
+    } catch (error) {
+      console.error("Error creating unit:", error);
+      toast({
+        variant: "error",
+        title: "Error creating unit",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -95,52 +104,27 @@ export default function NewUnitPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="courseId">Course</Label>
-                <Select
-                  value={formData.courseId}
-                  onValueChange={(value) => handleChange("courseId", value)}
-                >
-                  <SelectTrigger id="courseId">
-                    <SelectValue placeholder="Select a course" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {courses.map((course) => (
-                      <SelectItem key={course.id} value={course.id}>
-                        {course.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-muted-foreground">
-                  The course this unit belongs to.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value) => handleChange("status", value)}
-                >
-                  <SelectTrigger id="status">
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-muted-foreground">
-                  Set the visibility status of your unit.
-                </p>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="orderUnit">Order</Label>
+              <Input
+                id="orderUnit"
+                type="number"
+                placeholder="Enter unit order"
+                value={formData.orderUnit}
+                onChange={(e) =>
+                  handleChange("orderUnit", parseInt(e.target.value, 10))
+                }
+                required
+                min={0}
+              />
+              <p className="text-sm text-muted-foreground">
+                The order in which this unit appears in the course.
+              </p>
             </div>
 
             <div className="flex gap-2">
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Saving..." : "Save Unit"}
+                {isLoading ? "Creating..." : "Create Unit"}
               </Button>
               <Button
                 type="button"

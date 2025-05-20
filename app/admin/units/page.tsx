@@ -1,95 +1,135 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { PlusCircle, Pencil, Trash, Eye, MoreHorizontal } from "lucide-react"
-import { DataTable } from "../components/data-table"
-import { Badge } from "@/components/ui/badge"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, Pencil, Trash, Eye, MoreHorizontal } from "lucide-react";
+import { DataTable } from "../components/data-table";
+import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-// Mock data for units
-const unitsData = [
-  {
-    id: "1",
-    title: "Greetings and Introductions",
-    courseTitle: "Basic English for Kids",
-    lessons: 5,
-    status: "published",
-    createdAt: "2023-06-05T12:00:00Z",
-  },
-  {
-    id: "2",
-    title: "Numbers and Counting",
-    courseTitle: "Basic English for Kids",
-    lessons: 4,
-    status: "published",
-    createdAt: "2023-06-10T10:30:00Z",
-  },
-  {
-    id: "3",
-    title: "Colors and Shapes",
-    courseTitle: "Basic English for Kids",
-    lessons: 6,
-    status: "published",
-    createdAt: "2023-06-15T14:45:00Z",
-  },
-  {
-    id: "4",
-    title: "Family Members",
-    courseTitle: "Basic English for Kids",
-    lessons: 3,
-    status: "draft",
-    createdAt: "2023-06-20T09:15:00Z",
-  },
-  {
-    id: "5",
-    title: "Animals and Pets",
-    courseTitle: "Basic English for Kids",
-    lessons: 7,
-    status: "published",
-    createdAt: "2023-06-25T11:20:00Z",
-  },
-]
+type ChallengeOption = {
+  id: number;
+  textOption: string;
+  correct: boolean;
+  imageSrc: string | null;
+  audioSrc: string | null;
+};
+
+type Challenge = {
+  id: number;
+  type: "SELECT" | "ASSIST";
+  imgSrc: string | null;
+  question: string;
+  orderChallenge: number;
+  challengesOption: ChallengeOption[];
+  challengesProgress: any[];
+};
+
+type Vocabulary = {
+  id: number;
+  note: string;
+  orderVocabulary: number;
+  eng: string;
+  vie: string;
+};
+
+type Lesson = {
+  id: number;
+  title: string;
+  difficulty: string | null;
+  orderIndex: number;
+  challenges: Challenge[];
+  vocabularies: Vocabulary[];
+};
+
+type Unit = {
+  id: number;
+  title: string;
+  description: string;
+  orderUnit: number;
+  lessons: Lesson[];
+};
 
 export default function UnitsPage() {
-  const [units, setUnits] = useState(unitsData)
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const courseId = 1;
 
-  const handleDelete = (id: string) => {
-    setUnits(units.filter((unit) => unit.id !== id))
-  }
+  useEffect(() => {
+    setLoading(true);
+    const fetchUnits = async () => {
+      try {
+        const unitsResponse = await fetch(`/api/units/${courseId}`);
+        if (!unitsResponse.ok) {
+          throw new Error("Failed to fetch course units");
+        }
+        const unitsData = await unitsResponse.json();
+        setUnits(unitsData);
+      } catch (error) {
+        console.error("Error fetching units:", error);
+        toast({
+          variant: "error",
+          title: "Error fetching units",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUnits();
+  }, [toast]);
 
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`/api/units/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete unit");
+      }
+
+      setUnits(units.filter((unit) => unit.id !== id));
+      toast({
+        variant: "success",
+        title: "Unit deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting unit:", error);
+      toast({
+        variant: "error",
+        title: "Error deleting unit",
+      });
+    }
+  };
   const columns = [
     {
       header: "Title",
-      accessorKey: "title" as const,
+      accessorKey: "title" as keyof Unit,
     },
     {
-      header: "Course",
-      accessorKey: "courseTitle" as const,
+      header: "Description",
+      accessorKey: "description" as keyof Unit,
+    },
+    {
+      header: "Order",
+      accessorKey: "orderUnit" as keyof Unit,
     },
     {
       header: "Lessons",
-      accessorKey: "lessons" as const,
-    },
-    {
-      header: "Status",
-      accessorKey: "status" as const,
-      cell: (unit: (typeof units)[0]) => (
-        <Badge variant={unit.status === "published" ? "default" : "secondary"}>
-          {unit.status.charAt(0).toUpperCase() + unit.status.slice(1)}
-        </Badge>
-      ),
-    },
-    {
-      header: "Created At",
-      accessorKey: "createdAt" as const,
-      cell: (unit: (typeof units)[0]) => <span>{new Date(unit.createdAt).toLocaleDateString()}</span>,
+      accessorKey: "lessons" as keyof Unit,
+      cell: (item: Unit) => item.lessons.length,
     },
     {
       header: "Actions",
-      accessorKey: "id" as const,
-      cell: (unit: (typeof units)[0]) => (
+      accessorKey: "id" as keyof Unit,
+      cell: (item: Unit) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
@@ -99,18 +139,18 @@ export default function UnitsPage() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/admin/units/${unit.id}`}>
+              <Link href={`/admin/units/${courseId}/${item.id}`}>
                 <Eye className="mr-2 h-4 w-4" />
                 View
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href={`/admin/units/${unit.id}/edit`}>
+              <Link href={`/admin/units/${courseId}/${item.id}/edit`}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDelete(unit.id)}>
+            <DropdownMenuItem onClick={() => handleDelete(item.id)}>
               <Trash className="mr-2 h-4 w-4" />
               Delete
             </DropdownMenuItem>
@@ -118,7 +158,7 @@ export default function UnitsPage() {
         </DropdownMenu>
       ),
     },
-  ]
+  ];
 
   return (
     <div className="space-y-6">
@@ -134,8 +174,7 @@ export default function UnitsPage() {
           </Link>
         </Button>
       </div>
-      <DataTable columns={columns} data={units} />
+      <DataTable columns={columns} data={units} loading={loading} />
     </div>
-  )
+  );
 }
-
