@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import {
   CheckCircle,
   XCircle,
-  Volume2,
   ArrowRight,
   Heart,
   ArrowLeft,
@@ -16,9 +15,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
+import { SelectChallenge } from "./components/SelectChallenge";
+import { SingleChallenge } from "./components/SingleChallenge";
+import { AssistChallenge } from "./components/AssistChallenge";
+import { MultiChallenge } from "./components/MultiChallenge";
 
 interface ChallengeOption {
   id: number;
@@ -30,7 +32,8 @@ interface ChallengeOption {
 
 interface Challenge {
   id: number;
-  type: string;
+  type: "SELECT" | "SINGLE" | "MULTI" | "ASSIST" | string;
+  imgSrc?: string | null;
   question: string;
   orderChallenge: number;
   challengesOption: ChallengeOption[];
@@ -206,6 +209,22 @@ export const ChallengeScreen = ({
     setShowExitConfirmation(false);
   };
 
+  const handleMultiSuccess = () => {
+    setIsCorrect(true);
+    setStreak(streak + 1);
+    setFeedbackMessage("Correct!");
+    correctSoundRef.current?.play();
+    setResults((prev) => ({
+      ...prev,
+      correct: prev.correct + 1,
+      xp: prev.xp + 10,
+    }));
+    const timeout = setTimeout(() => {
+      handleNext();
+    }, 3500);
+    setAutoAdvanceTimeout(timeout);
+  };
+
   const handleFinishLesson = async () => {
     try {
       setIsSubmitting(true);
@@ -240,11 +259,6 @@ export const ChallengeScreen = ({
     }
   };
 
-  const playAudio = (src: string) => {
-    const audio = new Audio(src);
-    audio.play();
-  };
-
   if (!currentChallenge && !showSummary) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
@@ -254,7 +268,6 @@ export const ChallengeScreen = ({
     );
   }
 
-  // Hiển thị màn hình tổng kết khi hoàn thành
   if (showSummary) {
     return (
       <div className="fixed inset-0 bg-white dark:bg-gray-950 z-50 flex flex-col items-center justify-center p-4">
@@ -383,91 +396,43 @@ export const ChallengeScreen = ({
 
       <div className="flex-1 pt-16 pb-24 px-4">
         <div className="max-w-4xl mx-auto">
-          {/* Challenge question */}
-          <div className="mt-20 text-center">
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
-              {currentChallenge.question}
-            </h2>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">
-              {currentChallenge.type === "SELECT"
-                ? "Select the correct answer"
-                : "Complete the challenge"}
-            </p>
-          </div>
+          {currentChallenge.type === "SELECT" && (
+            <SelectChallenge
+              question={currentChallenge.question}
+              options={currentChallenge.challengesOption}
+              selectedOptionId={selectedOptionId}
+              isCorrect={isCorrect}
+              onOptionClick={handleOptionClick}
+            />
+          )}
 
-          {/* Challenge options */}
-          <div className="space-y-4">
-            {currentChallenge.challengesOption.map((option) => (
-              <div
-                key={option.id}
-                className={cn(
-                  "p-4 border rounded-xl transition-all cursor-pointer flex justify-between items-center",
-                  selectedOptionId === null
-                    ? "hover:border-primary hover:bg-primary/5"
-                    : "",
-                  selectedOptionId === option.id && isCorrect
-                    ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-                    : "",
-                  selectedOptionId === option.id && !isCorrect
-                    ? "border-red-500 bg-red-50 dark:bg-red-900/20"
-                    : "",
-                  selectedOptionId !== null &&
-                    selectedOptionId !== option.id &&
-                    option.correct
-                    ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-                    : "",
-                  selectedOptionId !== null &&
-                    selectedOptionId !== option.id &&
-                    !option.correct
-                    ? "opacity-50"
-                    : ""
-                )}
-                onClick={() => handleOptionClick(option.id)}
-              >
-                <div className="flex items-center gap-3">
-                  {option.audioSrc && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        playAudio(option.audioSrc!);
-                      }}
-                      className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
-                    >
-                      <Volume2 className="h-5 w-5 text-primary" />
-                    </button>
-                  )}
-                  <span className="font-medium text-slate-800 dark:text-slate-200">
-                    {option.textOption}
-                  </span>
-                </div>
+          {currentChallenge.type === "SINGLE" && currentChallenge.imgSrc && (
+            <SingleChallenge
+              question={currentChallenge.question}
+              imgSrc={currentChallenge.imgSrc}
+              options={currentChallenge.challengesOption}
+              selectedOptionId={selectedOptionId}
+              isCorrect={isCorrect}
+              onOptionClick={handleOptionClick}
+            />
+          )}
 
-                <div className="flex items-center">
-                  {option.imageSrc && (
-                    <div className="h-14 w-14 relative mr-3 rounded-md overflow-hidden">
-                      <Image
-                        src={option.imageSrc}
-                        alt={option.textOption}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  )}
+          {currentChallenge.type === "MULTI" && (
+            <MultiChallenge
+              question={currentChallenge.question}
+              onCorrectArrangement={handleMultiSuccess}
+            />
+          )}
 
-                  {selectedOptionId === option.id && isCorrect && (
-                    <CheckCircle className="h-6 w-6 text-green-500 ml-2 flex-shrink-0" />
-                  )}
-                  {selectedOptionId === option.id && !isCorrect && (
-                    <XCircle className="h-6 w-6 text-red-500 ml-2 flex-shrink-0" />
-                  )}
-                  {selectedOptionId !== null &&
-                    selectedOptionId !== option.id &&
-                    option.correct && (
-                      <CheckCircle className="h-6 w-6 text-green-500 ml-2 flex-shrink-0" />
-                    )}
-                </div>
-              </div>
-            ))}
-          </div>
+          {currentChallenge.type === "ASSIST" && (
+            <AssistChallenge
+              question={currentChallenge.question}
+              options={currentChallenge.challengesOption}
+              selectedOptionId={selectedOptionId}
+              isCorrect={isCorrect}
+              onOptionClick={handleOptionClick}
+            />
+          )}
         </div>
       </div>
 
