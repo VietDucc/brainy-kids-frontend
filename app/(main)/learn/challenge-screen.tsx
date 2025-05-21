@@ -421,6 +421,18 @@ export const ChallengeScreen = ({
             <MultiChallenge
               question={currentChallenge.question}
               onCorrectArrangement={handleMultiSuccess}
+              onIncorrectAttempt={() => {
+                setIsCorrect(false);
+                setStreak(0);
+                setHearts(hearts - 1);
+                setFeedbackMessage("Incorrect!");
+                incorrectSoundRef.current?.play();
+                setResults((prev) => ({
+                  ...prev,
+                  incorrect: prev.incorrect + 1,
+                }));
+              }}
+              onNext={handleNext}
             />
           )}
 
@@ -436,19 +448,17 @@ export const ChallengeScreen = ({
         </div>
       </div>
 
-      {/* Feedback message with animation */}
       {feedbackMessage && (
         <div
           className={cn(
             "fixed bottom-24 left-0 right-0 text-center py-3 font-bold text-white animate-fade-in",
-            isCorrect ? "bg-green-500" : "bg-red-500"
+            isCorrect ? "bg-primary" : "bg-red-500"
           )}
         >
           {feedbackMessage}
         </div>
       )}
 
-      {/* Exit confirmation dialog */}
       {showExitConfirmation && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-30 p-4">
           <div className="bg-white dark:bg-gray-900 p-6 rounded-xl max-w-md w-full shadow-xl">
@@ -479,7 +489,6 @@ export const ChallengeScreen = ({
         </div>
       )}
 
-      {/* Bottom navigation - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 border-t dark:border-gray-800 p-4 z-10">
         <div className="max-w-4xl mx-auto">
           {selectedOptionId === null ? (
@@ -489,7 +498,7 @@ export const ChallengeScreen = ({
           ) : (
             <Button
               onClick={handleNext}
-              className="w-full py-3 rounded-xl flex items-center justify-center gap-2 bg-primary hover:bg-primary/90"
+              className="w-full py-3 rounded-xl flex items-center justify-center gap-2"
             >
               {currentChallengeIndex < sortedChallenges.length - 1
                 ? "Next"
