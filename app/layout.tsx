@@ -72,16 +72,12 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="vi" suppressHydrationWarning>
-        <meta
-          name="google-site-verification"
-          content="JpWFUnVRaLO5UX__Uu1dI7Fjw5l8w5qVLMLJwJwej-U"
-        />
         <head>
-          <link rel="canonical" href={siteConfig.url} />
           <meta
             name="google-site-verification"
-            content="your-verification-code"
+            content="JpWFUnVRaLO5UX__Uu1dI7Fjw5l8w5qVLMLJwJwej-U"
           />
+          <link rel="canonical" href={siteConfig.url} />
 
           {/* Google tag (gtag.js) */}
           <Script
