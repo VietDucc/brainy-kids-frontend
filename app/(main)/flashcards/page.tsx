@@ -320,23 +320,6 @@ export default function FlashCardApp() {
               Create New Deck
             </p>
           </div>
-
-          {userDecks.length === 0 && (
-            <div className="col-span-full text-center p-4 sm:p-8">
-              <BookOpen className="w-8 h-8 sm:w-12 sm:h-12 mx-auto text-muted-foreground mb-2 sm:mb-4" />
-              <p className="text-sm sm:text-base text-muted-foreground mb-2 sm:mb-4">
-                You haven&apos;t created any decks yet
-              </p>
-              <Button
-                onClick={() => setShowCreateDeck(true)}
-                size="sm"
-                className="h-8 sm:h-9 gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Create First Deck
-              </Button>
-            </div>
-          )}
         </div>
       </div>
 
