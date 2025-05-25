@@ -103,17 +103,16 @@ export default function BlogPost({ post, viewMode, onClick }: BlogPostProps) {
       className="hover:shadow-lg transition-all duration-200 cursor-pointer hover:bg-accent/40 group overflow-hidden"
       onClick={onClick}
     >
-      {post.imageUrl && (
-        <div className="aspect-video relative overflow-hidden">
-          <Image
-            src={post.imageUrl || "https://picsum.photos/400/300"}
-            alt={post.title}
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-            width={400}
-            height={300}
-          />
-        </div>
-      )}
+      <div className="aspect-video relative overflow-hidden">
+        <Image
+          src={post.imageUrl || "https://picsum.photos/400/300"}
+          alt={post?.title || "Blog Post Image"}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+          width={400}
+          height={300}
+        />
+      </div>
+
       <CardHeader className="space-y-2">
         <div className="flex items-center gap-2">
           {post.category && (
@@ -130,7 +129,7 @@ export default function BlogPost({ post, viewMode, onClick }: BlogPostProps) {
           </span>
         </div>
         <h3 className="text-xl font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-          {post.title}
+          {post?.title || "Blog Post Title"}
         </h3>
         <p className="text-muted-foreground line-clamp-3">{post.excerpt}</p>
       </CardHeader>
