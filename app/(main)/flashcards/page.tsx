@@ -273,7 +273,7 @@ export default function FlashCardApp() {
                       }}
                       className="gap-2"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="h-4 w-4 " />
                       Rename
                     </DropdownMenuItem>
                     <AlertDialog>
