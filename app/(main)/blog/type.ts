@@ -3,8 +3,8 @@ export interface BlogPost {
     title: string;
     content: string;
     imageUrl: string | null;
-    createdAt?: string;
-    updatedAt?: string;
+    createdAt: string;
+    updatedAt: string;
     authorId: string;
     comments: Comment[] | null;
     excerpt?: string;
@@ -24,8 +24,11 @@ export interface BlogPost {
   export interface Comment {
     id: number;
     content: string;
-    authorName: string;
+    authorId: string;
     createdAt: string;
+    parentId?: number | null;
+    replies?: Comment[];
+    level?: number;
   }
   
   export interface BlogState {
@@ -40,5 +43,5 @@ export interface BlogPost {
   export interface BlogFilters {
     searchQuery: string;
     category: string;
-    sortBy: "newest" | "oldest" | "popular" | "liked";
+    sortBy: string;
   } 

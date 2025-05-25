@@ -37,4 +37,8 @@ export const api = {
   userDeckById: (clerkUserId: string, id: number) =>
     `${API_BASE_URL}/api/${clerkUserId}/decks/${id}`,
   blog: `${API_BASE_URL}/api/blogs`,
+  blogById: (id: number) => `${API_BASE_URL}/api/blogs/${id}`,
+  blogCommentById: (id: number) => `${API_BASE_URL}/api/blogs/${id}/comments`,
+  replyById: (commentId: number) => `${API_BASE_URL}/api/comments/${commentId}/reply`,
+  commentById: (id: number) => `${API_BASE_URL}/api/comments/${id}`,
 };

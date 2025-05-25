@@ -1,12 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import {  NextResponse } from "next/server";
-import { api } from "../config";
+import { api } from "../../config";
 
 
-
-
-
-export async function POST(request: Request) {
+export async function POST(request: Request, { params }: { params: { id: number } }) {
     const { userId, getToken } = await auth();
   
     if (!userId) {
@@ -21,9 +18,9 @@ export async function POST(request: Request) {
   
     try {
       const body = await request.json();
-      const { title, imageUrl, content } = body;
+      const { content,parentCommentId,blogId } = body;
   
-      const response = await fetch(api.blog, {
+      const response = await fetch(api.blogCommentById(params.id), {
         method: "POST",
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -31,7 +28,7 @@ export async function POST(request: Request) {
             'clerkUserId': userId,
             
         },
-        body: JSON.stringify({ title, imageUrl ,content}),
+        body: JSON.stringify({ content,parentCommentId,blogId}),
       });
   
       if (!response.ok) {
@@ -46,7 +43,7 @@ export async function POST(request: Request) {
     }
   }
 
-  export async function GET() {
+  export async function GET(request: Request, { params }: { params: { id: number } }) {
     const { userId, getToken } = await auth();
     
     if (!userId) {
@@ -60,7 +57,7 @@ export async function POST(request: Request) {
     }
     
     try {
-      const response = await fetch(api.blog, {
+      const response = await fetch(api.blogCommentById(params.id), {
         cache: "no-store",
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -80,3 +77,36 @@ export async function POST(request: Request) {
   }
 
 
+  export async function DELETE(request: Request, { params }: { params: { id: number,commentId: number } }) {
+    const { userId, getToken } = await auth();
+  
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = await getToken({ template: "jwt-clerk" });
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+      const response = await fetch(api.commentById(params.commentId), {
+        method: "DELETE",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'clerkUserId': userId,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete reply");
+      }
+
+      return NextResponse.json({ message: "Reply deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json({ error: "Failed to delete reply" }, { status: 500 });
+    }
+  }     

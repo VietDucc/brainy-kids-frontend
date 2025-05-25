@@ -32,7 +32,6 @@ export function MultiChallenge({
   });
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  // Add useEffect to reset state when question changes
   useEffect(() => {
     setArrangedWords([...question.split(" ")].sort(() => Math.random() - 0.5));
     setHasSubmitted(false);
@@ -70,25 +69,22 @@ export function MultiChallenge({
       element,
     });
 
-    // Add visual feedback
     element.style.opacity = "0.5";
     element.style.transform = "scale(1.05)";
     element.style.zIndex = "50";
   };
 
   const handleTouchMove = (e: TouchEvent) => {
-    e.preventDefault(); // Prevent scrolling while dragging
+    e.preventDefault();
     if (!touchedWord.element) return;
 
     const touch = e.touches[0];
     const element = touchedWord.element;
     const touchY = touch.clientY;
 
-    // Move the element
     element.style.position = "fixed";
-    element.style.top = `${touchY - 30}px`; // 30px offset for better visibility
+    element.style.top = `${touchY - 30}px`;
 
-    // Find the element we're hovering over
     const elements = document.elementsFromPoint(touch.clientX, touchY);
     const droppableElement = elements.find(
       (el) => el.classList.contains("word-item") && el !== element
@@ -97,7 +93,6 @@ export function MultiChallenge({
     if (droppableElement) {
       const dropIndex = parseInt(droppableElement.dataset.index || "-1");
       if (dropIndex !== -1 && dropIndex !== touchedWord.index) {
-        // Rearrange the words
         const newArrangement = [...arrangedWords];
         const draggedWord = newArrangement[touchedWord.index];
         newArrangement.splice(touchedWord.index, 1);
@@ -111,7 +106,6 @@ export function MultiChallenge({
   const handleTouchEnd = () => {
     if (!touchedWord.element) return;
 
-    // Reset the element's style
     const element = touchedWord.element;
     element.style.opacity = "";
     element.style.transform = "";
@@ -132,11 +126,9 @@ export function MultiChallenge({
   };
 
   const handleNext = () => {
-    // Reset states before moving to next question
     setHasSubmitted(false);
     setDraggedIndex(null);
     setTouchedWord({ index: -1, element: null });
-    // Call the onNext prop to move to next question
     onNext();
   };
 

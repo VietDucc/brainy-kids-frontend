@@ -1,12 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import {  NextResponse } from "next/server";
-import { api } from "../config";
+import { api } from "../../../config";
 
-
-
-
-
-export async function POST(request: Request) {
+export async function POST(request: Request, { params }: { params: { id: number,commentId: number } }) {
     const { userId, getToken } = await auth();
   
     if (!userId) {
@@ -21,9 +17,9 @@ export async function POST(request: Request) {
   
     try {
       const body = await request.json();
-      const { title, imageUrl, content } = body;
+      const { content ,} = body;
   
-      const response = await fetch(api.blog, {
+      const response = await fetch(api.replyById(params.commentId), {
         method: "POST",
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -31,7 +27,7 @@ export async function POST(request: Request) {
             'clerkUserId': userId,
             
         },
-        body: JSON.stringify({ title, imageUrl ,content}),
+        body: JSON.stringify({ content,}),
       });
   
       if (!response.ok) {
@@ -46,37 +42,36 @@ export async function POST(request: Request) {
     }
   }
 
-  export async function GET() {
+  export async function DELETE(request: Request, { params }: { params: { id: number,commentId: number } }) {
     const { userId, getToken } = await auth();
-    
+  
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    
+
     const token = await getToken({ template: "jwt-clerk" });
-    
+
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    
+
     try {
-      const response = await fetch(api.blog, {
-        cache: "no-store",
+      const response = await fetch(api.commentById(params.commentId), {
+        method: "DELETE",
         headers: {
-          'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'clerkUserId': userId,
         },
       });
-  
+
       if (!response.ok) {
-        throw new Error("Failed to fetch blogs");
+        throw new Error("Failed to delete reply");
       }
-  
-      const data = await response.json();
-      return NextResponse.json(data);
+
+      return NextResponse.json({ message: "Reply deleted successfully" });
     } catch (error) {
       console.error(error);
-      return NextResponse.json({ error: "Failed to fetch blogs" }, { status: 500 });
+      return NextResponse.json({ error: "Failed to delete reply" }, { status: 500 });
     }
-  }
-
-
+  }         

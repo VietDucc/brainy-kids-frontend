@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 import {
   ArrowLeft,
   Calendar,
@@ -15,18 +16,55 @@ import {
   Share2,
   Star,
   Tag,
+  PenSquare,
 } from "lucide-react";
-import { BlogPost } from "../type";
+import { BlogPost, Comment } from "../type";
 import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
+import { useAuth } from "@clerk/nextjs";
+import Editor from "./Editor";
+import { useToast } from "@/hooks/use-toast";
+import { CommentComponent } from "./Comment";
 
 interface BlogPostDetailProps {
   post: BlogPost;
   onBack: () => void;
+  authorId: string;
 }
 
-export default function BlogPostDetail({ post, onBack }: BlogPostDetailProps) {
+export default function BlogPostDetail({
+  post,
+  onBack,
+  authorId,
+}: BlogPostDetailProps) {
   const [newComment, setNewComment] = useState("");
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+  const [replyContent, setReplyContent] = useState("");
   const [isLiked, setIsLiked] = useState(false);
+  const { userId } = useAuth();
+  const [content, setContent] = useState(post.content);
+  const [title, setTitle] = useState(post.title);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const isAuthor = userId === authorId;
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchComments();
+  }, [post.id]);
+
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(`/api/comment/${post.id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch comments");
+      }
+      const data = await response.json();
+      setComments(data);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -36,24 +74,75 @@ export default function BlogPostDetail({ post, onBack }: BlogPostDetailProps) {
     });
   };
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!newComment.trim()) return;
 
-    const comment = {
-      id: (post.comments?.length || 0) + 1,
-      content: newComment,
-      authorName: "Current User",
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const response = await fetch(`/api/comment/${post.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: newComment,
+        }),
+      });
 
-    post.comments = [...(post.comments || []), comment];
-    setNewComment("");
+      if (!response.ok) {
+        throw new Error("Failed to add comment");
+      }
+
+      setNewComment("");
+      await fetchComments();
+      toast({
+        variant: "success",
+        title: "Comment added successfully",
+      });
+    } catch (error) {
+      console.error("Error adding comment:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to add comment",
+        description: "Please try again",
+      });
+    }
+  };
+
+  const handleAddReply = async (commentId: number) => {
+    if (!replyContent.trim()) return;
+
+    try {
+      const response = await fetch(`/api/comment/${post.id}/${commentId}`, {
+        method: "POST",
+        body: JSON.stringify({
+          content: replyContent,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add reply");
+      }
+
+      setReplyContent("");
+      setReplyingTo(null);
+      await fetchComments();
+      toast({
+        title: "Reply added successfully",
+      });
+    } catch (error) {
+      console.error("Error adding reply:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to add reply",
+        description: "Please try again",
+      });
+    }
   };
 
   const handleShare = async () => {
     try {
       await navigator.share({
-        title: post.title,
+        title: title,
         text: post.excerpt,
         url: window.location.href,
       });
@@ -62,10 +151,162 @@ export default function BlogPostDetail({ post, onBack }: BlogPostDetailProps) {
     }
   };
 
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`/api/blog/${post.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content,
+          title,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update post");
+      }
+      setIsEditingTitle(false);
+      toast({
+        variant: "success",
+        title: "Post updated successfully",
+        description: "Your post has been updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating post:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to update post",
+        description: "Please try again",
+      });
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    try {
+      const response = await fetch(`/api/comment/${commentId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete comment");
+      }
+
+      await fetchComments();
+      toast({
+        title: "Comment deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to delete comment",
+        description: "Please try again",
+      });
+    }
+  };
+
+  const handleEditComment = async (commentId: number, content: string) => {
+    try {
+      const response = await fetch(`/api/comment/${commentId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update comment");
+      }
+
+      await fetchComments();
+      toast({
+        title: "Comment updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating comment:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to update comment",
+        description: "Please try again",
+      });
+    }
+  };
+
+  const renderComment = (comment: Comment) => (
+    <div key={comment.id} className="space-y-3">
+      <CommentComponent
+        comment={comment}
+        userId={userId}
+        authorId={authorId}
+        onReply={setReplyingTo}
+        onEdit={handleEditComment}
+        onDelete={handleDeleteComment}
+        formatDate={formatDate}
+      />
+
+      {replyingTo === comment.id && (
+        <div className="ml-10 flex gap-2">
+          <Avatar className="w-8 h-8">
+            <AvatarFallback>{userId?.[0] || "U"}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <Textarea
+              placeholder="Write a reply..."
+              value={replyContent}
+              onChange={(e) => setReplyContent(e.target.value)}
+              className="min-h-[100px] resize-none"
+            />
+            <div className="flex justify-end gap-2 mt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setReplyingTo(null);
+                  setReplyContent("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => handleAddReply(comment.id)}
+                disabled={!replyContent.trim()}
+              >
+                Reply
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="ml-10 space-y-3">
+          {comment.replies.map((reply) => (
+            <CommentComponent
+              key={reply.id}
+              comment={reply}
+              userId={userId}
+              authorId={authorId}
+              onReply={() => {}}
+              onEdit={handleEditComment}
+              onDelete={handleDeleteComment}
+              formatDate={formatDate}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -91,13 +332,18 @@ export default function BlogPostDetail({ post, onBack }: BlogPostDetailProps) {
                 <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
                 {post.likes + (isLiked ? 1 : 0)} Likes
               </Button>
+              {isAuthor && (
+                <Button onClick={handleSave} variant="default" size="sm">
+                  Save Changes
+                </Button>
+              )}
             </div>
           </div>
         </div>
       </header>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <article className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <article className="rounded-lg shadow-sm overflow-hidden">
           {/* Article Header */}
           <div className="p-8 pb-6">
             <div className="flex items-center gap-2 mb-4">
@@ -112,9 +358,31 @@ export default function BlogPostDetail({ post, onBack }: BlogPostDetailProps) {
               )}
             </div>
 
-            <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
-              {post.title}
-            </h1>
+            <div className="relative group">
+              {isAuthor && !isEditingTitle && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute -right-10 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => setIsEditingTitle(true)}
+                >
+                  <PenSquare className="w-4 h-4" />
+                </Button>
+              )}
+              {isEditingTitle ? (
+                <Input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="text-4xl font-bold mb-4 leading-tight"
+                  autoFocus
+                  onBlur={() => setIsEditingTitle(false)}
+                />
+              ) : (
+                <h1 className="text-4xl font-bold mb-4 leading-tight text-muted-foreground">
+                  {title}
+                </h1>
+              )}
+            </div>
 
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
@@ -127,10 +395,10 @@ export default function BlogPostDetail({ post, onBack }: BlogPostDetailProps) {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p className="font-medium text-muted-foreground">
                     {post.author?.name || "Anonymous"}
                   </p>
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground/70">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
                       {formatDate(post.createdAt)}
@@ -153,20 +421,28 @@ export default function BlogPostDetail({ post, onBack }: BlogPostDetailProps) {
             </div>
 
             {post.imageUrl && (
-              <img
-                src={post.imageUrl || "/placeholder.svg"}
-                alt={post.title}
+              <Image
+                src={post.imageUrl || "https://picsum.photos/400/300"}
+                alt={title}
                 className="w-full h-64 object-cover rounded-lg mb-6"
+                width={400}
+                height={300}
+                objectFit="cover"
               />
             )}
           </div>
 
           {/* Article Content */}
           <div className="px-8 pb-8">
-            <div
-              className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            <div className="prose prose-lg max-w-none">
+              <Editor
+                value={content}
+                onChange={setContent}
+                isEditable={isAuthor}
+                onSave={handleSave}
+                showSaveButton={isAuthor}
+              />
+            </div>
 
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
@@ -228,13 +504,13 @@ export default function BlogPostDetail({ post, onBack }: BlogPostDetailProps) {
                 <div key={comment.id} className="flex gap-4">
                   <Avatar>
                     <AvatarFallback>
-                      {comment.authorName.charAt(0)}
+                      {comment.authorId.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-medium text-gray-900">
-                        {comment.authorName}
+                        {comment.authorId}
                       </span>
                       <span className="text-sm text-gray-500">
                         {formatDate(comment.createdAt)}
@@ -249,45 +525,41 @@ export default function BlogPostDetail({ post, onBack }: BlogPostDetailProps) {
         )}
 
         {/* Comments Section */}
-        <div className="space-y-6">
-          <h2 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
-            <MessageCircle className="w-5 h-5" />
-            Comments ({post.comments?.length || 0})
-          </h2>
-
-          {/* Add Comment */}
-          <div className="space-y-4">
-            <Textarea
-              placeholder="Write a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              className="min-h-[100px]"
-            />
-            <Button onClick={handleAddComment} disabled={!newComment.trim()}>
-              Post Comment
-            </Button>
-          </div>
-
-          {/* Comments List */}
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="space-y-6">
-            {post.comments?.map((comment) => (
-              <div key={comment.id} className="flex gap-4">
-                <Avatar className="w-10 h-10">
-                  <AvatarFallback>{comment.authorName[0]}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-gray-900">
-                      {comment.authorName}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {formatDate(comment.createdAt)}
-                    </span>
-                  </div>
-                  <p className="text-gray-700">{comment.content}</p>
+            <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+              <MessageCircle className="w-5 h-5" />
+              Comments ({comments.length})
+            </h2>
+
+            {/* Add Comment */}
+            <div className="flex gap-2">
+              <Avatar className="w-8 h-8">
+                <AvatarFallback>{userId?.[0] || "U"}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <Textarea
+                  placeholder="Write a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className="min-h-[100px] resize-none"
+                />
+                <div className="flex justify-end mt-2">
+                  <Button
+                    onClick={handleAddComment}
+                    disabled={!newComment.trim()}
+                    size="sm"
+                  >
+                    Post
+                  </Button>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Comments List */}
+            <div className="space-y-6 mt-8">
+              {comments.map((comment) => renderComment(comment))}
+            </div>
           </div>
         </div>
       </div>

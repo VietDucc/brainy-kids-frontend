@@ -231,9 +231,9 @@ export default function FlashCardDetail({
   };
 
   return (
-    <div className="container py-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+    <div className="container px-4 sm:px-6 py-4 sm:py-6">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-8 mb-6 sm:mb-8">
           <Button
             variant="ghost"
             onClick={() => router.push("/flashcards")}
@@ -243,24 +243,35 @@ export default function FlashCardDetail({
             Back
           </Button>
 
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">{deck.name}</h1>
-            <Badge variant="secondary">{deck.flashCards.length} cards</Badge>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+            <h1 className="text-xl sm:text-2xl font-bold break-all">
+              {deck.name}
+            </h1>
+            <Badge variant="secondary" className="whitespace-nowrap">
+              {deck.flashCards.length} cards
+            </Badge>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button onClick={() => setShowCreateCard(true)} variant="outline">
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <Button
+              onClick={() => setShowCreateCard(true)}
+              variant="outline"
+              size="sm"
+              className="h-9"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Card
             </Button>
             {studyMode === "overview" && deck.flashCards.length > 0 && (
-              <Button onClick={startStudySession}>Start Learning</Button>
+              <Button onClick={startStudySession} size="sm" className="h-9">
+                Start Learning
+              </Button>
             )}
           </div>
         </div>
 
         {deck.flashCards.length === 0 ? (
-          <Card className="text-center p-8">
+          <Card className="text-center p-6 sm:p-8">
             <CardContent>
               <p className="text-muted-foreground mb-4">No cards yet</p>
               <Button onClick={() => setShowCreateCard(true)}>
@@ -270,7 +281,7 @@ export default function FlashCardDetail({
             </CardContent>
           </Card>
         ) : studyMode === "learn" ? (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Progress Bar */}
             <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
               <div
@@ -286,27 +297,27 @@ export default function FlashCardDetail({
             </div>
 
             {/* Study Progress */}
-            <div className="flex justify-center gap-4">
-              <Badge variant="secondary">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
+              <Badge variant="secondary" className="px-3 py-1">
                 Correct: {studyProgress.correct}
               </Badge>
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="px-3 py-1">
                 Incorrect: {studyProgress.incorrect}
               </Badge>
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="px-3 py-1">
                 Remaining: {studyProgress.remaining}
               </Badge>
             </div>
 
             {/* Current Card */}
-            <div className="flex justify-center">
+            <div className="flex justify-center px-2 sm:px-0">
               <Card
-                className="w-full max-w-lg cursor-pointer relative group"
+                className="w-full max-w-2xl cursor-pointer relative group"
                 onClick={() => setIsFlipped(!isFlipped)}
               >
-                <CardContent className="p-6">
-                  <div className="min-h-[200px] flex items-center justify-center">
-                    <div className="text-center">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="min-h-[180px] sm:min-h-[200px] flex items-center justify-center">
+                    <div className="text-center w-full px-4">
                       <div className="mb-4 flex items-center justify-center gap-2">
                         {isFlipped ? (
                           <EyeOff className="w-5 h-5" />
@@ -314,7 +325,7 @@ export default function FlashCardDetail({
                           <Eye className="w-5 h-5" />
                         )}
                       </div>
-                      <p className="text-xl">
+                      <p className="text-lg sm:text-xl break-words">
                         {isFlipped
                           ? deck.flashCards[currentCardIndex]?.back
                           : deck.flashCards[currentCardIndex]?.front}
@@ -334,22 +345,28 @@ export default function FlashCardDetail({
 
             {/* Study Controls */}
             {isFlipped && (
-              <div className="flex justify-center gap-4">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
                 <Button
+                  size="sm"
                   variant="destructive"
                   onClick={() => handleCardResponse("incorrect")}
+                  className="h-9"
                 >
                   Incorrect (1)
                 </Button>
                 <Button
+                  size="sm"
                   variant="outline"
                   onClick={() => handleCardResponse("skipped")}
+                  className="h-9"
                 >
                   Skip (2)
                 </Button>
                 <Button
+                  size="sm"
                   variant="default"
                   onClick={() => handleCardResponse("correct")}
+                  className="h-9"
                 >
                   Correct (3)
                 </Button>
@@ -357,62 +374,71 @@ export default function FlashCardDetail({
             )}
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Overview Stats */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
               <Card>
-                <CardContent className="p-6 text-center">
-                  <h3 className="text-2xl font-bold text-green-600">
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-green-600">
                     {
                       deck.flashCards.filter((c) => c.status === "correct")
                         .length
                     }
                   </h3>
-                  <p className="text-sm text-muted-foreground">Correct</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Correct
+                  </p>
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="p-6 text-center">
-                  <h3 className="text-2xl font-bold text-red-600">
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-red-600">
                     {
                       deck.flashCards.filter((c) => c.status === "incorrect")
                         .length
                     }
                   </h3>
-                  <p className="text-sm text-muted-foreground">Incorrect</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Incorrect
+                  </p>
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="p-6 text-center">
-                  <h3 className="text-2xl font-bold text-gray-600">
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-600">
                     {deck.flashCards.filter((c) => !c.status).length}
                   </h3>
-                  <p className="text-sm text-muted-foreground">Not Studied</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Not Studied
+                  </p>
                 </CardContent>
               </Card>
             </div>
 
             {/* All Cards List */}
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold">All Cards</h2>
-              <div className="space-y-2">
+              <h2 className="text-lg sm:text-xl font-semibold">All Cards</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {deck.flashCards.map((card) => (
                   <Card
                     key={card.id}
                     className={cn(
+                      "h-auto",
                       card.status === "correct" && "border-green-500",
                       card.status === "incorrect" && "border-red-500",
                       !card.status && "hover:border-primary/50"
                     )}
                   >
-                    <CardContent className="flex items-center justify-between p-4">
-                      <div>
-                        <p className="font-medium">{card.front}</p>
-                        <p className="text-sm text-muted-foreground">
+                    <CardContent className="flex items-start justify-between p-3 sm:p-4">
+                      <div className="flex-1 min-w-0 pr-2">
+                        <p className="font-medium text-sm break-words">
+                          {card.front}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1 break-words">
                           {card.back}
                         </p>
                         {card.lastReviewed && (
-                          <p className="text-xs text-muted-foreground mt-1">
+                          <p className="text-[10px] text-muted-foreground mt-1">
                             Last reviewed:{" "}
                             {card.lastReviewed.toLocaleDateString()}
                           </p>
@@ -421,7 +447,11 @@ export default function FlashCardDetail({
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 flex-shrink-0"
+                          >
                             <MoreVertical className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>

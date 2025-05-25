@@ -15,13 +15,13 @@ import {
 } from "@/components/ui/dialog";
 import { PenTool, Plus } from "lucide-react";
 import { BlogPost, BlogFilters as BlogFiltersType } from "./type";
-import BlogPostDetail from "./components/BlogPostDetail";
-import BlogFilters from "./components/BlogFilters";
 import BlogPostComponent from "./components/BlogPost";
 import Editor from "./components/Editor";
+import { useRouter } from "next/navigation";
+import BlogFilters from "./components/BlogFilters";
+import Loading from "@/app/loading";
 
 export default function BlogPage() {
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [filters, setFilters] = useState<BlogFiltersType>({
     searchQuery: "",
     category: "All",
@@ -33,10 +33,14 @@ export default function BlogPage() {
     title: "",
     content: "",
     imageUrl: "",
+    authorId: "",
   });
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     try {
       const fetchPosts = async () => {
         const response = await fetch("/api/blog");
@@ -46,6 +50,8 @@ export default function BlogPage() {
       fetchPosts();
     } catch (error) {
       console.error("Error fetching posts:", error);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -76,6 +82,7 @@ export default function BlogPage() {
         title: "",
         content: "",
         imageUrl: "",
+        authorId: "",
       });
       setShowCreatePost(false);
     } catch (error) {
@@ -83,28 +90,26 @@ export default function BlogPage() {
     }
   };
 
-  if (selectedPost) {
-    return (
-      <BlogPostDetail
-        post={selectedPost}
-        onBack={() => setSelectedPost(null)}
-      />
-    );
+  if (loading || !posts) {
+    return <Loading text="posts..." />;
   }
 
   return (
-    <div className="min-h-screen ">
-      {/* Header */}
-      <header className="shadow-sm border-b">
-        <div className="max-w-7xl">
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-gray-900">Blog</h1>
-              <Badge variant="outline">Professional</Badge>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary/90 to-primary bg-clip-text text-transparent">
+                Blog
+              </h1>
+              <Badge variant="secondary" className="font-medium">
+                Professional
+              </Badge>
             </div>
             <Button
               onClick={() => setShowCreatePost(true)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 shadow-sm hover:shadow-md transition-shadow"
             >
               <Plus className="w-4 h-4" />
               Create Post
@@ -114,7 +119,6 @@ export default function BlogPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Filters */}
         <BlogFilters
           filters={filters}
           onFiltersChange={setFilters}
@@ -122,7 +126,6 @@ export default function BlogPage() {
           onViewModeChange={setViewMode}
         />
 
-        {/* Posts Grid/List */}
         <div
           className={`mt-8 grid gap-6 ${
             viewMode === "grid"
@@ -135,27 +138,28 @@ export default function BlogPage() {
               key={post.id}
               post={post}
               viewMode={viewMode}
-              onClick={() => setSelectedPost(post)}
+              onClick={() => router.push(`/blog/${post.id}`)}
             />
           ))}
         </div>
 
-        {/* Create Post Dialog */}
         <Dialog open={showCreatePost} onOpenChange={setShowCreatePost}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <PenTool className="w-5 h-5" />
+              <DialogTitle className="flex items-center gap-2 text-xl">
+                <PenTool className="w-5 h-5 text-primary" />
                 Create New Post
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-muted-foreground">
                 Share your thoughts with the world
               </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-6 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="title" className="text-sm font-medium">
+                  Title
+                </Label>
                 <Input
                   id="title"
                   value={newPost.title}
@@ -163,22 +167,24 @@ export default function BlogPage() {
                     setNewPost((prev) => ({ ...prev, title: e.target.value }))
                   }
                   placeholder="Enter an engaging title..."
+                  className="bg-background"
                 />
               </div>
 
               <div className="grid gap-2">
-                <Label>Content</Label>
+                <Label className="text-sm font-medium">Content</Label>
                 <Editor
                   value={newPost.content}
                   onChange={(content) =>
                     setNewPost((prev) => ({ ...prev, content }))
                   }
                   placeholder="Write your post content here..."
+                  isEditable={true}
                 />
               </div>
 
               <div className="grid gap-2">
-                <Label>Image URL</Label>
+                <Label className="text-sm font-medium">Image URL</Label>
                 <Input
                   id="imageUrl"
                   value={newPost.imageUrl}
@@ -189,20 +195,23 @@ export default function BlogPage() {
                     }))
                   }
                   placeholder="Enter image URL..."
+                  className="bg-background"
                 />
               </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="gap-2">
               <Button
                 variant="outline"
                 onClick={() => setShowCreatePost(false)}
+                className="hover:bg-accent"
               >
                 Cancel
               </Button>
               <Button
                 onClick={createPost}
                 disabled={!newPost.title || !newPost.content}
+                className="shadow-sm hover:shadow-md transition-shadow"
               >
                 Publish
               </Button>

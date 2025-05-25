@@ -35,6 +35,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
           href="/leaderboard"
           iconSrc="/leaderboard.svg"
         />
+        <SidebarItem label="Blog" href="/blog" iconSrc="/blog.png" />
         <SidebarItem
           label="Flashcards"
           href="/flashcards"
