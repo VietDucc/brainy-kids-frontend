@@ -24,8 +24,8 @@ export interface ChallengeType {
 export interface LessonType {
   id: number;
   title: string;
-  orderIndex: number;
-  challenges: ChallengeType[];
+  orderLesson: number;
+  challenges?: ChallengeType[];
 }
 
 export interface UnitType {

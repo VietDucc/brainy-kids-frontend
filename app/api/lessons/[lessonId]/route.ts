@@ -31,7 +31,7 @@ interface Vocabulary {
 interface LessonPayload {
   title: string;
   difficulty: "EASY" | "MEDIUM" | "HARD";
-  orderIndex: number;
+  orderLesson: number;
   challenges?: Challenge[];
   vocabularies?: Vocabulary[];
 }
@@ -97,7 +97,7 @@ export async function PUT(
     const payload: LessonPayload = {
       title: values.title,
       difficulty: values.difficulty,
-      orderIndex: values.orderIndex,
+      orderLesson: values.orderLesson,
       challenges: Array.isArray(values.challenges) 
         ? values.challenges.map((challenge: Challenge) => ({
             id: challenge.id,

@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Medal, Award, Star } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import Loading from "@/app/loading";
 
@@ -13,6 +11,7 @@ interface LeaderboardUser {
   clerkUserId: string;
   username: string;
   score: number;
+  level?: number;
 }
 
 export default function LeaderboardPage() {
@@ -101,271 +100,137 @@ export default function LeaderboardPage() {
     return formattedName.substring(0, 2).toUpperCase();
   };
 
-  const getAvatarColor = (id: number) => {
-    const colors = [
-      "bg-pink-200",
-      "bg-purple-200",
-      "bg-blue-200",
-      "bg-green-200",
-      "bg-yellow-200",
-      "bg-orange-200",
-      "bg-red-200",
-      "bg-teal-200",
-    ];
-    return colors[id % colors.length];
-  };
-
-  const getTrophyIcon = (position: number) => {
-    switch (position) {
-      case 0:
-        return <Trophy className="h-8 w-8 text-yellow-500" />;
-      case 1:
-        return <Medal className="h-8 w-8 text-gray-400" />;
-      case 2:
-        return <Award className="h-8 w-8 text-amber-700" />;
-      default:
-        return <Star className="h-6 w-6 text-purple-400" />;
-    }
-  };
-
-  if (isLoading) {
-    return <Loading text="leaderboard..." />;
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4">
-        <div className="text-red-500 text-6xl mb-4">😢</div>
-        <h2 className="text-xl font-bold text-red-500 mb-4">{error}</h2>
-        <Button
-          onClick={() => window.location.reload()}
-          className="bg-purple-500 hover:bg-purple-600"
-        >
-          Try Again
-        </Button>
-      </div>
-    );
-  }
-
   const topThree = leaderboardData.slice(0, 3);
   const restOfUsers = leaderboardData.slice(3);
 
+  if (isLoading) return <Loading text="leaderboard..." />;
+  if (error) return <div>{error}</div>;
+
   return (
-    <div className="min-h-screen bg-white w-full py-8">
-      <div className="max-w-3xl mx-auto px-4">
-        <header className="text-center mb-12">
-          <motion.h1
-            className="text-2xl md:text-3xl font-bold text-gray-900 mb-2"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            Learning Champions
-          </motion.h1>
-          <motion.p
-            className="text-sm text-gray-600"
-            initial={{ y: -10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            Keep learning and climb the leaderboard!
-          </motion.p>
-        </header>
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold">Leaderboard</h1>
+          </div>
+        </div>
 
-        {/* Top 3 */}
-        <motion.div
-          className="flex justify-between items-end gap-4 mb-12"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          {/* 2 */}
-          {topThree[1] && (
-            <div className="flex-1">
-              <PodiumPosition
-                user={topThree[1]}
-                position={1}
-                getInitials={getInitials}
-                getAvatarColor={getAvatarColor}
-                getTrophyIcon={getTrophyIcon}
-                formatUsername={formatUsername}
-                height="h-24 md:h-32"
-              />
-            </div>
-          )}
+        <div className="relative bg-primary rounded-3xl p-12 mb-8">
+          <div className="flex justify-around items-end">
+            {topThree[1] && (
+              <motion.div
+                className="flex flex-col items-center"
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Avatar className="h-24 w-24 border-4 border-white mb-4">
+                  <span className="text-xl font-bold">
+                    {getInitials(topThree[1].username)}
+                  </span>
+                </Avatar>
+                <div className="text-center text-white">
+                  <p className="font-semibold text-lg">
+                    {formatUsername(topThree[1].username)}
+                  </p>
+                  <p className="text-primary-foreground/80">
+                    Level {topThree[1].level || 3}
+                  </p>
+                </div>
+                <div className="mt-4 text-6xl font-bold text-white">2</div>
+              </motion.div>
+            )}
 
-          {/* 1 */}
-          {topThree[0] && (
-            <div className="flex-1 z-10">
-              <PodiumPosition
-                user={topThree[0]}
-                position={0}
-                getInitials={getInitials}
-                getAvatarColor={getAvatarColor}
-                getTrophyIcon={getTrophyIcon}
-                formatUsername={formatUsername}
-                height="h-32 md:h-40"
-                isFirst={true}
-              />
-            </div>
-          )}
+            {/* First Place */}
+            {topThree[0] && (
+              <motion.div
+                className="flex flex-col items-center -mt-8"
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+              >
+                <Avatar className="h-32 w-32 border-4 border-yellow-400 mb-4">
+                  <span className="text-2xl font-bold">
+                    {getInitials(topThree[0].username)}
+                  </span>
+                </Avatar>
+                <div className="text-center text-white">
+                  <p className="font-bold text-xl">
+                    {formatUsername(topThree[0].username)}
+                  </p>
+                  <p className="text-primary-foreground/80">
+                    Level {topThree[0].level || 3}
+                  </p>
+                </div>
+                <div className="mt-4 text-7xl font-bold text-white">1</div>
+              </motion.div>
+            )}
 
-          {/* 3 */}
-          {topThree[2] && (
-            <div className="flex-1">
-              <PodiumPosition
-                user={topThree[2]}
-                position={2}
-                getInitials={getInitials}
-                getAvatarColor={getAvatarColor}
-                getTrophyIcon={getTrophyIcon}
-                formatUsername={formatUsername}
-                height="h-20 md:h-28"
-              />
-            </div>
-          )}
-        </motion.div>
+            {/* Third Place */}
+            {topThree[2] && (
+              <motion.div
+                className="flex flex-col items-center"
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+              >
+                <Avatar className="h-24 w-24 border-4 border-white mb-4">
+                  <span className="text-xl font-bold">
+                    {getInitials(topThree[2].username)}
+                  </span>
+                </Avatar>
+                <div className="text-center text-white">
+                  <p className="font-semibold text-lg">
+                    {formatUsername(topThree[2].username)}
+                  </p>
+                  <p className="text-primary-foreground/80">
+                    Level {topThree[2].level || 3}
+                  </p>
+                </div>
+                <div className="mt-4 text-6xl font-bold text-white">3</div>
+              </motion.div>
+            )}
+          </div>
+        </div>
 
-        {/* còn lại */}
-        <motion.div
-          className="bg-white rounded-lg border border-gray-200"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
+        {/* Rest of Users */}
+        <div className="bg-card rounded-3xl shadow-sm">
           <div className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">
-              Tất cả người học
-            </h2>
-
-            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-2">
               {restOfUsers.map((user, index) => (
                 <motion.div
                   key={user.id}
-                  className="flex items-center py-3 px-4 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                  className="flex items-center p-4 hover:bg-accent rounded-2xl transition-colors"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.3, delay: 0.1 * index }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
-                  <div className="flex-shrink-0 w-8 text-sm font-medium text-gray-500">
-                    #{index + 4}
-                  </div>
-                  <Avatar
-                    className={`${getAvatarColor(user.id)} h-10 w-10 mx-3`}
-                  >
-                    <div className="text-sm font-medium">
+                  <span className="w-8 text-lg font-semibold text-muted-foreground">
+                    {index + 4}
+                  </span>
+                  <Avatar className="h-12 w-12 mx-4">
+                    <span className="text-base font-semibold">
                       {getInitials(user.username)}
-                    </div>
+                    </span>
                   </Avatar>
                   <div className="flex-grow">
-                    <h3 className="font-medium text-gray-900">
+                    <p className="font-medium text-foreground">
                       {formatUsername(user.username)}
-                    </h3>
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Level {user.level || 3}
+                    </p>
                   </div>
-                  <div className="flex items-center gap-1.5 text-sm">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <span className="font-semibold text-gray-900">
-                      {user.score}
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold">
+                      {user.score} points
+                    </div>
                   </div>
                 </motion.div>
               ))}
-
-              {restOfUsers.length === 0 && (
-                <div className="text-center py-6 text-gray-500 text-sm">
-                  No more learners to show
-                </div>
-              )}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
-  );
-}
-
-interface PodiumPositionProps {
-  user: LeaderboardUser;
-  position: number;
-  getInitials: (username: string) => string;
-  getAvatarColor: (id: number) => string;
-  getTrophyIcon: (position: number) => React.ReactNode;
-  formatUsername: (username: string) => string;
-  height: string;
-  isFirst?: boolean;
-}
-
-function PodiumPosition({
-  user,
-  position,
-  getInitials,
-  getAvatarColor,
-  getTrophyIcon,
-  formatUsername,
-  height,
-  isFirst = false,
-}: PodiumPositionProps) {
-  return (
-    <motion.div className="flex flex-col items-center">
-      <motion.div
-        className="mb-2"
-        initial={{ y: -10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 * position }}
-      >
-        {getTrophyIcon(position)}
-      </motion.div>
-
-      <motion.div
-        className={`w-full ${
-          isFirst ? "bg-white border-yellow-200" : "bg-white"
-        } rounded-lg p-3 text-center border shadow-sm`}
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 * position + 0.2 }}
-      >
-        <Avatar
-          className={`${getAvatarColor(
-            user.id
-          )} h-14 w-14 mx-auto mb-2 border-2 ${
-            isFirst ? "border-yellow-200" : "border-gray-200"
-          }`}
-        >
-          <div className="text-base font-medium">
-            {getInitials(user.username)}
-          </div>
-        </Avatar>
-        <h3 className="font-medium text-gray-900 text-sm mb-1 truncate max-w-[100px] mx-auto">
-          {formatUsername(user.username)}
-        </h3>
-        <div className="flex items-center justify-center gap-1">
-          <Star
-            className={`h-4 w-4 ${
-              isFirst ? "text-yellow-500" : "text-yellow-400"
-            }`}
-          />
-          <span
-            className={`font-semibold text-sm ${
-              isFirst ? "text-gray-900" : "text-gray-700"
-            }`}
-          >
-            {user.score}
-          </span>
-        </div>
-      </motion.div>
-
-      <motion.div
-        className={`${height} w-full rounded-b shadow-sm ${
-          position === 0
-            ? "bg-yellow-100"
-            : position === 1
-            ? "bg-gray-100"
-            : "bg-orange-100"
-        }`}
-        initial={{ height: 0 }}
-        animate={{ height: height.split(" ")[1] }}
-        transition={{ delay: 0.2 * position + 0.4, duration: 0.5 }}
-      />
-    </motion.div>
   );
 }

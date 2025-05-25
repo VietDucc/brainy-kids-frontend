@@ -1,0 +1,517 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  ArrowLeft,
+  Plus,
+  Eye,
+  EyeOff,
+  Edit,
+  Trash2,
+  MoreVertical,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Loading from "@/app/loading";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import React from "react";
+
+interface FlashCard {
+  id: number;
+  front: string;
+  back: string;
+  status?: "correct" | "incorrect" | "skipped";
+  lastReviewed?: Date;
+}
+
+interface DeckWithCards {
+  id: number;
+  name: string;
+  flashCards: FlashCard[];
+}
+
+type StudyMode = "flashcard" | "learn" | "overview";
+
+export default function FlashCardDetail({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const unwrappedParams = React.use(params);
+  const router = useRouter();
+  const [deck, setDeck] = useState<DeckWithCards | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [showCreateCard, setShowCreateCard] = useState(false);
+  const [editingCard, setEditingCard] = useState<FlashCard | null>(null);
+  const [newCardFront, setNewCardFront] = useState("");
+  const [newCardBack, setNewCardBack] = useState("");
+  const [studyMode, setStudyMode] = useState<StudyMode>("overview");
+  const [studyProgress, setStudyProgress] = useState({
+    correct: 0,
+    incorrect: 0,
+    remaining: 0,
+  });
+
+  useEffect(() => {
+    const loadDeck = async () => {
+      try {
+        const data = await fetch(`/api/deck/${unwrappedParams.id}`);
+        const deckData = await data.json();
+        setDeck(deckData);
+      } catch (error) {
+        console.error("Failed to fetch deck:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadDeck();
+  }, [unwrappedParams.id]);
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (studyMode !== "learn" || !deck?.flashCards) return;
+
+      switch (e.code) {
+        case "Space":
+          e.preventDefault();
+          setIsFlipped(!isFlipped);
+          break;
+        case "ArrowLeft":
+          if (currentCardIndex > 0) {
+            setCurrentCardIndex((prev) => prev - 1);
+            setIsFlipped(false);
+          }
+          break;
+        case "ArrowRight":
+          if (isFlipped && currentCardIndex < deck.flashCards.length - 1) {
+            setCurrentCardIndex((prev) => prev + 1);
+            setIsFlipped(false);
+          }
+          break;
+        case "Digit1":
+        case "Numpad1":
+          if (isFlipped) handleCardResponse("incorrect");
+          break;
+        case "Digit2":
+        case "Numpad2":
+          if (isFlipped) handleCardResponse("skipped");
+          break;
+        case "Digit3":
+        case "Numpad3":
+          if (isFlipped) handleCardResponse("correct");
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [isFlipped, currentCardIndex, studyMode, deck?.flashCards?.length]);
+
+  if (loading) {
+    return <Loading text="flashcards" />;
+  }
+
+  if (!deck || !deck.flashCards) {
+    return <div>Deck not found</div>;
+  }
+
+  const createCard = () => {
+    if (!deck || !newCardFront.trim() || !newCardBack.trim()) return;
+
+    const newCard: FlashCard = {
+      id: Math.max(0, ...deck.flashCards.map((c) => c.id)) + 1,
+      front: newCardFront,
+      back: newCardBack,
+    };
+
+    setDeck({
+      ...deck,
+      flashCards: [...deck.flashCards, newCard],
+    });
+    setNewCardFront("");
+    setNewCardBack("");
+    setShowCreateCard(false);
+  };
+
+  const deleteCard = (cardId: number) => {
+    if (!deck) return;
+    setDeck({
+      ...deck,
+      flashCards: deck.flashCards.filter((card) => card.id !== cardId),
+    });
+    if (currentCardIndex >= deck.flashCards.length - 1) {
+      setCurrentCardIndex(Math.max(0, deck.flashCards.length - 2));
+    }
+  };
+
+  const updateCard = () => {
+    if (!editingCard || !deck || !newCardFront.trim() || !newCardBack.trim())
+      return;
+
+    setDeck({
+      ...deck,
+      flashCards: deck.flashCards.map((card) =>
+        card.id === editingCard.id
+          ? { ...card, front: newCardFront, back: newCardBack }
+          : card
+      ),
+    });
+    setEditingCard(null);
+    setNewCardFront("");
+    setNewCardBack("");
+  };
+
+  const startStudySession = () => {
+    if (!deck) return;
+    setStudyMode("learn");
+    setCurrentCardIndex(0);
+    setIsFlipped(false);
+    setStudyProgress({
+      correct: 0,
+      incorrect: 0,
+      remaining: deck.flashCards.length,
+    });
+    // Reset all cards' status
+    setDeck({
+      ...deck,
+      flashCards: deck.flashCards.map((card) => ({
+        ...card,
+        status: undefined,
+      })),
+    });
+  };
+
+  const handleCardResponse = (status: "correct" | "incorrect" | "skipped") => {
+    if (!deck) return;
+
+    const updatedCards = [...deck.flashCards];
+    updatedCards[currentCardIndex] = {
+      ...updatedCards[currentCardIndex],
+      status,
+      lastReviewed: new Date(),
+    };
+
+    setStudyProgress((prev) => ({
+      ...prev,
+      [status]: prev[status] + 1,
+      remaining: prev.remaining - 1,
+    }));
+
+    if (currentCardIndex < deck.flashCards.length - 1) {
+      setCurrentCardIndex((prev) => prev + 1);
+      setIsFlipped(false);
+    } else {
+      setStudyMode("overview");
+    }
+
+    setDeck({
+      ...deck,
+      flashCards: updatedCards,
+    });
+  };
+
+  return (
+    <div className="container py-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <Button
+            variant="ghost"
+            onClick={() => router.push("/flashcards")}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Button>
+
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold">{deck.name}</h1>
+            <Badge variant="secondary">{deck.flashCards.length} cards</Badge>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button onClick={() => setShowCreateCard(true)} variant="outline">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Card
+            </Button>
+            {studyMode === "overview" && deck.flashCards.length > 0 && (
+              <Button onClick={startStudySession}>Start Learning</Button>
+            )}
+          </div>
+        </div>
+
+        {deck.flashCards.length === 0 ? (
+          <Card className="text-center p-8">
+            <CardContent>
+              <p className="text-muted-foreground mb-4">No cards yet</p>
+              <Button onClick={() => setShowCreateCard(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Create First Card
+              </Button>
+            </CardContent>
+          </Card>
+        ) : studyMode === "learn" ? (
+          <div className="space-y-8">
+            {/* Progress Bar */}
+            <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
+              <div
+                className="bg-primary h-full transition-all"
+                style={{
+                  width: `${
+                    ((studyProgress.correct + studyProgress.incorrect) /
+                      deck.flashCards.length) *
+                    100
+                  }%`,
+                }}
+              />
+            </div>
+
+            {/* Study Progress */}
+            <div className="flex justify-center gap-4">
+              <Badge variant="secondary">
+                Correct: {studyProgress.correct}
+              </Badge>
+              <Badge variant="secondary">
+                Incorrect: {studyProgress.incorrect}
+              </Badge>
+              <Badge variant="secondary">
+                Remaining: {studyProgress.remaining}
+              </Badge>
+            </div>
+
+            {/* Current Card */}
+            <div className="flex justify-center">
+              <Card
+                className="w-full max-w-lg cursor-pointer relative group"
+                onClick={() => setIsFlipped(!isFlipped)}
+              >
+                <CardContent className="p-6">
+                  <div className="min-h-[200px] flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="mb-4 flex items-center justify-center gap-2">
+                        {isFlipped ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </div>
+                      <p className="text-xl">
+                        {isFlipped
+                          ? deck.flashCards[currentCardIndex]?.back
+                          : deck.flashCards[currentCardIndex]?.front}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+
+                {/* Keyboard shortcuts hint */}
+                <div className="absolute bottom-2 left-2 opacity-50 text-xs space-x-2">
+                  <span>Space: Flip</span>
+                  <span>←→: Navigate</span>
+                  {isFlipped && <span>1-2-3: Rate</span>}
+                </div>
+              </Card>
+            </div>
+
+            {/* Study Controls */}
+            {isFlipped && (
+              <div className="flex justify-center gap-4">
+                <Button
+                  variant="destructive"
+                  onClick={() => handleCardResponse("incorrect")}
+                >
+                  Incorrect (1)
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => handleCardResponse("skipped")}
+                >
+                  Skip (2)
+                </Button>
+                <Button
+                  variant="default"
+                  onClick={() => handleCardResponse("correct")}
+                >
+                  Correct (3)
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {/* Overview Stats */}
+            <div className="grid grid-cols-3 gap-4">
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-2xl font-bold text-green-600">
+                    {
+                      deck.flashCards.filter((c) => c.status === "correct")
+                        .length
+                    }
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Correct</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-2xl font-bold text-red-600">
+                    {
+                      deck.flashCards.filter((c) => c.status === "incorrect")
+                        .length
+                    }
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Incorrect</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-2xl font-bold text-gray-600">
+                    {deck.flashCards.filter((c) => !c.status).length}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Not Studied</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* All Cards List */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">All Cards</h2>
+              <div className="space-y-2">
+                {deck.flashCards.map((card) => (
+                  <Card
+                    key={card.id}
+                    className={cn(
+                      card.status === "correct" && "border-green-500",
+                      card.status === "incorrect" && "border-red-500",
+                      !card.status && "hover:border-primary/50"
+                    )}
+                  >
+                    <CardContent className="flex items-center justify-between p-4">
+                      <div>
+                        <p className="font-medium">{card.front}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {card.back}
+                        </p>
+                        {card.lastReviewed && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Last reviewed:{" "}
+                            {card.lastReviewed.toLocaleDateString()}
+                          </p>
+                        )}
+                      </div>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreVertical className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setEditingCard(card);
+                              setNewCardFront(card.front);
+                              setNewCardBack(card.back);
+                            }}
+                          >
+                            <Edit className="w-4 h-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => deleteCard(card.id)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <Dialog
+          open={showCreateCard || !!editingCard}
+          onOpenChange={(open) => {
+            if (!open) {
+              setShowCreateCard(false);
+              setEditingCard(null);
+              setNewCardFront("");
+              setNewCardBack("");
+            }
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {editingCard ? "Edit Card" : "Create New Card"}
+              </DialogTitle>
+              <DialogDescription>
+                {editingCard
+                  ? "Edit your flashcard content"
+                  : "Add a new flashcard to your deck"}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="front">Front Side</Label>
+                <Textarea
+                  id="front"
+                  placeholder="Question or term"
+                  value={newCardFront}
+                  onChange={(e) => setNewCardFront(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="back">Back Side</Label>
+                <Textarea
+                  id="back"
+                  placeholder="Answer or definition"
+                  value={newCardBack}
+                  onChange={(e) => setNewCardBack(e.target.value)}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCreateCard(false);
+                  setEditingCard(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={editingCard ? updateCard : createCard}>
+                {editingCard ? "Save Changes" : "Create Card"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
+  );
+}

@@ -127,7 +127,7 @@ export const UserProgress = ({
           </Button>
         </Link>
 
-        <Link href="/quests">
+        <Link href="/flashcards">
           <Button className="w-full mt-4" variant="outline" size="sm">
             Daily Quests
           </Button>

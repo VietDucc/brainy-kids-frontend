@@ -34,6 +34,7 @@ interface Challenge {
   id: number;
   type: "SELECT" | "SINGLE" | "MULTI" | "ASSIST" | string;
   imgSrc?: string | null;
+  imageSrc?: string | null;
   question: string;
   orderChallenge: number;
   challengesOption: ChallengeOption[];
@@ -90,10 +91,8 @@ export const ChallengeScreen = ({
   const completeSoundRef = useRef<HTMLAudioElement | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Đảm bảo currentChallenge luôn có giá trị hợp lệ
   const currentChallenge = sortedChallenges[currentChallengeIndex] || null;
 
-  // Khởi tạo audio elements khi component mount
   useEffect(() => {
     correctSoundRef.current = new Audio("/correct.wav");
     incorrectSoundRef.current = new Audio("/incorrect.wav");
@@ -267,6 +266,8 @@ export const ChallengeScreen = ({
       </div>
     );
   }
+
+  console.log(currentChallenge);
 
   if (showSummary) {
     return (

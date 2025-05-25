@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { GripVertical, ArrowRight } from "lucide-react";
-import { useState, useRef, TouchEvent } from "react";
+import { useState, useRef, TouchEvent, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 interface MultiChallengeProps {
@@ -32,6 +32,14 @@ export function MultiChallenge({
   });
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
+  // Add useEffect to reset state when question changes
+  useEffect(() => {
+    setArrangedWords([...question.split(" ")].sort(() => Math.random() - 0.5));
+    setHasSubmitted(false);
+    setDraggedIndex(null);
+    setTouchedWord({ index: -1, element: null });
+  }, [question]);
+
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
   };
@@ -50,7 +58,6 @@ export function MultiChallenge({
 
   const handleDragEnd = () => {
     setDraggedIndex(null);
-    checkArrangement();
   };
 
   const handleTouchStart = (e: TouchEvent, index: number) => {
@@ -113,13 +120,6 @@ export function MultiChallenge({
     element.style.zIndex = "";
 
     setTouchedWord({ index: -1, element: null });
-    checkArrangement();
-  };
-
-  const checkArrangement = () => {
-    if (arrangedWords.join(" ") === originalWords.join(" ")) {
-      onCorrectArrangement();
-    }
   };
 
   const handleSubmit = () => {
@@ -129,6 +129,15 @@ export function MultiChallenge({
     } else {
       onIncorrectAttempt();
     }
+  };
+
+  const handleNext = () => {
+    // Reset states before moving to next question
+    setHasSubmitted(false);
+    setDraggedIndex(null);
+    setTouchedWord({ index: -1, element: null });
+    // Call the onNext prop to move to next question
+    onNext();
   };
 
   return (
@@ -187,15 +196,13 @@ export function MultiChallenge({
             Check Answer
           </Button>
         ) : (
-          arrangedWords.join(" ") !== originalWords.join(" ") && (
-            <Button
-              onClick={onNext}
-              className="w-full py-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-2"
-            >
-              Next
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-          )
+          <Button
+            onClick={handleNext}
+            className="w-full py-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-2"
+          >
+            Next
+            <ArrowRight className="h-5 w-5" />
+          </Button>
         )}
       </div>
     </div>

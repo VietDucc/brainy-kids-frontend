@@ -20,7 +20,6 @@ import {
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 
 import {
   AlertDialog,
@@ -41,22 +40,23 @@ import {
 import { CourseEditForm } from "./[courseId]/components/CourseEditForm";
 
 interface Course {
-  id: string;
+  id: number;
   title: string;
-  imageSrc: string;
   description: string;
-  progress?: number;
-  totalUnits?: number;
-  totalLessons?: number;
-  totalChallenges?: number;
+  orderUnit: number;
+  lessons: {
+    id: number;
+    title: string;
+    orderLesson: number;
+  }[];
 }
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-  const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
+  const [courseToDelete, setCourseToDelete] = useState<number | null>(null);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
-  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -65,17 +65,7 @@ export default function CoursesPage() {
       try {
         const response = await fetch("/api/courses");
         const data = await response.json();
-
-        // Transform data to include statistics
-        const coursesWithStats = data.map((course: Course) => ({
-          ...course,
-          progress: Math.floor(Math.random() * 100), // Replace with actual progress
-          totalUnits: 5, // Replace with actual count from units API
-          totalLessons: 15,
-          totalChallenges: 45,
-        }));
-
-        setCourses(coursesWithStats);
+        setCourses(data);
       } catch (error) {
         console.error("Error fetching courses:", error);
         toast({
@@ -89,7 +79,7 @@ export default function CoursesPage() {
     fetchCourses();
   }, []);
 
-  const handleDelete = async (courseId: string) => {
+  const handleDelete = async (courseId: number) => {
     try {
       await fetch(`/api/courses/${courseId}`, {
         method: "DELETE",
@@ -161,17 +151,10 @@ export default function CoursesPage() {
                 >
                   <CardHeader className="relative h-36 p-0">
                     <Image
-                      src={
-                        (course.imageSrc !== "string" && course.imageSrc) ||
-                        "/images/course-placeholder.jpg"
-                      }
+                      src={"/images/course-placeholder.jpg"}
                       alt={course.title}
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = "/images/course-placeholder.jpg";
-                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     <div className="absolute bottom-3 left-3 right-3">
@@ -187,35 +170,17 @@ export default function CoursesPage() {
                   </p>
 
                   <div className="mt-auto space-y-3">
-                    <div className="grid grid-cols-3 gap-1.5 text-center text-xs">
-                      <div className="flex items-center justify-center gap-1 text-blue-600">
-                        <div className="font-semibold">{course.totalUnits}</div>
-                        <div className="opacity-80">Units</div>
-                      </div>
+                    <div className="grid grid-cols-2 gap-1.5 text-center text-xs">
                       <div className="flex items-center justify-center gap-1 text-purple-600">
                         <div className="font-semibold">
-                          {course.totalLessons}
+                          {course.lessons?.length || 0}
                         </div>
                         <div className="opacity-80">Lessons</div>
                       </div>
-                      <div className="flex items-center justify-center gap-1 text-green-600">
-                        <div className="font-semibold">
-                          {course.totalChallenges}
-                        </div>
-                        <div className="opacity-80">Tasks</div>
+                      <div className="flex items-center justify-center gap-1 text-blue-600">
+                        <div className="font-semibold">{course.orderUnit}</div>
+                        <div className="opacity-80">Order</div>
                       </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-600 font-medium">
-                          Progress
-                        </span>
-                        <span className="font-semibold text-blue-600">
-                          {course.progress}%
-                        </span>
-                      </div>
-                      <Progress value={course.progress} className="h-1" />
                     </div>
 
                     <div className="flex items-center justify-between pt-2 border-t">
@@ -258,11 +223,11 @@ export default function CoursesPage() {
                               setOpenDropdownId(null);
                             }}
                             className="text-red-500 focus:text-red-500 cursor-pointer"
-                            disabled={course.id == "1"}
+                            disabled={course.id === 1}
                           >
                             <Trash className="mr-2 h-4 w-4" />
                             <span>
-                              {course.id == "1"
+                              {course.id === 1
                                 ? "Cannot delete default"
                                 : "Delete"}
                             </span>
@@ -288,11 +253,10 @@ export default function CoursesPage() {
           </DialogHeader>
           {editingCourse && (
             <CourseEditForm
-              courseId={editingCourse.id}
+              courseId={editingCourse.id.toString()}
               initialData={{
                 title: editingCourse.title,
                 description: editingCourse.description,
-                imageSrc: editingCourse.imageSrc,
               }}
               onCancel={() => setEditingCourse(null)}
               onSuccess={(data) => {
@@ -324,7 +288,7 @@ export default function CoursesPage() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This will permanently delete the course and all its associated
-              units, lessons, and challenges. This action cannot be undone.
+              lessons. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

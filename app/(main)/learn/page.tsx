@@ -23,34 +23,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { BookOpen, PenSquare } from "lucide-react";
 
-interface ChallengeOption {
-  id: number;
-  textOption: string;
-  correct: boolean;
-  imageSrc: string;
-  audioSrc: string;
-}
-
-interface ChallengeProgress {
-  id: number;
-  userId: string;
-  completed: boolean;
-}
-
-interface Challenge {
-  id: number;
-  type: string;
-  question: string;
-  orderChallenge: number;
-  challengesOption: ChallengeOption[];
-  challengesProgress: ChallengeProgress[];
-}
-
 interface Lesson {
   id: number;
   title: string;
-  orderIndex: number;
-  challenges: Challenge[];
+  orderLesson: number;
 }
 
 interface Unit {
@@ -183,27 +159,22 @@ const LearnPage = () => {
       return "completed";
     }
 
-    if (!lesson.challenges || lesson.challenges.length === 0) {
-      return "locked";
-    }
-
+    // Since challenges are no longer part of the initial response,
+    // we'll consider all lessons as available by default
     return "available";
   };
 
   const getLessonStatusDescription = (
     status: "locked" | "available" | "completed",
-    orderIndex: number,
-    challengesCount: number
+    orderLesson: number
   ): string => {
     switch (status) {
       case "completed":
-        return `✅ Completed! ${challengesCount} challenges in lesson! 🌟`;
+        return "✅ Completed! 🌟";
       case "available":
-        return ` ${challengesCount} fun ${
-          challengesCount === 1 ? "challenge" : "challenges"
-        } 🎮`;
+        return `Lesson ${orderLesson}`;
       case "locked":
-        return "🔒 Coming soon • New adventures await!";
+        return "Complete previous lessons to unlock";
     }
   };
 
@@ -239,14 +210,37 @@ const LearnPage = () => {
       }
 
       const data = await response.json();
-      const lessonData = transformLessonData(data, selectedLessonId);
 
-      if (!lessonData.challenges || lessonData.challenges.length === 0) {
+      if (!data.challenges || data.challenges.length === 0) {
         setError("This lesson doesn't have any challenges yet.");
         setSelectedLesson(null);
-      } else {
-        setSelectedLesson(lessonData);
+        setShowLearningOptions(false);
+        setLoadingLessonId(null);
+        setIsLoadingLesson(false);
+        return;
       }
+
+      const lessonData = transformLessonData(
+        [
+          {
+            id: selectedLessonId,
+            title:
+              units
+                .flatMap((u) => u.lessons)
+                .find((l) => l.id === selectedLessonId)?.title ||
+              `Lesson ${selectedLessonId}`,
+            orderLesson:
+              units
+                .flatMap((u) => u.lessons)
+                .find((l) => l.id === selectedLessonId)?.orderLesson || 0,
+            challenges: data.challenges,
+          },
+        ],
+        selectedLessonId
+      );
+
+      console.log("Transformed Data:", lessonData); // Debug log
+      setSelectedLesson(lessonData);
     } catch (error) {
       console.error("Error loading lesson:", error);
       setError("Failed to load lesson. Please try again.");
@@ -372,11 +366,9 @@ const LearnPage = () => {
 
             {selectedUnit.lessons.map((lesson) => {
               const status = getLessonStatus(lesson);
-              const challengesCount = lesson.challenges?.length || 0;
               const statusDescription = getLessonStatusDescription(
                 status,
-                lesson.orderIndex,
-                challengesCount
+                lesson.orderLesson
               );
               const isCurrentLessonLoading = loadingLessonId === lesson.id;
 
@@ -454,11 +446,9 @@ const LearnPage = () => {
                     {unit.lessons && unit.lessons.length > 0 ? (
                       unit.lessons.map((lesson) => {
                         const status = getLessonStatus(lesson);
-                        const challengesCount = lesson.challenges?.length || 0;
                         const statusDescription = getLessonStatusDescription(
                           status,
-                          lesson.orderIndex,
-                          challengesCount
+                          lesson.orderLesson
                         );
                         const isCurrentLessonLoading =
                           loadingLessonId === lesson.id;

@@ -31,7 +31,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const lessonFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   difficulty: z.enum(["EASY", "MEDIUM", "HARD"]).nullable(),
-  orderIndex: z.number().min(0, "Order must be 0 or greater"),
+  orderLesson: z.number().min(0, "Order must be 0 or greater"),
 });
 
 type LessonFormValues = z.infer<typeof lessonFormSchema>;
@@ -47,7 +47,7 @@ export default function LessonForm() {
     defaultValues: {
       title: "",
       difficulty: null,
-      orderIndex: 0,
+      orderLesson: 0,
     },
   });
 
@@ -60,7 +60,7 @@ export default function LessonForm() {
           form.reset({
             title: data.title,
             difficulty: data.difficulty,
-            orderIndex: data.orderIndex,
+            orderLesson: data.orderLesson,
           });
         } catch (error) {
           console.error("Error fetching lesson:", error);
@@ -185,7 +185,7 @@ export default function LessonForm() {
 
               <FormField
                 control={form.control}
-                name="orderIndex"
+                name="orderLesson"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Order</FormLabel>

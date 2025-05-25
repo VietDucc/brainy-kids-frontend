@@ -18,7 +18,7 @@ import { useState } from "react";
 const courseFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  imageSrc: z.string().url("Must be a valid URL").optional(),
+  orderUnit: z.number().min(0, "Order must be 0 or greater"),
 });
 
 type CourseFormValues = z.infer<typeof courseFormSchema>;
@@ -41,7 +41,10 @@ export function CourseEditForm({
 
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseFormSchema),
-    defaultValues: initialData,
+    defaultValues: {
+      ...initialData,
+      orderUnit: initialData.orderUnit || 0,
+    },
   });
 
   const onSubmit = async (data: CourseFormValues) => {
@@ -97,15 +100,38 @@ export function CourseEditForm({
 
         <FormField
           control={form.control}
-          name="imageSrc"
+          name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Cover Image URL</FormLabel>
+              <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="https://example.com/image.jpg" {...field} />
+                <Input placeholder="Enter course description" {...field} />
               </FormControl>
               <FormDescription>
-                Provide a URL for the course cover image
+                Provide a brief description of the course
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="orderUnit"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Order</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Enter order number"
+                  {...field}
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                />
+              </FormControl>
+              <FormDescription>
+                Set the display order of the course (0 or greater)
               </FormDescription>
               <FormMessage />
             </FormItem>

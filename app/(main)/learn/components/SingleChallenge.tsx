@@ -5,7 +5,7 @@ import { ChallengeOption } from "../types";
 
 interface SingleChallengeProps {
   question: string;
-  imgSrc: string;
+  imgSrc: string | null;
   options: ChallengeOption[];
   selectedOptionId: number | null;
   isCorrect: boolean | null;
@@ -23,21 +23,25 @@ export function SingleChallenge({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <div className="relative w-full h-64 mb-6 rounded-xl overflow-hidden">
-          <Image
-            src={imgSrc}
-            alt={question}
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+        {imgSrc && (
+          <div className="relative w-full h-64 mb-6 rounded-xl overflow-hidden">
+            <Image
+              src={imgSrc}
+              alt={question}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
         <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-4">
           {question}
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm">
-          Choose the sentence that matches this picture
-        </p>
+        {imgSrc && (
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
+            Choose the sentence that matches this picture
+          </p>
+        )}
       </div>
 
       <div className="space-y-4">
