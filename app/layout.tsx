@@ -5,12 +5,63 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ClerkLoaded, ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/toaster";
+import { siteConfig } from "./metadata";
+import Script from "next/script";
+import { SchemaMarkup } from "./components/shared/SchemaMarkup";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "KidsLearn - Nền tảng học tập tương tác cho trẻ em",
-  description:
-    "Nền tảng học tập tương tác giúp trẻ phát triển ngôn ngữ, tư duy, toán học và lập trình một cách thú vị.",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: siteConfig.authors,
+  creator: siteConfig.creator,
+  openGraph: {
+    type: "website",
+    locale: "vi_VN",
+    url: siteConfig.url,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+    creator: "@brainykids",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
+  themeColor: siteConfig.themeColor,
 };
 
 export default function RootLayout({
@@ -21,6 +72,32 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="vi" suppressHydrationWarning>
+        <head>
+          <link rel="canonical" href={siteConfig.url} />
+          <meta
+            name="google-site-verification"
+            content="your-verification-code"
+          />
+
+          {/* Google tag (gtag.js) */}
+          <Script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-8QN6TXH5QG"
+          ></Script>
+          <Script id="google-analytics">
+            {`
+               window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+
+                gtag('config', 'G-8QN6TXH5QG');
+            `}
+          </Script>
+
+          {/* Schema Markup */}
+          <SchemaMarkup type="Organization" />
+          <SchemaMarkup type="WebSite" />
+        </head>
         <body className={inter.className}>
           <ThemeProvider
             attribute="class"
