@@ -90,7 +90,7 @@ export default function BlogPage() {
     }
   };
 
-  if (loading || !posts) {
+  if (loading || !posts.length) {
     return <Loading text="posts..." />;
   }
 
