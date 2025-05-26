@@ -36,6 +36,8 @@ export const api = {
     `${API_BASE_URL}/api/${clerkUserId}/decks`,
   userDeckById: (clerkUserId: string, id: number) =>
     `${API_BASE_URL}/api/${clerkUserId}/decks/${id}`,
+  userDeckCardById: (clerkUserId: string, deckId: number) =>
+    `${API_BASE_URL}/api/{clerkUserId}/cards/deck/${deckId}?clerkUserId=${clerkUserId}`,
   blog: `${API_BASE_URL}/api/blogs`,
   blogById: (id: number) => `${API_BASE_URL}/api/blogs/${id}`,
   blogCommentById: (id: number) => `${API_BASE_URL}/api/blogs/${id}/comments`,

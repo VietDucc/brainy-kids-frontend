@@ -32,8 +32,8 @@ export default function BlogPost({ post, viewMode, onClick }: BlogPostProps) {
           {post.imageUrl && (
             <div className="flex-shrink-0 overflow-hidden rounded-lg">
               <Image
-                src={post.imageUrl || "https://picsum.photos/400/300"}
-                alt={post.title}
+                src={post?.imageUrl || "https://picsum.photos/400/300"}
+                alt={post?.title || "Blog Post Image"}
                 className="w-48 h-32 object-cover transition-transform duration-200 group-hover:scale-105"
                 width={400}
                 height={300}
@@ -137,20 +137,16 @@ export default function BlogPost({ post, viewMode, onClick }: BlogPostProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Avatar className="w-8 h-8 border-2 border-background">
-              <AvatarImage src={post.author?.avatar} />
+              <AvatarImage src={post.authorImg} />
               <AvatarFallback className="bg-primary/10 text-primary">
-                {post.author?.name[0]}
+                {post.authorName}
               </AvatarFallback>
             </Avatar>
             <span className="text-sm font-medium text-foreground">
-              {post.author?.name}
+              {post.authorName}
             </span>
           </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1 hover:text-primary transition-colors">
-              <Clock className="w-4 h-4" />
-              {post.readTime} min
-            </span>
             <span className="flex items-center gap-1 hover:text-primary transition-colors">
               <Heart className="w-4 h-4" />
               {post.likes}

@@ -1,14 +1,17 @@
+"use client";
+
 import { useState } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Comment } from "../type";
+import { cn } from "@/lib/utils";
 
 interface CommentProps {
   comment: Comment;
   userId?: string | null;
   authorId: string;
-  onReply: (commentId: number) => void;
+  onReply: () => void;
   onEdit: (commentId: number, content: string) => void;
   onDelete: (commentId: number) => void;
   formatDate: (date: string) => string;
@@ -29,14 +32,21 @@ export function CommentComponent({
   const isBlogAuthor = userId === authorId;
   const canDelete = isCommentAuthor || isBlogAuthor;
 
+  const handleReplyClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onReply();
+  };
+
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 group">
       <Avatar className="w-8 h-8">
         <AvatarFallback className="bg-primary/10 text-primary">
-          {comment.authorId[0]}
+          {comment.authorName?.[0]?.toUpperCase()}
         </AvatarFallback>
+        <AvatarImage src={comment.authorImg} />
       </Avatar>
-      <div className="flex-1 space-y-1">
+      <div className="flex-1 space-y-1 min-w-0">
         {isEditing ? (
           <div className="space-y-2">
             <Textarea
@@ -72,12 +82,24 @@ export function CommentComponent({
           </div>
         ) : (
           <>
-            <div className="bg-accent/50 dark:bg-accent rounded-xl px-4 py-2.5">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold block text-sm text-foreground">
-                  {comment.authorId}
-                </span>
-                <div className="flex items-center gap-2">
+            <div
+              className={cn(
+                "bg-accent/50 dark:bg-accent rounded-xl px-4 py-2.5",
+                "group-hover:bg-accent/70 dark:group-hover:bg-accent/70 transition-colors"
+              )}
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="font-semibold text-sm text-foreground truncate">
+                    {comment.authorName}
+                  </span>
+                  {comment.authorId === authorId && (
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                      Author
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
                   {isCommentAuthor && (
                     <button
                       onClick={() => setIsEditing(true)}
@@ -96,17 +118,19 @@ export function CommentComponent({
                   )}
                 </div>
               </div>
-              <p className="text-sm text-foreground/90 mt-1">
+              <p className="text-sm text-foreground/90 mt-1 whitespace-pre-wrap break-words">
                 {comment.content}
               </p>
             </div>
             <div className="flex items-center gap-4 px-4">
-              <button
-                onClick={() => onReply(comment.id)}
-                className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleReplyClick}
+                className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors p-0 h-auto"
               >
                 Reply
-              </button>
+              </Button>
               <span className="text-xs text-muted-foreground">
                 {formatDate(comment.createdAt)}
               </span>

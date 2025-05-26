@@ -42,11 +42,13 @@ import { useRouter } from "next/navigation";
 import Loading from "@/app/loading";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+import { Card } from "@/components/ui/card";
 
 interface Deck {
   id: number;
   name: string;
   flashCards?: { id: number }[];
+  authorId: number;
 }
 
 export default function FlashCardApp() {
@@ -176,6 +178,10 @@ export default function FlashCardApp() {
     }
   };
 
+  const navigateToDeck = (deckId: number, isUserDeck: boolean) => {
+    router.push(`/flashcards/${deckId}?type=${isUserDeck ? "user" : "public"}`);
+  };
+
   if (loading) {
     return <Loading text="flashcards" />;
   }
@@ -238,11 +244,12 @@ export default function FlashCardApp() {
 
         <div className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-4">
           {userDecks.map((deck) => (
-            <div key={deck.id} className="group relative">
-              <div
-                className="aspect-square rounded-lg sm:rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/10 p-1.5 sm:p-4 shadow-sm hover:shadow-md transition-all duration-200 ease-in-out border border-gray-200 dark:border-gray-800 flex flex-col items-center justify-center group-hover:scale-105 group-hover:border-blue-300 dark:group-hover:border-blue-700 cursor-pointer"
-                onClick={() => router.push(`/flashcards/${deck.id}`)}
-              >
+            <Card
+              key={deck.id}
+              onClick={() => navigateToDeck(deck.id, true)}
+              className="cursor-pointer"
+            >
+              <div className="aspect-square rounded-lg sm:rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/10 p-1.5 sm:p-4 shadow-sm hover:shadow-md transition-all duration-200 ease-in-out border border-gray-200 dark:border-gray-800 flex flex-col items-center justify-center group-hover:scale-105 group-hover:border-blue-300 dark:group-hover:border-blue-700">
                 <Folder className="w-12 h-12 sm:w-16 sm:h-16 text-blue-500 mb-1 sm:mb-3 group-hover:text-blue-600 flex-shrink-0" />
                 <div className="w-full">
                   <p className="text-[10px] sm:text-sm font-medium text-center truncate">
@@ -308,18 +315,20 @@ export default function FlashCardApp() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-            </div>
+            </Card>
           ))}
 
-          <div
-            className="aspect-square rounded-lg sm:rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-800 p-1.5 sm:p-4 hover:border-blue-300 dark:hover:border-blue-700 transition-colors cursor-pointer flex flex-col items-center justify-center"
+          <Card
             onClick={() => setShowCreateDeck(true)}
+            className="cursor-pointer"
           >
-            <Plus className="w-6 h-6 sm:w-12 sm:h-12 text-gray-400 mb-1 sm:mb-2" />
-            <p className="text-[10px] sm:text-sm font-medium text-muted-foreground text-center">
-              Create New Deck
-            </p>
-          </div>
+            <div className="aspect-square rounded-lg sm:rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-800 p-1.5 sm:p-4 hover:border-blue-300 dark:hover:border-blue-700 transition-colors cursor-pointer flex flex-col items-center justify-center">
+              <Plus className="w-6 h-6 sm:w-12 sm:h-12 text-gray-400 mb-1 sm:mb-2" />
+              <p className="text-[10px] sm:text-sm font-medium text-muted-foreground text-center">
+                Create New Deck
+              </p>
+            </div>
+          </Card>
         </div>
       </div>
 
@@ -329,10 +338,10 @@ export default function FlashCardApp() {
 
         <div className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1 sm:gap-4">
           {publicDecks.map((deck) => (
-            <div
+            <Card
               key={deck.id}
-              className="group relative cursor-pointer"
-              onClick={() => router.push(`/flashcards/${deck.id}`)}
+              onClick={() => navigateToDeck(deck.id, false)}
+              className="cursor-pointer"
             >
               <div className="aspect-square rounded-lg sm:rounded-2xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/10 p-1.5 sm:p-4 shadow-sm hover:shadow-md transition-all duration-200 ease-in-out border border-gray-200 dark:border-gray-800 flex flex-col items-center justify-center group-hover:scale-105 group-hover:border-green-300 dark:group-hover:border-green-700">
                 <Folder className="w-12 h-12 sm:w-16 sm:h-16 text-green-500 mb-1 sm:mb-3 group-hover:text-green-600 flex-shrink-0" />
@@ -345,7 +354,7 @@ export default function FlashCardApp() {
                   </p>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
 
           {publicDecks.length === 0 && (

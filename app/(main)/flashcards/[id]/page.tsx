@@ -33,30 +33,20 @@ import Loading from "@/app/loading";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import React from "react";
-
-interface FlashCard {
-  id: number;
-  front: string;
-  back: string;
-  status?: "correct" | "incorrect" | "skipped";
-  lastReviewed?: Date;
-}
-
-interface DeckWithCards {
-  id: number;
-  name: string;
-  flashCards: FlashCard[];
-}
-
-type StudyMode = "flashcard" | "learn" | "overview";
+import { useAuth } from "@clerk/nextjs";
+import { FlashCard, DeckWithCards, StudyMode } from "../types";
 
 export default function FlashCardDetail({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ type?: "user" | "public" }>;
 }) {
   const unwrappedParams = React.use(params);
+  const unwrappedSearchParams = React.use(searchParams);
   const router = useRouter();
+  const { userId } = useAuth();
   const [deck, setDeck] = useState<DeckWithCards | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -75,17 +65,30 @@ export default function FlashCardDetail({
   useEffect(() => {
     const loadDeck = async () => {
       try {
-        const data = await fetch(`/api/deck/${unwrappedParams.id}`);
-        const deckData = await data.json();
+        const response = await fetch(
+          unwrappedSearchParams.type === "user"
+            ? `/api/user-deck/${unwrappedParams.id}`
+            : `/api/deck/${unwrappedParams.id}`
+        );
+
+        if (!response.ok) {
+          setDeck(null);
+          return;
+        }
+
+        const deckData = await response.json();
         setDeck(deckData);
       } catch (error) {
         console.error("Failed to fetch deck:", error);
+        setDeck(null);
       } finally {
         setLoading(false);
       }
     };
     loadDeck();
-  }, [unwrappedParams.id]);
+  }, [unwrappedParams.id, userId, unwrappedSearchParams.type]);
+
+  const canEdit = deck?.authorId === userId;
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -132,11 +135,28 @@ export default function FlashCardDetail({
   }
 
   if (!deck || !deck.flashCards) {
-    return <div>Deck not found</div>;
+    return (
+      <div className="container px-4 sm:px-6 py-4 sm:py-6">
+        <div className="max-w-5xl mx-auto">
+          <Button
+            variant="ghost"
+            onClick={() => router.push("/flashcards")}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Button>
+          <div className="text-center mt-8">
+            <p className="text-muted-foreground">Deck not found</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const createCard = () => {
-    if (!deck || !newCardFront.trim() || !newCardBack.trim()) return;
+    if (!deck || !newCardFront.trim() || !newCardBack.trim() || !canEdit)
+      return;
 
     const newCard: FlashCard = {
       id: Math.max(0, ...deck.flashCards.map((c) => c.id)) + 1,
@@ -154,7 +174,7 @@ export default function FlashCardDetail({
   };
 
   const deleteCard = (cardId: number) => {
-    if (!deck) return;
+    if (!deck || !canEdit) return;
     setDeck({
       ...deck,
       flashCards: deck.flashCards.filter((card) => card.id !== cardId),
@@ -165,7 +185,13 @@ export default function FlashCardDetail({
   };
 
   const updateCard = () => {
-    if (!editingCard || !deck || !newCardFront.trim() || !newCardBack.trim())
+    if (
+      !editingCard ||
+      !deck ||
+      !newCardFront.trim() ||
+      !newCardBack.trim() ||
+      !canEdit
+    )
       return;
 
     setDeck({
@@ -191,7 +217,6 @@ export default function FlashCardDetail({
       incorrect: 0,
       remaining: deck.flashCards.length,
     });
-    // Reset all cards' status
     setDeck({
       ...deck,
       flashCards: deck.flashCards.map((card) => ({

@@ -19,6 +19,8 @@ export interface BlogPost {
       avatar: string;
       bio: string;
     };
+    authorName: string;
+    authorImg: string;
   }
   
   export interface Comment {
@@ -29,6 +31,8 @@ export interface BlogPost {
     parentId?: number | null;
     replies?: Comment[];
     level?: number;
+    authorName: string;
+    authorImg: string;
   }
   
   export interface BlogState {

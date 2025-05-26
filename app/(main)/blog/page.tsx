@@ -34,6 +34,8 @@ export default function BlogPage() {
     content: "",
     imageUrl: "",
     authorId: "",
+    authorName: "",
+    authorImg: "",
   });
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const router = useRouter();
@@ -83,6 +85,8 @@ export default function BlogPage() {
         content: "",
         imageUrl: "",
         authorId: "",
+        authorName: "",
+        authorImg: "",
       });
       setShowCreatePost(false);
     } catch (error) {

@@ -243,7 +243,7 @@ export default function BlogPostDetail({
         comment={comment}
         userId={userId}
         authorId={authorId}
-        onReply={setReplyingTo}
+        onReply={() => setReplyingTo(comment.id)}
         onEdit={handleEditComment}
         onDelete={handleDeleteComment}
         formatDate={formatDate}
@@ -292,7 +292,7 @@ export default function BlogPostDetail({
               comment={reply}
               userId={userId}
               authorId={authorId}
-              onReply={() => {}}
+              onReply={() => setReplyingTo(reply.id)}
               onEdit={handleEditComment}
               onDelete={handleDeleteComment}
               formatDate={formatDate}
@@ -387,16 +387,14 @@ export default function BlogPostDetail({
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
                 <Avatar>
-                  <AvatarImage
-                    src={post.author?.avatar || "/placeholder.svg"}
-                  />
+                  <AvatarImage src={post.authorImg || "/placeholder.svg"} />
                   <AvatarFallback>
-                    {post.author?.name?.charAt(0) || "U"}
+                    {post.authorName?.charAt(0) || "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="font-medium text-muted-foreground">
-                    {post.author?.name || "Anonymous"}
+                    {post.authorName || "Anonymous"}
                   </p>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground/70">
                     <span className="flex items-center gap-1">
