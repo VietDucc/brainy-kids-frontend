@@ -106,6 +106,7 @@ const LearnPage = () => {
           setCompletedLessonId(lessonIds);
         }
         const courseId = userProgress.activeCourse.id;
+
         const unitsResponse = await fetch(`/api/units/${courseId}`);
         if (!unitsResponse.ok) {
           throw new Error("Failed to fetch course units");
