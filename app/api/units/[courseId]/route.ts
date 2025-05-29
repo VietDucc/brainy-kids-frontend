@@ -21,8 +21,8 @@ export async function GET(
     const response = await fetch(api.units(courseId), {
       headers: {
         Authorization: `Bearer ${token}`,
-        "no-cache": "true",
       },
+      cache: "no-cache",
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch units for course ${courseId}`);
