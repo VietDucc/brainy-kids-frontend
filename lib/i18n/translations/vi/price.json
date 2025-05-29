@@ -1,0 +1,54 @@
+{
+  "highlight": "Gói học tập",
+  "title": {
+    "text": "Chọn gói phù hợp với",
+    "highlight": "con bạn"
+  },
+  "description": "Chúng tôi cung cấp nhiều gói học tập khác nhau để phù hợp với nhu cầu và ngân sách của bạn.",
+  "billing": {
+    "monthly": "Hàng tháng",
+    "yearly": "Hàng năm",
+    "discount": "-17%",
+    "save": "Tiết kiệm"
+  },
+  "plans": {
+    "basic": {
+      "name": "Cơ bản",
+      "description": "Dành cho người mới bắt đầu",
+      "features": [
+        "Truy cập 100+ bài học",
+        "Trò chơi học tập cơ bản",
+        "Báo cáo tiến độ hàng tuần",
+        "Hỗ trợ qua email"
+      ]
+    },
+    "standard": {
+      "name": "Tiêu chuẩn",
+      "description": "Dành cho học sinh tiểu học",
+      "features": [
+        "Truy cập 300+ bài học",
+        "Tất cả trò chơi học tập",
+        "Báo cáo tiến độ hàng ngày",
+        "Hỗ trợ qua email và chat",
+        "Bài tập cá nhân hóa"
+      ],
+      "popular": "Phổ biến nhất"
+    },
+    "premium": {
+      "name": "Cao cấp",
+      "description": "Dành cho học sinh nghiêm túc",
+      "features": [
+        "Truy cập toàn bộ bài học",
+        "Báo cáo tiến độ thời gian thực",
+        "Hỗ trợ ưu tiên 24/7",
+        "Bài tập cá nhân hóa",
+        "Kèm 1-1 với giáo viên"
+      ]
+    }
+  },
+  "cta": {
+    "popular": "Bắt đầu ngay",
+    "default": "Đăng ký"
+  },
+  "scroll_hint": "Vuốt để xem tất cả các gói"
+} 

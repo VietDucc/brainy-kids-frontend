@@ -21,6 +21,7 @@ export async function GET(
     const response = await fetch(api.units(courseId), {
       headers: {
         Authorization: `Bearer ${token}`,
+        "no-cache": "true",
       },
     });
     if (!response.ok) {

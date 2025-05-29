@@ -14,7 +14,13 @@ type SidebarItemProps = {
 
 export const SidebarItem = ({ label, iconSrc, href }: SidebarItemProps) => {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const segments = pathname.split("/");
+  const locale = segments[1];
+
+  const pathWithoutLocale = "/" + segments.slice(2).join("/");
+  const isActive = pathWithoutLocale === href;
+
+  const fullHref = locale ? `/${locale}${href}` : href;
 
   return (
     <Button
@@ -22,7 +28,7 @@ export const SidebarItem = ({ label, iconSrc, href }: SidebarItemProps) => {
       className="h-[52px] justify-start"
       asChild
     >
-      <Link href={href}>
+      <Link href={fullHref}>
         <Image
           src={iconSrc}
           alt={label}

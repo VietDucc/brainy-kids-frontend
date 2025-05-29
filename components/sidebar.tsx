@@ -1,17 +1,44 @@
+"use client";
+
 import { ClerkLoading, ClerkLoaded, UserButton } from "@clerk/nextjs";
 import { BookOpen, Loader } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
-
 import { SidebarItem } from "./sidebar-item";
 import { ModeToggle } from "./mode-toggle";
+import { LanguageSwitcher } from "./language-switcher";
 
 type SidebarProps = {
   className?: string;
 };
 
 export const Sidebar = ({ className }: SidebarProps) => {
+  const { t } = useTranslation("main");
+
+  const navigationItems = [
+    { label: "navigation.learn", href: "/learn", iconSrc: "/learn.svg" },
+    {
+      label: "navigation.leaderboard",
+      href: "/leaderboard",
+      iconSrc: "/leaderboard.svg",
+    },
+    { label: "navigation.blog", href: "/blog", iconSrc: "/blog.png" },
+    {
+      label: "navigation.flashcards",
+      href: "/flashcards",
+      iconSrc: "/flashcard.png",
+    },
+    {
+      label: "navigation.dictionary",
+      href: "/dictionary",
+      iconSrc: "/dictionary.svg",
+    },
+    { label: "navigation.games", href: "/games", iconSrc: "/game.png" },
+    { label: "navigation.videos", href: "/videos", iconSrc: "/video.svg" },
+  ];
+
   return (
     <div
       className={cn(
@@ -29,25 +56,14 @@ export const Sidebar = ({ className }: SidebarProps) => {
       </Link>
 
       <div className="flex flex-1 flex-col gap-y-2">
-        <SidebarItem label="Learn" href="/learn" iconSrc="/learn.svg" />
-        <SidebarItem
-          label="Leaderboard"
-          href="/leaderboard"
-          iconSrc="/leaderboard.svg"
-        />
-        <SidebarItem label="Blog" href="/blog" iconSrc="/blog.png" />
-        <SidebarItem
-          label="Flashcards"
-          href="/flashcards"
-          iconSrc="/flashcard.png"
-        />
-        <SidebarItem
-          label="Dictionary"
-          href="/dictionary"
-          iconSrc="/dictionary.svg"
-        />
-        <SidebarItem label="Games" href="/games" iconSrc="/game.png" />
-        <SidebarItem label="Videos" href="/videos" iconSrc="/video.svg" />
+        {navigationItems.map((item) => (
+          <SidebarItem
+            key={item.href}
+            label={t(item.label)}
+            href={item.href}
+            iconSrc={item.iconSrc}
+          />
+        ))}
       </div>
 
       <div className="py-4">
@@ -56,7 +72,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
         </ClerkLoading>
 
         <ClerkLoaded>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center gap-2">
             <UserButton
               appearance={{
                 elements: {
@@ -64,6 +80,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
                 },
               }}
             />
+            <LanguageSwitcher />
             <ModeToggle />
           </div>
         </ClerkLoaded>

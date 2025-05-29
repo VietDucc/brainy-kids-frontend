@@ -1,0 +1,54 @@
+{
+  "highlight": "Learning Packages",
+  "title": {
+    "text": "Choose the right package for",
+    "highlight": "your child"
+  },
+  "description": "We offer different learning packages to suit your needs and budget.",
+  "billing": {
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "discount": "-17%",
+    "save": "Save"
+  },
+  "plans": {
+    "basic": {
+      "name": "Basic",
+      "description": "For beginners",
+      "features": [
+        "Access to 100+ lessons",
+        "Basic learning games",
+        "Weekly progress reports",
+        "Email support"
+      ]
+    },
+    "standard": {
+      "name": "Standard",
+      "description": "For elementary students",
+      "features": [
+        "Access to 300+ lessons",
+        "All learning games",
+        "Daily progress reports",
+        "Email and chat support",
+        "Personalized exercises"
+      ],
+      "popular": "Most Popular"
+    },
+    "premium": {
+      "name": "Premium",
+      "description": "For serious students",
+      "features": [
+        "Access to all lessons",
+        "Real-time progress reports",
+        "Priority 24/7 support",
+        "Personalized exercises",
+        "1-on-1 tutoring"
+      ]
+    }
+  },
+  "cta": {
+    "popular": "Start Now",
+    "default": "Sign Up"
+  },
+  "scroll_hint": "Swipe to see all packages"
+} 

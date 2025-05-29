@@ -1,0 +1,23 @@
+{
+  "title": "Học tập đa dạng lĩnh vực",
+  "description": "Nền tảng của chúng tôi cung cấp nhiều lĩnh vực học tập khác nhau, giúp trẻ phát triển toàn diện.",
+  "highlight": "Tính năng nổi bật",
+  "areas": {
+    "language": {
+      "title": "Ngôn ngữ",
+      "description": "Học đọc, viết và phát triển vốn từ vựng qua các trò chơi tương tác."
+    },
+    "thinking": {
+      "title": "Tư duy",
+      "description": "Phát triển kỹ năng giải quyết vấn đề và tư duy logic qua các thử thách."
+    },
+    "math": {
+      "title": "Toán học",
+      "description": "Học toán qua các bài tập tương tác và trò chơi số học thú vị."
+    },
+    "programming": {
+      "title": "Lập trình",
+      "description": "Làm quen với tư duy lập trình qua các trò chơi kéo thả đơn giản."
+    }
+  }
+} 

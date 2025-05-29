@@ -16,7 +16,6 @@ import {
   Zap,
   ArrowRight,
   Crown,
-  Loader,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
@@ -25,14 +24,11 @@ import { motion, useScroll } from "framer-motion";
 import { ModeToggle } from "../mode-toggle";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import {
-  ClerkLoading,
-  ClerkLoaded,
-  useAuth,
-  SignUpButton,
-} from "@clerk/nextjs";
+import { ClerkLoaded, useAuth, SignUpButton } from "@clerk/nextjs";
 import { UserButton } from "@clerk/nextjs";
 import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { LanguageSwitcher } from "../language-switcher";
+import { useTranslation } from "react-i18next";
 
 // Add a function to scroll to top
 export const scrollToTop = () => {
@@ -65,6 +61,7 @@ export const scrollToSection = (
 };
 
 const Header = () => {
+  const { t } = useTranslation("common");
   const [hoverItem, setHoverItem] = useState<string | null>(null);
   const { scrollYProgress } = useScroll();
   const [isOpen, setIsOpen] = useState(false);
@@ -100,10 +97,10 @@ const Header = () => {
   }, [lastScrollY]);
 
   const navItems = [
-    { id: "features", label: "Tính năng", icon: Lightbulb },
-    { id: "how-it-works", label: "Cách thức hoạt động", icon: Puzzle },
-    { id: "testimonials", label: "Đánh giá", icon: Award },
-    { id: "pricing", label: "Gói dịch vụ", icon: CreditCard },
+    { id: "features", label: t("nav.features"), icon: Lightbulb },
+    { id: "how-it-works", label: t("nav.how_it_works"), icon: Puzzle },
+    { id: "testimonials", label: t("nav.testimonials"), icon: Award },
+    { id: "pricing", label: t("nav.pricing"), icon: CreditCard },
   ];
 
   return (
@@ -158,9 +155,8 @@ const Header = () => {
 
             <div className="relative">
               <span className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight text-foreground">
-                Kids<span className="text-primary font-light">Learn</span>
+                {t("brand.name")}
               </span>
-
               <motion.div
                 className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/80 to-primary/30 rounded-full origin-left"
                 initial={{ scaleX: 0 }}
@@ -204,12 +200,10 @@ const Header = () => {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2">
             <ModeToggle />
             <div className="flex gap-x-3">
-              <ClerkLoading>
-                <Loader className="h-5 w-5 animate-spin text-muted-foreground" />
-              </ClerkLoading>
+              <LanguageSwitcher />
               <ClerkLoaded>
                 <SignedIn>
                   <UserButton />
@@ -220,7 +214,7 @@ const Header = () => {
                       className="hidden lg:flex group text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 rounded-lg gap-1.5 shadow-md shadow-primary/20"
                       variant="outline"
                     >
-                      <span className="mr-1">Đăng nhập</span>
+                      <span className="mr-1">{t("nav.login")}</span>
                     </Button>
                   </SignInButton>
                 </SignedOut>
@@ -233,7 +227,7 @@ const Header = () => {
                   className="hidden lg:flex group text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 rounded-lg gap-1.5 shadow-md shadow-primary/20"
                   variant="default"
                 >
-                  <span className="mr-1">Dùng thử</span>
+                  <span className="mr-1">{t("nav.try_demo")}</span>
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{
@@ -270,14 +264,13 @@ const Header = () => {
                 side="right"
                 className="w-full sm:w-80 p-0 overflow-y-auto"
               >
-                <div className="bg-primary/10 backdrop-blur-md p-3 flex items-center justify-between sticky top-0 z-10 ">
+                <div className="bg-primary/10 backdrop-blur-md p-3 flex items-center justify-between sticky top-0 z-10">
                   <div className="flex items-center">
-                    <div className="bg-primary/20 rounded-full p-1.5 ">
+                    <div className="bg-primary/20 rounded-full p-1.5">
                       <BookOpen className="h-3.5 w-3.5 text-primary" />
                     </div>
                     <span className="text-sm font-semibold ml-2">
-                      Kids
-                      <span className="text-primary font-light">Learn</span>
+                      {t("brand.name")}
                     </span>
                   </div>
                   <Button
@@ -291,7 +284,7 @@ const Header = () => {
                   </Button>
                 </div>
 
-                <div className="p-4 pb-20">
+                <div className="p-4 space-y-4">
                   <nav className="flex flex-col gap-1">
                     <Link
                       href="#hero"
@@ -304,7 +297,9 @@ const Header = () => {
                       <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full p-1.5 group-hover:bg-blue-200 dark:group-hover:bg-blue-800/30 transition-colors">
                         <Home className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                       </div>
-                      <span className="text-sm font-medium">Trang chủ</span>
+                      <span className="text-sm font-medium">
+                        {t("nav.home")}
+                      </span>
                       <ChevronRight className="h-3.5 w-3.5 ml-auto opacity-60" />
                     </Link>
 
@@ -371,23 +366,24 @@ const Header = () => {
                       <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-full p-1.5 group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800/30 transition-colors">
                         <LogIn className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                       </div>
-                      <span className="text-sm font-medium">Đăng nhập</span>
+                      <span className="text-sm font-medium">
+                        {t("nav.login")}
+                      </span>
                       <ChevronRight className="h-3.5 w-3.5 ml-auto opacity-60" />
                     </Link>
                   </nav>
 
-                  <div className="mt-6 mb-4 bg-gradient-to-r from-amber-100/80 to-amber-50/80 dark:from-amber-900/20 dark:to-amber-800/20 rounded-lg p-3 border border-amber-200/50 dark:border-amber-700/30">
+                  <div className="bg-amber-50 dark:bg-amber-950 rounded-lg p-4">
                     <div className="flex items-start gap-3">
                       <div className="bg-amber-200 dark:bg-amber-700/50 rounded-full p-1.5 mt-0.5">
                         <Crown className="h-4 w-4 text-amber-600 dark:text-amber-300" />
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-amber-900 dark:text-amber-200">
-                          Nâng cấp lên Premium
+                          {t("actions.upgrade_premium")}
                         </h4>
                         <p className="text-xs text-amber-700/80 dark:text-amber-300/70 mt-0.5">
-                          Mở khóa tất cả tính năng và nội dung học tập không
-                          giới hạn
+                          {t("actions.upgrade_desc")}
                         </p>
                       </div>
                     </div>
@@ -399,14 +395,17 @@ const Header = () => {
                     </div>
                   </div>
 
-                  <Button className="w-full rounded-lg py-4 h-auto group bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary border-none shadow-md shadow-primary/20">
+                  <Button
+                    className="w-full relative bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg shadow-primary/20"
+                    size="lg"
+                  >
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-bold mb-0.5 flex items-center gap-1.5">
                         <Zap className="h-3.5 w-3.5 text-yellow-200" />
-                        Dùng thử miễn phí
+                        {t("actions.try_free")}
                       </span>
                       <span className="text-[10px] opacity-90">
-                        7 ngày dùng thử không giới hạn
+                        {t("actions.try_free_period")}
                       </span>
                     </div>
                     <motion.div
@@ -423,27 +422,26 @@ const Header = () => {
                     </motion.div>
                   </Button>
 
-                  {/* Footer - reduced spacing */}
-                  <div className="mt-6 text-center text-[10px] text-muted-foreground">
-                    <p>© 2023 KidsLearn. Mọi quyền được bảo lưu.</p>
+                  <div className="text-center space-y-2 text-xs text-muted-foreground">
+                    <p>{t("footer.copyright")}</p>
                     <div className="flex justify-center gap-2 mt-1.5">
                       <Link
                         href="#"
                         className="hover:text-primary transition-colors"
                       >
-                        Điều khoản
+                        {t("footer.terms")}
                       </Link>
                       <Link
                         href="#"
                         className="hover:text-primary transition-colors"
                       >
-                        Bảo mật
+                        {t("footer.privacy")}
                       </Link>
                       <Link
                         href="#"
                         className="hover:text-primary transition-colors"
                       >
-                        Trợ giúp
+                        {t("footer.help")}
                       </Link>
                     </div>
                   </div>

@@ -13,9 +13,11 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { scrollToSection, scrollToTop } from "./header";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation("footer");
 
   return (
     <footer className="relative border-t bg-background overflow-hidden">
@@ -86,8 +88,7 @@ const Footer = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              Nền tảng học tập tương tác giúp trẻ phát triển ngôn ngữ, tư duy,
-              toán học và lập trình một cách thú vị.
+              {t("description")}
             </motion.p>
 
             <motion.div
@@ -102,7 +103,7 @@ const Footer = () => {
                 className="h-9 rounded-full gap-2 group"
               >
                 <Mail className="h-4 w-4 text-primary group-hover:animate-ping" />
-                <span className="text-xs">Đăng ký nhận tin</span>
+                <span className="text-xs">{t("newsletter")}</span>
               </Button>
             </motion.div>
           </div>
@@ -118,7 +119,7 @@ const Footer = () => {
               >
                 <h3 className="text-sm font-medium flex items-center gap-2">
                   <Star className="h-3.5 w-3.5 text-primary" />
-                  Sản phẩm
+                  {t("sections.product.title")}
                 </h3>
                 <nav className="flex flex-col gap-2">
                   <Link
@@ -129,7 +130,7 @@ const Footer = () => {
                       scrollToSection("features");
                     }}
                   >
-                    Tính năng
+                    {t("sections.product.links.features")}
                   </Link>
                   <Link
                     href="#pricing"
@@ -139,7 +140,7 @@ const Footer = () => {
                       scrollToSection("pricing");
                     }}
                   >
-                    Gói dịch vụ
+                    {t("sections.product.links.pricing")}
                   </Link>
                   <Link
                     href="#"
@@ -149,7 +150,7 @@ const Footer = () => {
                       scrollToTop();
                     }}
                   >
-                    Dùng thử miễn phí
+                    {t("sections.product.links.trial")}
                   </Link>
                 </nav>
               </motion.div>
@@ -163,26 +164,26 @@ const Footer = () => {
               >
                 <h3 className="text-sm font-medium flex items-center gap-2">
                   <Heart className="h-3.5 w-3.5 text-red-500" />
-                  Công ty
+                  {t("sections.company.title")}
                 </h3>
                 <nav className="flex flex-col gap-2">
                   <Link
                     href="#"
                     className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
-                    Về chúng tôi
+                    {t("sections.company.links.about")}
                   </Link>
                   <Link
                     href="#"
                     className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
-                    Blog
+                    {t("sections.company.links.blog")}
                   </Link>
                   <Link
                     href="#"
                     className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
-                    Liên hệ
+                    {t("sections.company.links.contact")}
                   </Link>
                 </nav>
               </motion.div>
@@ -196,13 +197,13 @@ const Footer = () => {
               >
                 <h3 className="text-sm font-medium flex items-center gap-2">
                   <Phone className="h-3.5 w-3.5 text-green-500" />
-                  Liên hệ & Hỗ trợ
+                  {t("sections.contact.title")}
                 </h3>
                 <nav className="flex flex-col gap-2">
                   <div className="flex items-start gap-2">
                     <MapPin className="h-3.5 w-3.5 text-muted-foreground mt-0.5" />
                     <span className="text-sm text-muted-foreground">
-                      khu phố 6, phường Linh Trung, quận Thủ Đức, TP HCM
+                      {t("sections.contact.address")}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -211,7 +212,7 @@ const Footer = () => {
                       href="mailto:kidslearn@gmail.com"
                       className="text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
-                      kidslearn@gmail.com
+                      {t("sections.contact.email")}
                     </a>
                   </div>
                   <div className="flex items-center gap-2">
@@ -220,7 +221,7 @@ const Footer = () => {
                       href="tel:+84901234567"
                       className="text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
-                      090 123 4567
+                      {t("sections.contact.phone")}
                     </a>
                   </div>
                 </nav>
@@ -240,7 +241,7 @@ const Footer = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              &copy; {currentYear} KidsLearn. Tất cả các quyền được bảo lưu.
+              {t("legal.copyright", { year: currentYear })}
             </motion.p>
 
             <motion.div
@@ -254,19 +255,19 @@ const Footer = () => {
                 href="#"
                 className="text-xs text-muted-foreground hover:text-primary transition-colors"
               >
-                Điều khoản sử dụng
+                {t("legal.links.terms")}
               </Link>
               <Link
                 href="#"
                 className="text-xs text-muted-foreground hover:text-primary transition-colors"
               >
-                Chính sách bảo mật
+                {t("legal.links.privacy")}
               </Link>
               <Link
                 href="#"
                 className="text-xs text-muted-foreground hover:text-primary transition-colors"
               >
-                Cookie
+                {t("legal.links.cookies")}
               </Link>
             </motion.div>
 

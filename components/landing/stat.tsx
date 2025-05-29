@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Users, BookOpen, Award, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const CountUp = ({
   end,
@@ -175,26 +176,28 @@ const StatCard = ({
 };
 
 const Stat = () => {
+  const { t } = useTranslation("stat");
+
   const stats = [
     {
       icon: Users,
       value: 10000,
       suffix: "+",
-      label: "Học sinh đang sử dụng",
+      label: t("stats.students.label"),
       color: "#FF6B6B",
     },
     {
       icon: BookOpen,
       value: 500,
       suffix: "+",
-      label: "Bài học tương tác",
+      label: t("stats.lessons.label"),
       color: "#4ECDC4",
     },
     {
       icon: Award,
       value: 98,
       suffix: "%",
-      label: "Phụ huynh hài lòng",
+      label: t("stats.satisfaction.label"),
       color: "#FFD166",
     },
   ];
@@ -273,7 +276,7 @@ const Stat = () => {
           >
             <span className="flex items-center gap-1.5">
               <Award className="h-4 w-4" />
-              Thành tựu
+              {t("highlight")}
             </span>
           </motion.div>
           <motion.h2
@@ -283,7 +286,8 @@ const Stat = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            Con số <span className="text-primary">ấn tượng</span>
+            {t("title.text")}{" "}
+            <span className="text-primary">{t("title.highlight")}</span>
           </motion.h2>
           <motion.p
             className="max-w-[900px] text-xs sm:text-sm md:text-base text-muted-foreground"
@@ -292,8 +296,7 @@ const Stat = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.6 }}
           >
-            Chúng tôi tự hào về những thành tựu đã đạt được trong việc hỗ trợ
-            học tập cho trẻ em.
+            {t("description")}
           </motion.p>
         </motion.div>
 

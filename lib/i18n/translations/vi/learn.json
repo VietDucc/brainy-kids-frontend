@@ -1,0 +1,54 @@
+{
+  "title": "Học tập",
+  "description": "Chọn lộ trình học và bắt đầu hành trình của bạn",
+  "categories": {
+    "beginner": {
+      "title": "Cơ bản",
+      "description": "Bắt đầu với kiến thức cơ bản"
+    },
+    "intermediate": {
+      "title": "Trung cấp",
+      "description": "Phát triển kiến thức hiện có"
+    },
+    "advanced": {
+      "title": "Nâng cao",
+      "description": "Làm chủ các chủ đề phức tạp"
+    }
+  },
+  "featured": {
+    "title": "Bài học nổi bật",
+    "view_all": "Xem tất cả"
+  },
+  "progress": {
+    "title": "Tiến độ của bạn",
+    "completed": "Đã hoàn thành",
+    "in_progress": "Đang học",
+    "not_started": "Chưa bắt đầu"
+  },
+  "learning_options": {
+    "title": "Chọn phương pháp học",
+    "vocabulary": "Học từ vựng",
+    "exercises": "Làm bài tập"
+  },
+  "status": {
+    "completed": "✅ Đã hoàn thành! 🌟",
+    "lesson": "Bài",
+    "locked": "Hoàn thành các bài học trước để mở khóa"
+  },
+  "errors": {
+    "load_course": "Không thể tải dữ liệu khóa học. Vui lòng thử lại sau.",
+    "load_lesson": "Không thể tải bài học. Vui lòng thử lại.",
+    "no_challenges": "Bài học này chưa có bài tập.",
+    "unit_not_found": "Không tìm thấy chương học",
+    "no_lessons": "Chưa có bài học nào trong chương này.",
+    "no_units": "Chưa có chương học nào trong khóa học này."
+  },
+  "actions": {
+    "try_again": "Thử lại",
+    "back_to_units": "Quay lại danh sách chương"
+  },
+  "recommendations": {
+    "title": "Đề xuất cho bạn",
+    "based_on": "Dựa trên lịch sử học tập của bạn"
+  }
+} 

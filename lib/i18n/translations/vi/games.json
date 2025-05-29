@@ -1,0 +1,51 @@
+{
+  "title": "Trò chơi học tập",
+  "description": "Học tập thông qua các trò chơi giáo dục thú vị",
+  "categories": {
+    "vocabulary": {
+      "title": "Trò chơi từ vựng",
+      "description": "Mở rộng vốn từ vựng qua các trò chơi thú vị"
+    },
+    "grammar": {
+      "title": "Trò chơi ngữ pháp",
+      "description": "Luyện tập ngữ pháp một cách tương tác"
+    },
+    "pronunciation": {
+      "title": "Trò chơi phát âm",
+      "description": "Học cách phát âm từ tiếng Anh chính xác và thú vị!"
+    },
+    "listening": {
+      "title": "Trò chơi nghe hiểu",
+      "description": "Nâng cao khả năng nghe hiểu"
+    }
+  },
+  "featured": {
+    "title": "Trò chơi nổi bật",
+    "view_all": "Xem tất cả trò chơi"
+  },
+  "achievements": {
+    "title": "Thành tích của bạn",
+    "points": "Điểm",
+    "badges": "Huy hiệu",
+    "level": "Cấp độ"
+  },
+  "leaderboard": {
+    "title": "Bảng xếp hạng",
+    "weekly": "Tuần",
+    "monthly": "Tháng",
+    "all_time": "Tất cả"
+  },
+  "header": {
+    "title": "Trò chơi học tập vui nhộn",
+    "description": "Chọn một trò chơi và bắt đầu học tập thật vui vẻ!"
+  },
+  "games": {
+    "word_chain": {
+      "title": "Trò chơi nối từ",
+      "description": "Kết nối các từ thành chuỗi và xem bạn có thể đi được bao xa!"
+    }
+  },
+  "labels": {
+    "coming_soon": "Sắp ra mắt"
+  }
+} 

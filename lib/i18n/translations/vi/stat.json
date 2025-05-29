@@ -1,0 +1,19 @@
+{
+  "highlight": "Thành tựu",
+  "title": {
+    "text": "Con số",
+    "highlight": "ấn tượng"
+  },
+  "description": "Chúng tôi tự hào về những thành tựu đã đạt được trong việc hỗ trợ học tập cho trẻ em.",
+  "stats": {
+    "students": {
+      "label": "Học sinh đang sử dụng"
+    },
+    "lessons": {
+      "label": "Bài học tương tác"
+    },
+    "satisfaction": {
+      "label": "Phụ huynh hài lòng"
+    }
+  }
+} 

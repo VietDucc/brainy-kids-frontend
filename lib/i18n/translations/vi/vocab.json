@@ -1,0 +1,42 @@
+{
+  "title": "Từ vựng",
+  "description": "Xây dựng vốn từ vựng với danh sách từ toàn diện của chúng tôi",
+  "categories": {
+    "daily": {
+      "title": "Từ của ngày",
+      "learn_more": "Tìm hiểu thêm"
+    },
+    "topics": {
+      "title": "Chủ đề",
+      "all": "Tất cả chủ đề",
+      "popular": "Chủ đề phổ biến",
+      "recent": "Mới thêm"
+    },
+    "difficulty": {
+      "title": "Cấp độ",
+      "beginner": "Cơ bản",
+      "intermediate": "Trung cấp",
+      "advanced": "Nâng cao"
+    }
+  },
+  "study": {
+    "title": "Công cụ học tập",
+    "flashcards": "Thẻ ghi nhớ",
+    "quiz": "Câu đố",
+    "games": "Trò chơi",
+    "practice": "Luyện tập"
+  },
+  "progress": {
+    "title": "Tiến độ học tập",
+    "words_learned": "Từ đã học",
+    "mastery_level": "Mức độ thành thạo",
+    "streak": "Chuỗi ngày học",
+    "next_review": "Ôn tập tiếp theo"
+  },
+  "actions": {
+    "add_to_list": "Thêm vào danh sách",
+    "mark_known": "Đánh dấu đã biết",
+    "practice": "Luyện tập ngay",
+    "share": "Chia sẻ"
+  }
+} 

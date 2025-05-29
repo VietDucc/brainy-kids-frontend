@@ -1,0 +1,36 @@
+{
+  "description": "An interactive learning platform helping children develop language, thinking, math and programming skills in a fun way.",
+  "newsletter": "Subscribe to newsletter",
+  "sections": {
+    "product": {
+      "title": "Product",
+      "links": {
+        "features": "Features",
+        "pricing": "Pricing",
+        "trial": "Free Trial"
+      }
+    },
+    "company": {
+      "title": "Company",
+      "links": {
+        "about": "About Us",
+        "blog": "Blog",
+        "contact": "Contact"
+      }
+    },
+    "contact": {
+      "title": "Contact & Support",
+      "address": "Linh Trung Ward, Thu Duc City, Ho Chi Minh City",
+      "email": "kidslearn@gmail.com",
+      "phone": "090 123 4567"
+    }
+  },
+  "legal": {
+    "copyright": "© {year} KidsLearn. All rights reserved.",
+    "links": {
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookies"
+    }
+  }
+} 

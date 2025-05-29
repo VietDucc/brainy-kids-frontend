@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, Star, Sparkles, Crown, Rocket, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
@@ -10,6 +11,7 @@ const Pricing = () => {
   );
   const [hoveredPlan, setHoveredPlan] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const { t } = useTranslation("price");
 
   useEffect(() => {
     setIsClient(true);
@@ -28,48 +30,35 @@ const Pricing = () => {
 
   const plans = [
     {
-      name: "Cơ bản",
-      description: "Dành cho người mới bắt đầu",
+      name: t("plans.basic.name"),
+      description: t("plans.basic.description"),
       monthlyPrice: 99000,
       yearlyPrice: 990000,
-      features: [
-        "Truy cập 100+ bài học",
-        "Trò chơi học tập cơ bản",
-        "Báo cáo tiến độ hàng tuần",
-        "Hỗ trợ qua email",
-      ],
+      features: t("plans.basic.features", { returnObjects: true }) as string[],
       color: "#4ECDC4",
       icon: Rocket,
       popular: false,
     },
     {
-      name: "Tiêu chuẩn",
-      description: "Dành cho học sinh tiểu học",
+      name: t("plans.standard.name"),
+      description: t("plans.standard.description"),
       monthlyPrice: 199000,
       yearlyPrice: 1990000,
-      features: [
-        "Truy cập 300+ bài học",
-        "Tất cả trò chơi học tập",
-        "Báo cáo tiến độ hàng ngày",
-        "Hỗ trợ qua email và chat",
-        "Bài tập cá nhân hóa",
-      ],
+      features: t("plans.standard.features", {
+        returnObjects: true,
+      }) as string[],
       color: "#FFD166",
       icon: Crown,
       popular: true,
     },
     {
-      name: "Cao cấp",
-      description: "Dành cho học sinh nghiêm túc",
+      name: t("plans.premium.name"),
+      description: t("plans.premium.description"),
       monthlyPrice: 299000,
       yearlyPrice: 2990000,
-      features: [
-        "Truy cập toàn bộ bài học",
-        "Báo cáo tiến độ thời gian thực",
-        "Hỗ trợ ưu tiên 24/7",
-        "Bài tập cá nhân hóa",
-        "Kèm 1-1 với giáo viên",
-      ],
+      features: t("plans.premium.features", {
+        returnObjects: true,
+      }) as string[],
       color: "#FF6B6B",
       icon: Shield,
       popular: false,
@@ -198,7 +187,7 @@ const Pricing = () => {
             >
               <span className="flex items-center gap-1.5">
                 <Star className="h-4 w-4 fill-current" />
-                Gói học tập
+                {t("highlight")}
               </span>
             </motion.div>
             <motion.h2
@@ -208,7 +197,8 @@ const Pricing = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              Chọn gói phù hợp với <span className="text-primary">con bạn</span>
+              {t("title.text")}{" "}
+              <span className="text-primary">{t("title.highlight")}</span>
             </motion.h2>
             <motion.p
               className="max-w-[900px] text-xs sm:text-sm md:text-base text-muted-foreground"
@@ -217,8 +207,7 @@ const Pricing = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.6 }}
             >
-              Chúng tôi cung cấp nhiều gói học tập khác nhau để phù hợp với nhu
-              cầu và ngân sách của bạn.
+              {t("description")}
             </motion.p>
           </div>
 
@@ -237,7 +226,7 @@ const Pricing = () => {
               }`}
               onClick={() => setBillingCycle("monthly")}
             >
-              Hàng tháng
+              {t("billing.monthly")}
             </button>
             <button
               className={`relative ml-0.5 rounded-full px-4 py-2 text-sm font-medium ${
@@ -247,9 +236,9 @@ const Pricing = () => {
               }`}
               onClick={() => setBillingCycle("yearly")}
             >
-              Hàng năm
+              {t("billing.yearly")}
               <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] py-1 px-4 font-bold text-white">
-                -17%
+                {t("billing.discount")}
               </span>
             </button>
           </motion.div>
@@ -297,7 +286,7 @@ const Pricing = () => {
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-0 right-0 mx-auto w-fit rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                    Phổ biến nhất
+                    {t("plans.standard.popular")}
                   </div>
                 )}
 
@@ -412,7 +401,7 @@ const Pricing = () => {
                     size="sm"
                   >
                     <span className="relative z-10 dark:text-black/70 text-xs sm:text-sm font-medium">
-                      {plan.popular ? "Bắt đầu ngay" : "Đăng ký"}
+                      {plan.popular ? t("cta.popular") : t("cta.default")}
                     </span>
                     {plan.popular && (
                       <motion.div
@@ -457,7 +446,7 @@ const Pricing = () => {
         `}</style>
 
         <p className="text-center text-xs text-muted-foreground mt-4 lg:hidden">
-          Vuốt để xem tất cả các gói
+          {t("scroll_hint")}
         </p>
       </div>
     </section>

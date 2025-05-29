@@ -3,52 +3,49 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 
 const Feedback = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const { t } = useTranslation("feedback");
 
   const testimonials = [
     {
-      content:
-        "Con tôi rất thích học trên nền tảng này. Các bài học thú vị và con tiến bộ rõ rệt trong việc học toán.",
-      author: "Nguyễn Thị Hương",
-      role: "Phụ huynh học sinh lớp 2",
+      content: t("testimonials.0.content"),
+      author: t("testimonials.0.author"),
+      role: t("testimonials.0.role"),
       avatar: "/User1.jpg",
       rating: 5,
       color: "#FF6B6B",
     },
     {
-      content:
-        "Giao diện thân thiện và dễ sử dụng. Con tôi đã học được nhiều từ vựng mới và rất hào hứng mỗi khi học.",
-      author: "Trần Văn Minh",
-      role: "Phụ huynh học sinh lớp 1",
+      content: t("testimonials.1.content"),
+      author: t("testimonials.1.author"),
+      role: t("testimonials.1.role"),
       avatar: "/User2.jpg",
       rating: 5,
       color: "#4ECDC4",
     },
     {
-      content:
-        "Tôi rất ấn tượng với cách nền tảng này giúp con tôi học lập trình cơ bản. Các bài học rất trực quan.",
-      author: "Lê Thị Hà",
-      role: "Phụ huynh học sinh lớp 4",
+      content: t("testimonials.2.content"),
+      author: t("testimonials.2.author"),
+      role: t("testimonials.2.role"),
       avatar: "/User3.jpg",
       rating: 5,
       color: "#FFD166",
     },
     {
-      content:
-        "Các trò chơi học tập rất cuốn hút, con tôi thường xuyên đòi được học thêm mỗi ngày.",
-      author: "Phạm Văn Đức",
-      role: "Phụ huynh học sinh lớp 3",
+      content: t("testimonials.3.content"),
+      author: t("testimonials.3.author"),
+      role: t("testimonials.3.role"),
       avatar: "/User4.jpg",
       rating: 5,
       color: "#6A0572",
     },
     {
-      content:
-        "Tôi thấy con mình tự tin hơn rất nhiều khi giao tiếp bằng tiếng Anh sau khi học trên nền tảng này.",
-      author: "Hoàng Thị Mai",
-      role: "Phụ huynh học sinh lớp 5",
+      content: t("testimonials.4.content"),
+      author: t("testimonials.4.author"),
+      role: t("testimonials.4.role"),
       avatar: "/User5.jpg",
       rating: 5,
       color: "#58CC02",
@@ -160,7 +157,7 @@ const Feedback = () => {
             >
               <span className="flex items-center gap-1.5">
                 <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-current" />
-                Phản hồi từ phụ huynh
+                {t("highlight")}
               </span>
             </motion.div>
             <motion.h2
@@ -170,8 +167,8 @@ const Feedback = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              Phụ huynh nói gì về{" "}
-              <span className="text-primary">chúng tôi</span>
+              {t("title.text")}{" "}
+              <span className="text-primary">{t("title.highlight")}</span>
             </motion.h2>
             <motion.p
               className="max-w-[900px] text-xs sm:text-sm md:text-base text-muted-foreground"
@@ -180,8 +177,7 @@ const Feedback = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.6 }}
             >
-              Hàng ngàn phụ huynh đã tin tưởng chúng tôi trong việc hỗ trợ con
-              em họ học tập.
+              {t("description")}
             </motion.p>
           </div>
         </motion.div>

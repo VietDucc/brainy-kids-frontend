@@ -1,0 +1,31 @@
+{
+  "brand": {
+    "name": "KidsLearn",
+    "slogan": "Learn with fun"
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "how_it_works": "How it works",
+    "testimonials": "Testimonials",
+    "pricing": "Pricing",
+    "try_demo": "Try Demo",
+    "login": "Login"
+  },
+  "actions": {
+    "get_started": "Get Started",
+    "learn_more": "Learn More",
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "try_free": "Try Free",
+    "try_free_period": "7 days unlimited trial",
+    "upgrade_premium": "Upgrade to Premium",
+    "upgrade_desc": "Unlock all features and unlimited learning content"
+  },
+  "footer": {
+    "copyright": "© 2023 KidsLearn. All rights reserved.",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "help": "Help"
+  }
+} 

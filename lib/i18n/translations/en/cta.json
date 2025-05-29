@@ -1,0 +1,14 @@
+{
+  "title": "Ready for your child to start learning?",
+  "description": "Sign up today and get a 7-day free trial of the {plan} plan",
+  "plan": "Family",
+  "buttons": {
+    "trial": "Start Free Trial",
+    "learn_more": "Learn More"
+  },
+  "features": {
+    "no_credit_card": "No credit card required",
+    "cancel_anytime": "Cancel anytime",
+    "support": "24/7 Support"
+  }
+} 

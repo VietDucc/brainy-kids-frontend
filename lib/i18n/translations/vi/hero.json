@@ -1,0 +1,32 @@
+{
+  "learning_tip": "Học tập vui vẻ mỗi ngày",
+  "help_kids": "Giúp trẻ",
+  "learning_description": "Nền tảng học tập tương tác giúp trẻ phát triển ngôn ngữ, tư duy, toán học và lập trình một cách thú vị.",
+  "platform_description": "Nền tảng học tập tương tác giúp trẻ phát triển ngôn ngữ, tư duy, toán học và lập trình một cách thú vị.",
+  "start_now": "Bắt đầu ngay",
+  "learn_more": "Tìm hiểu thêm",
+  "students_using": "1000+ học sinh đang sử dụng",
+  "learning_progress": "Tiến độ học tập",
+  "completed": "hoàn thành",
+  "hero": {
+    "title": {
+      "help": "Giúp trẻ",
+      "learn": "học tập",
+      "fun": "vui vẻ",
+      "effective": "hiệu quả",
+      "and": "và"
+    },
+    "subtitle": "Nền tảng học tập tương tác giúp trẻ phát triển ngôn ngữ, tư duy, toán học và lập trình một cách thú vị.",
+    "cta": {
+      "start": "Bắt đầu ngay",
+      "learn": "Tìm hiểu thêm"
+    },
+    "stats": {
+      "users": "1000+ học sinh đang sử dụng",
+      "progress": {
+        "title": "Tiến độ học tập",
+        "value": "85% hoàn thành"
+      }
+    }
+  }
+} 

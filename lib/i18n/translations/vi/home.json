@@ -1,0 +1,7 @@
+{
+    "welcome": "Chào mừng",
+    "description": "Đây là một mô tả tiếng Anh.",
+    "client-component": {
+      "heading": "Đây là thành phần client"
+    }
+  }

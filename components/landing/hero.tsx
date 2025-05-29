@@ -5,9 +5,11 @@ import { ChevronRight, Sparkles, Stars, BookOpen, Rocket } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 const Hero = () => {
   const [isClient, setIsClient] = useState(false);
+  const { t } = useTranslation("hero");
 
   useEffect(() => {
     setIsClient(true);
@@ -272,7 +274,7 @@ const Hero = () => {
                 className="inline-flex items-center gap-1 sm:gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs sm:text-sm font-medium text-primary"
               >
                 <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Học tập vui vẻ mỗi ngày</span>
+                <span>{t("learning_tip")}</span>
               </motion.div>
 
               <motion.h1
@@ -281,23 +283,24 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <span className="text-primary">Giúp trẻ</span> học tập{" "}
+                <span className="text-primary">{t("hero.title.help")}</span>{" "}
+                {t("hero.title.learn")}{" "}
                 <motion.span
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: [0.8, 1.2, 1] }}
                   transition={{ duration: 0.8, delay: 0.8 }}
                   className="inline-block text-orange-500"
                 >
-                  vui vẻ
+                  {t("hero.title.fun")}
                 </motion.span>{" "}
-                và{" "}
+                {t("hero.title.and")}{" "}
                 <motion.span
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: [0.8, 1.2, 1] }}
                   transition={{ duration: 0.8, delay: 1 }}
                   className="inline-block text-destructive dark:text-red-500"
                 >
-                  hiệu quả
+                  {t("hero.title.effective")}
                 </motion.span>
               </motion.h1>
 
@@ -307,8 +310,7 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
-                Nền tảng học tập tương tác giúp trẻ phát triển ngôn ngữ, tư duy,
-                toán học và lập trình một cách thú vị.
+                {t("hero.subtitle")}
               </motion.p>
             </div>
 
@@ -328,7 +330,7 @@ const Hero = () => {
                     size="default"
                     className="w-full sm:w-auto text-primary-foreground text-sm sm:text-base group h-10 sm:h-11"
                   >
-                    <span className="text-white">Bắt đầu ngay</span>
+                    <span className="text-white">{t("hero.cta.start")}</span>
                     <motion.div
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1, repeat: Infinity }}
@@ -349,7 +351,7 @@ const Hero = () => {
                   className="w-full sm:w-auto text-sm sm:text-base h-10 sm:h-11"
                 >
                   <BookOpen className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Tìm hiểu thêm
+                  {t("hero.cta.learn")}
                 </Button>
               </motion.div>
             </motion.div>
@@ -380,8 +382,7 @@ const Hero = () => {
                 ))}
               </div>
               <div className="text-xs sm:text-sm text-muted-foreground">
-                <span className="font-bold text-primary">1000+</span> học sinh
-                đang sử dụng
+                {t("hero.stats.users")}
               </div>
             </motion.div>
           </motion.div>
@@ -455,10 +456,10 @@ const Hero = () => {
                 </div>
                 <div>
                   <div className="text-[10px] sm:text-xs font-medium">
-                    Tiến độ học tập
+                    {t("hero.stats.progress.title")}
                   </div>
                   <div className="text-xs sm:text-sm font-bold">
-                    85% hoàn thành
+                    {t("hero.stats.progress.value")}
                   </div>
                 </div>
               </div>

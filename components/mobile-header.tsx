@@ -1,9 +1,21 @@
-import { MobileSidebar } from "./mobile-sidebar";
+"use client";
+
+import { Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sidebar } from "@/components/sidebar";
+import { useTranslation } from "react-i18next";
 
 export const MobileHeader = () => {
+  const { t } = useTranslation("main");
+
   return (
-    <nav className="fixed top-0 z-50 flex h-[50px] w-full items-center border-b bg-green-500 px-4 lg:hidden">
-      <MobileSidebar />
-    </nav>
+    <Sheet>
+      <SheetTrigger className="pr-4 transition hover:opacity-75 lg:hidden">
+        <Menu />
+      </SheetTrigger>
+      <SheetContent side="left" className="p-0 border-0">
+        <Sidebar />
+      </SheetContent>
+    </Sheet>
   );
 };

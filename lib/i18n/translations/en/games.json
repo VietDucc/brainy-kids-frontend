@@ -1,0 +1,55 @@
+{
+  "title": "Learning Games",
+  "description": "Learn while having fun with our educational games",
+  "categories": {
+    "vocabulary": {
+      "title": "Vocabulary Games",
+      "description": "Expand your vocabulary through fun games"
+    },
+    "grammar": {
+      "title": "Grammar Games",
+      "description": "Practice grammar rules interactively"
+    },
+    "pronunciation": {
+      "title": "Pronunciation Games",
+      "description": "Improve your pronunciation skills"
+    },
+    "listening": {
+      "title": "Listening Games",
+      "description": "Enhance your listening comprehension"
+    }
+  },
+  "featured": {
+    "title": "Featured Games",
+    "view_all": "View all games"
+  },
+  "achievements": {
+    "title": "Your Achievements",
+    "points": "Points",
+    "badges": "Badges",
+    "level": "Level"
+  },
+  "leaderboard": {
+    "title": "Game Leaderboard",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "all_time": "All Time"
+  },
+  "header": {
+    "title": "Fun Learning Games",
+    "description": "Choose a game and start learning while having fun!"
+  },
+  "games": {
+    "pronunciation": {
+      "title": "Pronunciation Game",
+      "description": "Learn to speak English words correctly and have fun!"
+    },
+    "word_chain": { 
+      "title": "Word Chain Game", 
+      "description": "Connect words in a chain and see how long you can go!"
+    }
+  },
+  "labels": {
+    "coming_soon": "Coming Soon"
+  }
+} 

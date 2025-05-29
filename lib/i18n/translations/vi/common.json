@@ -1,0 +1,33 @@
+{
+  "brand": {
+    "name": "KidsLearn",
+    "slogan": "Học mà chơi, chơi mà học"
+  },
+  
+  "nav": {
+    "home": "Trang chủ",
+    "features": "Tính năng",
+    "how_it_works": "Cách thức hoạt động",
+    "testimonials": "Đánh giá",
+    "pricing": "Gói dịch vụ",
+    "try_demo": "Dùng thử",
+    "login": "Đăng nhập"
+  },
+  "actions": {
+    "get_started": "Bắt đầu ngay",
+    "learn_more": "Tìm hiểu thêm",
+    "sign_in": "Đăng nhập",
+    "sign_up": "Đăng ký",
+    "try_free": "Dùng thử miễn phí",
+    "try_free_period": "7 ngày dùng thử không giới hạn",
+    "upgrade_premium": "Nâng cấp lên Premium",
+    "upgrade_desc": "Mở khóa tất cả tính năng và nội dung học tập không giới hạn"
+  },
+  
+  "footer": {
+    "copyright": "© 2023 KidsLearn. Mọi quyền được bảo lưu.",
+    "terms": "Điều khoản",
+    "privacy": "Bảo mật",
+    "help": "Trợ giúp"
+  }
+} 

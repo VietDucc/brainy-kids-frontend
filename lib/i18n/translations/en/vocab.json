@@ -1,0 +1,42 @@
+{
+  "title": "Vocabulary",
+  "description": "Build your vocabulary with our comprehensive word lists",
+  "categories": {
+    "daily": {
+      "title": "Word of the Day",
+      "learn_more": "Learn more"
+    },
+    "topics": {
+      "title": "Topics",
+      "all": "All Topics",
+      "popular": "Popular Topics",
+      "recent": "Recently Added"
+    },
+    "difficulty": {
+      "title": "Difficulty Levels",
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    }
+  },
+  "study": {
+    "title": "Study Tools",
+    "flashcards": "Flashcards",
+    "quiz": "Quiz",
+    "games": "Games",
+    "practice": "Practice"
+  },
+  "progress": {
+    "title": "Learning Progress",
+    "words_learned": "Words Learned",
+    "mastery_level": "Mastery Level",
+    "streak": "Daily Streak",
+    "next_review": "Next Review"
+  },
+  "actions": {
+    "add_to_list": "Add to My List",
+    "mark_known": "Mark as Known",
+    "practice": "Practice Now",
+    "share": "Share"
+  }
+} 

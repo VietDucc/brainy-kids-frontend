@@ -1,0 +1,22 @@
+{
+  "highlight": "Easy to start",
+  "title": {
+    "text": "How it",
+    "highlight": "works"
+  },
+  "description": "Simple, effective and fun learning process for children of all ages.",
+  "steps": {
+    "1": {
+      "title": "Create account",
+      "description": "Register an account and create profiles for your children with information about their age and interests."
+    },
+    "2": {
+      "title": "Explore lessons",
+      "description": "Access a diverse collection of age-appropriate lessons and games."
+    },
+    "3": {
+      "title": "Learn and progress",
+      "description": "Track your child's progress and receive detailed reports on their learning journey."
+    }
+  }
+} 
