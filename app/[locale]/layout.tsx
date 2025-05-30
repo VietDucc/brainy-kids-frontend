@@ -6,6 +6,28 @@ import { Toaster } from "@/components/ui/toaster";
 import { Locale } from "@/lib/types";
 import { serverSideTranslation } from "@/lib/i18n/client";
 import I18NProvider from "@/app/components/i18n/i18n-provider";
+import { Metadata } from "next";
+import { headers } from "next/headers";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  const domain =
+    process.env.NEXT_PUBLIC_APP_URL || "https://brainykidslearn.id.vn";
+  const currentPath = headersList.get("x-url") || "";
+  const pathWithoutLocale = currentPath.replace(/^\/(vi|en)/, "");
+  const canonicalUrl = `${domain}${pathWithoutLocale}`;
+
+  return {
+    metadataBase: new URL(domain),
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        en: `${domain}/en${pathWithoutLocale}`,
+        vi: `${domain}/vi${pathWithoutLocale}`,
+      },
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -35,18 +57,20 @@ export default async function RootLayout({
   const { resources } = await serverSideTranslation(locale, ns);
 
   return (
-    <>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <I18NProvider locale={locale} namespaces={ns} resources={resources}>
-          <Toaster />
-          <ClerkProvider>{children}</ClerkProvider>
-        </I18NProvider>
-      </ThemeProvider>
-    </>
+    <html lang={locale}>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <I18NProvider locale={locale} namespaces={ns} resources={resources}>
+            <Toaster />
+            <ClerkProvider>{children}</ClerkProvider>
+          </I18NProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }
