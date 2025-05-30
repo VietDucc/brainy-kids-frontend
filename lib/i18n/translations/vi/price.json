@@ -50,5 +50,36 @@
     "popular": "Bắt đầu ngay",
     "default": "Đăng ký"
   },
-  "scroll_hint": "Vuốt để xem tất cả các gói"
+  "scroll_hint": "Vuốt để xem tất cả các gói",
+  "lifetime": {
+    "badge": "Đặc quyền trọn đời",
+    "title": "Nâng cấp một lần, học mãi mãi",
+    "description": "Mở khóa toàn bộ tính năng và nội dung học tập không giới hạn với gói Lifetime Premium",
+    "access": "LIFETIME ACCESS",
+    "plan_name": "Premium Lifetime",
+    "plan_description": "Trọn đời không giới hạn",
+    "one_time_payment": "Thanh toán một lần duy nhất",
+    "upgrade_button": "Nâng cấp ngay",
+    "signin_to_upgrade": "Đăng nhập để nâng cấp",
+    "processing": "Đang xử lý...",
+    "already_upgraded": "Đã nâng cấp Premium",
+    "enjoy_premium": "Bạn đang sở hữu gói Premium trọn đời. Tận hưởng tất cả tính năng!",
+    "money_back_guarantee": "Đảm bảo hoàn tiền trong 30 ngày nếu không hài lòng",
+    "toast": {
+      "success": "Tạo đơn hàng thành công",
+      "redirect": "Đang chuyển đến trang thanh toán...",
+      "error": "Có lỗi xảy ra",
+      "try_again": "Vui lòng thử lại sau"
+    },
+    "features": [
+      "Truy cập không giới hạn tất cả bài học",
+      "Công cụ học tập thông minh AI",
+      "Theo dõi tiến độ học tập chi tiết",
+      "Bài tập tương tác hấp dẫn",
+      "Phát âm chuẩn với công nghệ AI",
+      "Cập nhật nội dung thường xuyên",
+      "Hỗ trợ kỹ thuật ưu tiên",
+      "Không giới hạn thời gian sử dụng"
+    ]
+  }
 } 

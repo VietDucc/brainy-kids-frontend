@@ -1,0 +1,25 @@
+{
+  "success": {
+    "title": "Payment Successful!",
+    "description": "Thank you! Your payment has been processed successfully."
+  },
+  "failed": {
+    "title": "Payment Failed",
+    "description": "We apologize, there was an issue processing your payment.",
+    "support_message": "If you continue to experience issues, please contact our support team."
+  },
+  "amount": {
+    "label": "Total Amount Paid"
+  },
+  "transaction": {
+    "bank": "Bank",
+    "card_type": "Card Type",
+    "date": "Transaction Date",
+    "transaction_no": "Transaction No.",
+    "bank_transaction_no": "Bank Transaction No.",
+    "order_info": "Order Info"
+  },
+  "actions": {
+    "return_learning": "Return to Learning"
+  }
+} 

@@ -90,6 +90,7 @@ export default async function RootLayout({
     "learn",
     "blog",
     "games",
+    "payment",
   ];
   const { resources } = await serverSideTranslation(locale, ns);
 

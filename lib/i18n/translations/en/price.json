@@ -50,5 +50,36 @@
     "popular": "Start Now",
     "default": "Sign Up"
   },
-  "scroll_hint": "Swipe to see all packages"
+  "scroll_hint": "Swipe to see all packages",
+  "lifetime": {
+    "badge": "Lifetime Privilege",
+    "title": "Upgrade Once, Learn Forever",
+    "description": "Unlock unlimited access to all learning content and features with Lifetime Premium",
+    "access": "LIFETIME ACCESS",
+    "plan_name": "Premium Lifetime",
+    "plan_description": "Unlimited lifetime access",
+    "one_time_payment": "One-time payment only",
+    "upgrade_button": "Upgrade Now",
+    "signin_to_upgrade": "Sign in to upgrade",
+    "processing": "Processing...",
+    "already_upgraded": "Premium Upgraded",
+    "enjoy_premium": "You have lifetime Premium access. Enjoy all features!",
+    "money_back_guarantee": "30-day money-back guarantee if not satisfied",
+    "toast": {
+      "success": "Order created successfully",
+      "redirect": "Redirecting to payment page...",
+      "error": "Something went wrong",
+      "try_again": "Please try again later"
+    },
+    "features": [
+      "Unlimited access to all lessons",
+      "AI-powered learning tools",
+      "Detailed progress tracking",
+      "Interactive exercises",
+      "AI pronunciation technology",
+      "Regular content updates",
+      "Priority technical support",
+      "No time limit"
+    ]
+  }
 } 

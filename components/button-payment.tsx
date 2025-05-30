@@ -13,12 +13,11 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Card } from "./ui/card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Badge } from "./ui/badge";
 import React from "react";
@@ -54,6 +53,7 @@ export const ButtonPayment = () => {
   const { userId } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation("common");
+  const [activeUser, setActiveUser] = useState(false);
 
   const handleUpgrade = async () => {
     try {
@@ -84,6 +84,17 @@ export const ButtonPayment = () => {
       });
     }
   };
+  useEffect(() => {
+    const fetchActiveUser = async () => {
+      const response = await fetch("/api/active-user", {
+        method: "GET",
+      });
+      const data = await response.json();
+      setActiveUser(data.active);
+      console.log(data);
+    };
+    fetchActiveUser();
+  }, []);
 
   const benefits = [
     {
@@ -118,6 +129,9 @@ export const ButtonPayment = () => {
     t("premium.features.priority_support"),
     t("premium.features.no_time_limit"),
   ];
+  if (activeUser) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

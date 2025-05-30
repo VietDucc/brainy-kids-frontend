@@ -1,6 +1,6 @@
 import { I18NConfig } from "../types";
 
-export const defaultLocale = "en";
+export const defaultLocale = "vi";
 export const locales = ["en", "vi"] as const;
 export type Locale = (typeof locales)[number];
 

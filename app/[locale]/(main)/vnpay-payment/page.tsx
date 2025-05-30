@@ -10,6 +10,7 @@ import {
 import { CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface PaymentResultProps {
   searchParams: {
@@ -27,6 +28,7 @@ interface PaymentResultProps {
 }
 
 export default function VNPayPayment({ searchParams }: PaymentResultProps) {
+  const { t } = useTranslation("payment");
   const isSuccess = searchParams.vnp_TransactionStatus === "00";
   const amount = Number(searchParams.vnp_Amount) / 100;
 
@@ -64,12 +66,10 @@ export default function VNPayPayment({ searchParams }: PaymentResultProps) {
             </div>
             <div className="text-center space-y-2">
               <CardTitle className="text-2xl font-bold">
-                {isSuccess ? "Payment Successful!" : "Payment Failed"}
+                {isSuccess ? t("success.title") : t("failed.title")}
               </CardTitle>
               <CardDescription className="text-base">
-                {isSuccess
-                  ? "Thank you! Your payment has been processed successfully."
-                  : "We apologize, there was an issue processing your payment."}
+                {isSuccess ? t("success.description") : t("failed.description")}
               </CardDescription>
             </div>
           </CardHeader>
@@ -79,25 +79,25 @@ export default function VNPayPayment({ searchParams }: PaymentResultProps) {
                 {amount.toLocaleString()} VND
               </div>
               <div className="text-sm text-center text-muted-foreground">
-                Total Amount Paid
+                {t("amount.label")}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-                  Bank
+                  {t("transaction.bank")}
                 </p>
                 <p className="font-semibold">{searchParams.vnp_BankCode}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-                  Card Type
+                  {t("transaction.card_type")}
                 </p>
                 <p className="font-semibold">{searchParams.vnp_CardType}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-                  Transaction Date
+                  {t("transaction.date")}
                 </p>
                 <p className="font-semibold">
                   {formatDate(searchParams.vnp_PayDate)}
@@ -105,7 +105,7 @@ export default function VNPayPayment({ searchParams }: PaymentResultProps) {
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-                  Transaction No.
+                  {t("transaction.transaction_no")}
                 </p>
                 <p className="font-semibold">
                   {searchParams.vnp_TransactionNo}
@@ -113,13 +113,13 @@ export default function VNPayPayment({ searchParams }: PaymentResultProps) {
               </div>
               <div className="col-span-2 space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-                  Bank Transaction No.
+                  {t("transaction.bank_transaction_no")}
                 </p>
                 <p className="font-semibold">{searchParams.vnp_BankTranNo}</p>
               </div>
               <div className="col-span-2 space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">
-                  Order Info
+                  {t("transaction.order_info")}
                 </p>
                 <p className="font-semibold break-all">
                   {searchParams.vnp_OrderInfo}
@@ -135,13 +135,12 @@ export default function VNPayPayment({ searchParams }: PaymentResultProps) {
                 variant={isSuccess ? "default" : "outline"}
               >
                 <ArrowLeft className="h-5 w-5" />
-                Return to Learning
+                {t("actions.return_learning")}
               </Button>
             </Link>
             {!isSuccess && (
               <p className="text-sm text-center text-muted-foreground">
-                If you continue to experience issues, please contact our support
-                team.
+                {t("failed.support_message")}
               </p>
             )}
           </CardFooter>
