@@ -57,20 +57,18 @@ export default async function RootLayout({
   const { resources } = await serverSideTranslation(locale, ns);
 
   return (
-    <html lang={locale}>
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <I18NProvider locale={locale} namespaces={ns} resources={resources}>
-            <Toaster />
-            <ClerkProvider>{children}</ClerkProvider>
-          </I18NProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <I18NProvider locale={locale} namespaces={ns} resources={resources}>
+          <Toaster />
+          <ClerkProvider>{children}</ClerkProvider>
+        </I18NProvider>
+      </ThemeProvider>
+    </>
   );
 }
