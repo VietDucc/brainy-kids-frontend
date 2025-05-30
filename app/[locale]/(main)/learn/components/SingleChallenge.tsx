@@ -24,7 +24,7 @@ export function SingleChallenge({
     <div className="space-y-6">
       <div className="text-center">
         {imgSrc && (
-          <div className="relative w-full h-64 mb-6 rounded-xl overflow-hidden">
+          <div className="relative max-w-xl mx-auto h-64 mb-6 rounded-xl overflow-hidden mt-6">
             <Image
               src={imgSrc}
               alt={question}

@@ -121,11 +121,9 @@ export const UserProgress = ({
           </div>
         </div>
 
-        <Link href="/shop">
-          <Button variant="default" className="w-full mt-4" size="sm">
-            Visit Shop
-          </Button>
-        </Link>
+        <Button variant="default" className="w-full mt-4" size="sm">
+          Visit Shop
+        </Button>
 
         <Link href="/flashcards">
           <Button className="w-full mt-4" variant="outline" size="sm">
