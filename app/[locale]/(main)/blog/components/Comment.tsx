@@ -58,24 +58,15 @@ export function CommentComponent({
   };
 
   return (
-    <div className="flex gap-2 group">
-      <Avatar className="w-8 h-8">
+    <div className="flex gap-2 group items-start">
+      <Avatar className="w-8 h-8 mt-2">
         <AvatarFallback className="bg-primary/10 text-primary">
           {comment.authorName?.[0]?.toUpperCase()}
         </AvatarFallback>
         <AvatarImage src={comment.authorImg} />
       </Avatar>
       <div className="flex-1 space-y-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="font-medium text-foreground">
-            {comment.authorId === authorId
-              ? t("post.author")
-              : comment.authorId}
-          </span>
-          <span className="text-sm text-muted-foreground">
-            {formatDate(comment.createdAt)}
-          </span>
-        </div>
+        <div className="flex items-center gap-2 mb-1"></div>
         {isEditing ? (
           <div className="space-y-2">
             <Textarea
@@ -167,6 +158,9 @@ export function CommentComponent({
                   {t("post.reply")}
                 </Button>
               )}
+              <span className="text-[12px] text-muted-foreground">
+                {formatDate(comment.createdAt)}
+              </span>
             </div>
           </>
         )}
