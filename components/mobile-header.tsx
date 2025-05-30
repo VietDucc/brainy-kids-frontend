@@ -3,10 +3,9 @@
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/sidebar";
-import { useTranslation } from "react-i18next";
 
 export const MobileHeader = () => {
-  const { t } = useTranslation("main");
+  // const { t } = useTranslation("main");
 
   return (
     <Sheet>

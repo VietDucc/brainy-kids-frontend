@@ -15,10 +15,9 @@ const MainLayout = ({ children }: PropsWithChildren) => {
     <>
       <MobileHeader />
       <Sidebar className="hidden lg:flex" />
-      <main className="h-full pt-[50px] lg:pl-[256px] lg:pt-0">
+      <main className="h-full lg:pl-[256px] ">
         <div className="mx-auto h-full max-w-[1056px] pt-6">
           <Toaster />
-
           {userId && <ChatbotPopup />}
           {children}
         </div>

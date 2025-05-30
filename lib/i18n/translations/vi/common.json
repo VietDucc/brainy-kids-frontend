@@ -1,33 +1,56 @@
 {
   "brand": {
     "name": "KidsLearn",
-    "slogan": "Học mà chơi, chơi mà học"
+    "slogan": "Học mà vui"
   },
   
   "nav": {
     "home": "Trang chủ",
     "features": "Tính năng",
-    "how_it_works": "Cách thức hoạt động",
+    "how_it_works": "Cách hoạt động",
     "testimonials": "Đánh giá",
-    "pricing": "Gói dịch vụ",
+    "pricing": "Bảng giá",
     "try_demo": "Dùng thử",
     "login": "Đăng nhập"
   },
   "actions": {
-    "get_started": "Bắt đầu ngay",
+    "get_started": "Bắt đầu",
     "learn_more": "Tìm hiểu thêm",
     "sign_in": "Đăng nhập",
     "sign_up": "Đăng ký",
-    "try_free": "Dùng thử miễn phí",
+    "try_free": "Dùng thử",
     "try_free_period": "7 ngày dùng thử không giới hạn",
-    "upgrade_premium": "Nâng cấp lên Premium",
-    "upgrade_desc": "Mở khóa tất cả tính năng và nội dung học tập không giới hạn"
+    "upgrade_premium": "Nâng cấp Premium",
+    "upgrade_desc": "Mở khóa tất cả tính năng và nội dung học tập"
   },
   
   "footer": {
-    "copyright": "© 2023 KidsLearn. Mọi quyền được bảo lưu.",
+    "copyright": "© 2023 KidsLearn. Đã đăng ký bản quyền.",
     "terms": "Điều khoản",
     "privacy": "Bảo mật",
     "help": "Trợ giúp"
+  },
+  "premium": {
+    "lifetime_title": "Gói Premium Trọn Đời",
+    "lifetime_desc": "Đầu tư một lần - Học cả đời",
+    "benefit1_title": "Truy Cập Trọn Đời",
+    "benefit1_desc": "Không giới hạn thời gian sử dụng",
+    "benefit2_title": "Công Nghệ AI",
+    "benefit2_desc": "Học tập thông minh với trợ lý AI",
+    "benefit3_title": "Tiến Bộ Nhanh Chóng",
+    "benefit3_desc": "Theo dõi và cải thiện liên tục",
+    "one_time_payment": "Chỉ thanh toán một lần duy nhất",
+    "upgrade_now": "Nâng Cấp Ngay",
+    "money_back_guarantee": "Đảm bảo hoàn tiền trong 30 ngày nếu không hài lòng",
+    "features": {
+      "unlimited_access": "Truy cập không giới hạn tất cả bài học",
+      "ai_tools": "Công cụ học tập thông minh AI",
+      "progress_tracking": "Theo dõi tiến độ học tập chi tiết",
+      "interactive_exercises": "Bài tập tương tác hấp dẫn",
+      "ai_pronunciation": "Phát âm chuẩn với công nghệ AI",
+      "regular_updates": "Cập nhật nội dung thường xuyên",
+      "priority_support": "Hỗ trợ kỹ thuật ưu tiên",
+      "no_time_limit": "Không giới hạn thời gian sử dụng"
+    }
   }
 } 

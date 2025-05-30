@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { SidebarItem } from "./sidebar-item";
 import { ModeToggle } from "./mode-toggle";
 import { LanguageSwitcher } from "./language-switcher";
+import { ButtonPayment } from "./button-payment";
 
 type SidebarProps = {
   className?: string;
@@ -65,7 +66,9 @@ export const Sidebar = ({ className }: SidebarProps) => {
           />
         ))}
       </div>
-
+      <div className="py-4 flex justify-center">
+        <ButtonPayment />
+      </div>
       <div className="py-4">
         <ClerkLoading>
           <Loader className="h-5 w-5 animate-spin text-muted-foreground" />
@@ -81,6 +84,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
               }}
             />
             <LanguageSwitcher />
+
             <ModeToggle />
           </div>
         </ClerkLoaded>

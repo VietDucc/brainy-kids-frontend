@@ -22,6 +22,29 @@
     "upgrade_premium": "Upgrade to Premium",
     "upgrade_desc": "Unlock all features and unlimited learning content"
   },
+  "premium": {
+    "lifetime_title": "Lifetime Premium Package",
+    "lifetime_desc": "One-time investment - Lifetime learning",
+    "benefit1_title": "Lifetime Access",
+    "benefit1_desc": "Unlimited access to all content",
+    "benefit2_title": "AI Technology",
+    "benefit2_desc": "Smart learning with AI assistance",
+    "benefit3_title": "Rapid Progress",
+    "benefit3_desc": "Track and improve continuously",
+    "one_time_payment": "One-time payment only",
+    "upgrade_now": "Upgrade Now",
+    "money_back_guarantee": "30-day money-back guarantee if not satisfied",
+    "features": {
+      "unlimited_access": "Unlimited access to all lessons",
+      "ai_tools": "Smart AI learning tools",
+      "progress_tracking": "Detailed progress tracking",
+      "interactive_exercises": "Interactive engaging exercises",
+      "ai_pronunciation": "AI-powered pronunciation",
+      "regular_updates": "Regular content updates",
+      "priority_support": "Priority technical support",
+      "no_time_limit": "No time limit restrictions"
+    }
+  },
   "footer": {
     "copyright": "© 2023 KidsLearn. All rights reserved.",
     "terms": "Terms",

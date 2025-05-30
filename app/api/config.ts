@@ -43,4 +43,5 @@ export const api = {
   blogCommentById: (id: number) => `${API_BASE_URL}/api/blogs/${id}/comments`,
   replyById: (commentId: number) => `${API_BASE_URL}/api/comments/${commentId}/reply`,
   commentById: (id: number) => `${API_BASE_URL}/api/comments/${id}`,
+  vnpay: (amount: number, orderInfo: string) => `${API_BASE_URL}/submitOrder?amount=${amount}&orderInfo=${orderInfo}`,
 };
