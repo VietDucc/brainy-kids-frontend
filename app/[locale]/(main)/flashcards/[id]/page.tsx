@@ -88,8 +88,6 @@ export default function FlashCardDetail({
     loadDeck();
   }, [unwrappedParams.id, userId, unwrappedSearchParams.type]);
 
-  const canEdit = deck?.authorId === userId;
-
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (studyMode !== "learn" || !deck?.flashCards) return;
@@ -146,17 +144,22 @@ export default function FlashCardDetail({
             <ArrowLeft className="w-4 h-4" />
             Back
           </Button>
-          <div className="text-center mt-8">
-            <p className="text-muted-foreground">Deck not found</p>
-          </div>
+          <Card className="text-center p-6 sm:p-8 mt-8">
+            <CardContent>
+              <p className="text-muted-foreground mb-4">Deck not found</p>
+              <Button onClick={() => setShowCreateCard(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Create First Card
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
   }
 
   const createCard = () => {
-    if (!deck || !newCardFront.trim() || !newCardBack.trim() || !canEdit)
-      return;
+    if (!deck || !newCardFront.trim() || !newCardBack.trim()) return;
 
     const newCard: FlashCard = {
       id: Math.max(0, ...deck.flashCards.map((c) => c.id)) + 1,
@@ -174,7 +177,7 @@ export default function FlashCardDetail({
   };
 
   const deleteCard = (cardId: number) => {
-    if (!deck || !canEdit) return;
+    if (!deck) return;
     setDeck({
       ...deck,
       flashCards: deck.flashCards.filter((card) => card.id !== cardId),
@@ -185,13 +188,7 @@ export default function FlashCardDetail({
   };
 
   const updateCard = () => {
-    if (
-      !editingCard ||
-      !deck ||
-      !newCardFront.trim() ||
-      !newCardBack.trim() ||
-      !canEdit
-    )
+    if (!editingCard || !deck || !newCardFront.trim() || !newCardBack.trim())
       return;
 
     setDeck({

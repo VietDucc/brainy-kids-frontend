@@ -11,10 +11,11 @@ import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
 import { i18nConfig } from "@/lib/i18n";
+import Image from "next/image";
 
 const languages = [
-  { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
-  { code: "en", name: "English", flag: "🇬🇧" },
+  { code: "vi", name: "Tiếng Việt", flag: "/vietnam-flag.svg" },
+  { code: "en", name: "English", flag: "/uk-flag.svg" },
 ];
 
 export const LanguageSwitcher = () => {
@@ -43,13 +44,11 @@ export const LanguageSwitcher = () => {
       return;
     }
 
-    // For all other paths
     const segments = pathname.split("/").filter(Boolean);
     const isCurrentPathLocalized =
       segments[0] in
       languages.reduce((acc, lang) => ({ ...acc, [lang.code]: true }), {});
 
-    // Get the path without locale
     const pathWithoutLocale = isCurrentPathLocalized
       ? segments.slice(1).join("/")
       : segments.join("/");
@@ -57,7 +56,6 @@ export const LanguageSwitcher = () => {
     router.push(`/${locale}/${pathWithoutLocale}`);
   };
 
-  // Find current language from cookie or fallback to path, then Vietnamese
   const savedLocale = Cookies.get("NEXT_LOCALE");
   const currentLanguage =
     languages.find((lang) => lang.code === (savedLocale || currentLocale)) ||
@@ -72,18 +70,30 @@ export const LanguageSwitcher = () => {
           className="h-9 w-9 relative"
           title={currentLanguage.name}
         >
-          <span className="absolute text-xs">{currentLanguage.flag}</span>
+          <Image
+            src={currentLanguage.flag}
+            alt={currentLanguage.name}
+            width={24}
+            height={24}
+            className="rounded-sm"
+          />
           <span className="sr-only">Switch language</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[150px]">
+      <DropdownMenuContent align="center" className="w-[150px]">
         {languages.map((language) => (
           <DropdownMenuItem
             key={language.code}
             onClick={() => handleLanguageChange(language.code)}
             className="flex items-center gap-2 cursor-pointer"
           >
-            <span className="text-base">{language.flag}</span>
+            <Image
+              src={language.flag}
+              alt={language.name}
+              width={24}
+              height={24}
+              className="rounded-sm"
+            />
             <span>{language.name}</span>
             {currentLanguage.code === language.code && (
               <span className="ml-auto text-xs text-primary">✓</span>
