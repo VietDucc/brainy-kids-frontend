@@ -255,9 +255,6 @@ export default function FlashCardApp() {
                   <p className="text-[10px] sm:text-sm font-medium text-center truncate">
                     {deck.name}
                   </p>
-                  <p className="text-[8px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1 text-center">
-                    {deck.flashCards?.length || 0} cards
-                  </p>
                 </div>
               </div>
 
@@ -357,9 +354,6 @@ export default function FlashCardApp() {
                 <div className="w-full">
                   <p className="text-[10px] sm:text-sm font-medium text-center truncate">
                     {deck.name}
-                  </p>
-                  <p className="text-[8px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1 text-center">
-                    {deck.flashCards?.length || 0} cards
                   </p>
                 </div>
               </div>
