@@ -80,16 +80,37 @@ export default function BookDetail({ bookId }: BookDetailProps) {
     if (!audio) return;
 
     const updateTime = () => setCurrentTime(audio.currentTime);
-    const updateDuration = () => setDuration(audio.duration);
+    const updateDuration = () => {
+      if (audio.duration && !isNaN(audio.duration)) {
+        setDuration(audio.duration);
+      }
+    };
     const handleEnded = () => handleNext();
+    const handleLoadStart = () => {
+      setDuration(0);
+      setCurrentTime(0);
+    };
+    const handleCanPlay = () => {
+      updateDuration();
+    };
 
     audio.addEventListener("timeupdate", updateTime);
     audio.addEventListener("loadedmetadata", updateDuration);
+    audio.addEventListener("durationchange", updateDuration);
+    audio.addEventListener("canplay", handleCanPlay);
+    audio.addEventListener("loadstart", handleLoadStart);
     audio.addEventListener("ended", handleEnded);
+
+    // Reset audio state when voice changes
+    setCurrentTime(0);
+    setIsPlaying(false);
 
     return () => {
       audio.removeEventListener("timeupdate", updateTime);
       audio.removeEventListener("loadedmetadata", updateDuration);
+      audio.removeEventListener("durationchange", updateDuration);
+      audio.removeEventListener("canplay", handleCanPlay);
+      audio.removeEventListener("loadstart", handleLoadStart);
       audio.removeEventListener("ended", handleEnded);
     };
   }, [book, currentVoiceIndex, handleNext]);
@@ -115,10 +136,19 @@ export default function BookDetail({ bookId }: BookDetailProps) {
 
   const handleSeek = (value: number[]) => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !duration || isNaN(duration)) return;
 
-    audio.currentTime = value[0];
-    setCurrentTime(value[0]);
+    const seekTime = value[0];
+
+    // Ensure seek time is within valid range
+    if (seekTime >= 0 && seekTime <= duration) {
+      try {
+        audio.currentTime = seekTime;
+        setCurrentTime(seekTime);
+      } catch (error) {
+        console.error("Error seeking audio:", error);
+      }
+    }
   };
 
   const formatTime = (time: number) => {
@@ -231,11 +261,12 @@ export default function BookDetail({ bookId }: BookDetailProps) {
                   <div className="flex-1 space-y-1">
                     <Slider
                       value={[currentTime]}
-                      max={duration || 100}
+                      max={duration > 0 ? duration : 100}
                       step={1}
                       onValueChange={handleSeek}
                       className="w-full"
                       title={t("controls.seek")}
+                      disabled={!duration || duration === 0}
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>{formatTime(currentTime)}</span>

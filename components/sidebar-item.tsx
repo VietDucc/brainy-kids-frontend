@@ -18,7 +18,22 @@ export const SidebarItem = ({ label, iconSrc, href }: SidebarItemProps) => {
   const locale = segments[1];
 
   const pathWithoutLocale = "/" + segments.slice(2).join("/");
-  const isActive = pathWithoutLocale === href;
+
+  const isActive = (() => {
+    if (href === "/") {
+      return pathWithoutLocale === "/" || pathWithoutLocale === "";
+    }
+
+    if (pathWithoutLocale === href) {
+      return true;
+    }
+
+    if (pathWithoutLocale.startsWith(href + "/")) {
+      return true;
+    }
+
+    return false;
+  })();
 
   const fullHref = locale ? `/${locale}${href}` : href;
 
