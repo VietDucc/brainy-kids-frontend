@@ -33,6 +33,26 @@ interface SubtitleItem {
   text: string;
 }
 
+// Helper function to fetch subtitles with proper error handling
+const fetchSubtitleFile = async (url: string): Promise<string> => {
+  console.log(`Attempting to fetch subtitle from: ${url}`);
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "text/plain",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  const text = await response.text();
+  console.log(`Successfully fetched subtitle, length: ${text.length}`);
+  return text;
+};
+
 export default function VideoPlayer({
   selectedVideo,
 }: {
@@ -52,6 +72,13 @@ export default function VideoPlayer({
   const [vietnameseSubtitles, setVietnameseSubtitles] = useState<
     SubtitleItem[]
   >([]);
+  const [subtitleLoadingState, setSubtitleLoadingState] = useState<{
+    english: "loading" | "loaded" | "error";
+    vietnamese: "loading" | "loaded" | "error";
+  }>({
+    english: "loading",
+    vietnamese: "loading",
+  });
   const playerRef = useRef<ReactPlayer>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
@@ -95,41 +122,62 @@ export default function VideoPlayer({
   };
 
   useEffect(() => {
+    // Reset loading states
+    setSubtitleLoadingState({
+      english: "loading",
+      vietnamese: "loading",
+    });
+
+    // Create URLs using API route to avoid locale prefix issues
+    const createSubtitleApiUrl = (url: string) => {
+      // Remove leading slash and "subtitles/" prefix if present
+      const cleanPath = url.replace(/^\/?(subtitles\/)?/, "");
+
+      // Return API route URL
+      return `/api/subtitles/${cleanPath}`;
+    };
+
+    const englishSubtitleUrl = createSubtitleApiUrl(selectedVideo.subtitleUrl);
+    console.log("Original subtitle URL:", selectedVideo.subtitleUrl);
+    console.log("English API URL:", englishSubtitleUrl);
+
     // Load English subtitles
-    fetch(selectedVideo.subtitleUrl)
-      .then((response) => response.text())
+    fetchSubtitleFile(englishSubtitleUrl)
       .then((text) => {
         const parsedSubtitles = parseSRT(text);
         setEnglishSubtitles(parsedSubtitles);
+        setSubtitleLoadingState((prev) => ({ ...prev, english: "loaded" }));
       })
       .catch((error) => {
         console.error("Error loading English subtitles:", error);
+        setSubtitleLoadingState((prev) => ({ ...prev, english: "error" }));
       });
 
     // Generate Vietnamese subtitle URL and load it
     const getVietnameseSubtitleUrl = () => {
-      const urlParts = selectedVideo.subtitleUrl.split("/");
-      const filename = urlParts.pop() || "";
-      return [...urlParts, `vi-${filename}`].join("/");
+      const cleanPath = selectedVideo.subtitleUrl.replace(
+        /^\/?(subtitles\/)?/,
+        ""
+      );
+      const pathParts = cleanPath.split("/");
+      const filename = pathParts.pop() || "";
+      const viFilename = `vi-${filename}`;
+      const viPath = [...pathParts, viFilename].join("/");
+      return `/api/subtitles/${viPath}`;
     };
 
     const viSubtitleUrl = getVietnameseSubtitleUrl();
+    console.log("Vietnamese API URL:", viSubtitleUrl);
 
-    fetch(viSubtitleUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(
-            `Failed to load Vietnamese subtitles: ${response.status}`
-          );
-        }
-        return response.text();
-      })
+    fetchSubtitleFile(viSubtitleUrl)
       .then((text) => {
         const parsedSubtitles = parseSRT(text);
         setVietnameseSubtitles(parsedSubtitles);
+        setSubtitleLoadingState((prev) => ({ ...prev, vietnamese: "loaded" }));
       })
       .catch((error) => {
         console.warn("Error loading Vietnamese subtitles:", error);
+        setSubtitleLoadingState((prev) => ({ ...prev, vietnamese: "error" }));
         // If Vietnamese subtitles fail to load, we can still continue with just English
       });
   }, [selectedVideo.subtitleUrl]);
@@ -433,6 +481,7 @@ export default function VideoPlayer({
       <SubtitleDisplay
         englishText={currentEnglishSubtitle}
         vietnameseText={currentVietnameseSubtitle}
+        loadingState={subtitleLoadingState}
       />
     </div>
   );
