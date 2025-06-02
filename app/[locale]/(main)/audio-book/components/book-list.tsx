@@ -94,9 +94,7 @@ export default function BookList() {
                 {book.voices.map((v) => v.pageIndex).join(", ")}
               </div>
               <Link href={`/audio-book/${book.id}`}>
-                <Button size="sm" className="w-full">
-                  {t("list.read_book")}
-                </Button>
+                <Button className="w-full">{t("list.read_book")}</Button>
               </Link>
             </div>
           </CardContent>
