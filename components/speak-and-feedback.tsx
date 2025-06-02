@@ -36,7 +36,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
 import { toast as sonnerToast } from "sonner";
-import { Category } from "@/app/(main)/games/listen-n-speak/data";
+import { Category } from "@/app/[locale]/(main)/games/listen-n-speak/data";
 
 interface Props {
   category: Category;

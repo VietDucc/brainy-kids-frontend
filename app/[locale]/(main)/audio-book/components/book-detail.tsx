@@ -156,13 +156,16 @@ export default function BookDetail({ bookId }: BookDetailProps) {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="mb-6">
+      <div className="mb-6 flex items-center gap-2">
         <Link href="/audio-book">
-          <Button variant="outline">
+          <Button variant="ghost" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t("back")}
           </Button>
         </Link>
+        <span className="text-muted-foreground font-bold text-md md:text-xl text-center w-full">
+          {book.title}
+        </span>
       </div>
 
       <div className="space-y-6">
@@ -266,11 +269,11 @@ export default function BookDetail({ bookId }: BookDetailProps) {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-0">
             <div className="w-full" style={{ height: "150vh" }}>
               <iframe
-                src={book.pdfUrl}
-                className="w-full h-full border rounded-lg shadow-sm"
+                src={`${book.pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                className="w-full h-full"
                 title={`PDF viewer for ${book.title}`}
               />
             </div>

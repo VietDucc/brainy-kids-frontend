@@ -143,6 +143,7 @@ export default function FlashCardDetail({
       <div className="container px-4 sm:px-6 py-4 sm:py-6">
         <div className="max-w-5xl mx-auto">
           <Button
+            size="sm"
             variant="ghost"
             onClick={() => router.push("/flashcards")}
             className="flex items-center gap-2"
@@ -409,24 +410,28 @@ export default function FlashCardDetail({
           </div>
 
           <div className="flex items-center gap-2 self-end sm:self-auto">
-            <Button
-              onClick={() => setShowCreateCard(true)}
-              variant="outline"
-              size="sm"
-              className="h-9"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Card
-            </Button>
-            <Button
-              onClick={() => setShowBulkImport(true)}
-              variant="outline"
-              size="sm"
-              className="h-9"
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              Bulk Import
-            </Button>
+            {unwrappedSearchParams.type !== "public" && (
+              <>
+                <Button
+                  onClick={() => setShowCreateCard(true)}
+                  variant="outline"
+                  size="sm"
+                  className="h-9"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Card
+                </Button>
+                <Button
+                  onClick={() => setShowBulkImport(true)}
+                  variant="outline"
+                  size="sm"
+                  className="h-9"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Bulk Import
+                </Button>
+              </>
+            )}
             {studyMode === "overview" && deck.flashCards.length > 0 && (
               <Button onClick={startStudySession} size="sm" className="h-9">
                 Start Learning
@@ -643,36 +648,38 @@ export default function FlashCardDetail({
                         )}
                       </div>
 
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 flex-shrink-0"
-                          >
-                            <MoreVertical className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setEditingCard(card);
-                              setNewCardFront(card.front);
-                              setNewCardBack(card.back);
-                            }}
-                          >
-                            <Edit className="w-4 h-4 mr-2" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => deleteCard(card.id)}
-                            className="text-destructive"
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      {unwrappedSearchParams.type !== "public" && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 flex-shrink-0"
+                            >
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setEditingCard(card);
+                                setNewCardFront(card.front);
+                                setNewCardBack(card.back);
+                              }}
+                            >
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => deleteCard(card.id)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
                     </CardContent>
                   </Card>
                 ))}

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function ListenNSpeak() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -47,10 +48,14 @@ export default function ListenNSpeak() {
       <div className="space-y-2">
         <div className="text-center mb-8 sm:mb-12">
           <Link href="/games">
-            <span className="flex items-center gap-x-2 text-muted-foreground text-sm sm:text-base">
+            <Button
+              size="sm"
+              variant="ghost"
+              className="flex items-center gap-x-2 text-muted-foreground"
+            >
               <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6" />
               Back to Games
-            </span>
+            </Button>
           </Link>
           <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-2 sm:mb-4">
             English Pronunciation Game
