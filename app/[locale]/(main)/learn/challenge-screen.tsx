@@ -21,6 +21,7 @@ import { SelectChallenge } from "./components/SelectChallenge";
 import { SingleChallenge } from "./components/SingleChallenge";
 import { AssistChallenge } from "./components/AssistChallenge";
 import { MultiChallenge } from "./components/MultiChallenge";
+import { AUDIO_FILES, createAudio } from "@/lib/audio-utils";
 
 interface ChallengeOption {
   id: number;
@@ -94,9 +95,8 @@ export const ChallengeScreen = ({
   const currentChallenge = sortedChallenges[currentChallengeIndex] || null;
 
   useEffect(() => {
-    correctSoundRef.current = new Audio("/correct.wav");
-    incorrectSoundRef.current = new Audio("/incorrect.wav");
-    completeSoundRef.current = new Audio("/complete.wav");
+    correctSoundRef.current = createAudio(AUDIO_FILES.CORRECT);
+    incorrectSoundRef.current = createAudio(AUDIO_FILES.INCORRECT);
 
     return () => {
       if (correctSoundRef.current) {
@@ -106,10 +106,6 @@ export const ChallengeScreen = ({
       if (incorrectSoundRef.current) {
         incorrectSoundRef.current.pause();
         incorrectSoundRef.current = null;
-      }
-      if (completeSoundRef.current) {
-        completeSoundRef.current.pause();
-        completeSoundRef.current = null;
       }
     };
   }, []);
