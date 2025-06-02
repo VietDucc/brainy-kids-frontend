@@ -66,7 +66,6 @@ export const LessonCard = ({
           "relative overflow-hidden"
         )}
       >
-        {/* Thêm hiệu ứng loading shimmer */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-100/50 dark:via-blue-900/30 to-transparent animate-shimmer" />
 
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/50 relative">

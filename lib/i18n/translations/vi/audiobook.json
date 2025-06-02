@@ -1,0 +1,49 @@
+{
+  "title": "Sách Nói",
+  "page_title": "Thư viện Sách nói",
+  "page_description": "Khám phá bộ sưu tập sách nói phong phú",
+  "loading": "Đang tải sách...",
+  "book_not_found": "Không tìm thấy sách",
+  "back_to_home": "Quay lại trang chủ",
+  "back": "Quay lại",
+  "audio_player": "Audio",
+  "page": "Trang",
+  "of": "của",
+  "current_time": "Thời gian hiện tại",
+  "total_time": "Tổng thời gian",
+  "play": "Phát",
+  "pause": "Tạm dừng",
+  "previous": "Trước",
+  "next": "Tiếp theo",
+  "skip_back": "Lùi",
+  "skip_forward": "Tiến",
+  "volume": "Âm lượng",
+  "page_list": "Danh sách trang",
+  "list": {
+    "loading_books": "Đang tải sách...",
+    "pages_with_audio": "trang có audio",
+    "available_pages": "Các trang có audio:",
+    "read_book": "Đọc sách",
+    "no_books": "Không có sách nào"
+  },
+  "error": {
+    "load_book": "Lỗi khi tải sách",
+    "load_books": "Lỗi khi tải danh sách sách",
+    "try_again": "Vui lòng thử lại sau",
+    "audio_error": "Lỗi khi phát audio",
+    "network_error": "Lỗi kết nối mạng"
+  },
+  "controls": {
+    "play_pause": "Phát/Tạm dừng",
+    "previous_page": "Trang trước",
+    "next_page": "Trang sau",
+    "seek": "Tua",
+    "go_to_page": "Đi đến trang"
+  },
+  "status": {
+    "playing": "Đang phát",
+    "paused": "Đã tạm dừng",
+    "loading": "Đang tải",
+    "ended": "Đã kết thúc"
+  }
+} 

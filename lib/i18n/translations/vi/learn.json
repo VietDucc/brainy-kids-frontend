@@ -32,7 +32,8 @@
   },
   "status": {
     "completed": "✅ Đã hoàn thành! 🌟",
-    "lesson": "Bài",
+    "lesson": "Bài học",
+    "lesson_start": "Bắt đầu bài học",
     "locked": "Hoàn thành các bài học trước để mở khóa"
   },
   "errors": {

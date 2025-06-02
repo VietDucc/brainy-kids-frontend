@@ -53,6 +53,7 @@ export default async function RootLayout({
     "blog",
     "games",
     "payment",
+    "audiobook",
   ];
   const { resources } = await serverSideTranslation(locale, ns);
 

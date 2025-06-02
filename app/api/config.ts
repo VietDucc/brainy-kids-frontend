@@ -45,4 +45,6 @@ export const api = {
   commentById: (id: number) => `${API_BASE_URL}/api/comments/${id}`,
   vnpay: (amount: number, orderInfo: string) => `${API_BASE_URL}/submitOrder?amount=${amount}&orderInfo=${orderInfo}`,
   activeUser: (clerkUserId: string) => `${API_BASE_URL}/users/userActive/${clerkUserId}`,
+  book: `${API_BASE_URL}/books`,
+  bookById: (id: number) => `${API_BASE_URL}/books/${id}`,
 };

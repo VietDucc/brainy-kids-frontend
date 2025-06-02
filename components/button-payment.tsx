@@ -5,6 +5,7 @@ import {
   Lock,
   Crown,
   Star,
+  Loader2,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -54,8 +55,10 @@ export const ButtonPayment = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation("common");
   const [activeUser, setActiveUser] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleUpgrade = async () => {
+    setLoading(true);
     try {
       const response = await fetch("/api/vnpay", {
         method: "POST",
@@ -82,6 +85,8 @@ export const ButtonPayment = () => {
         title: "Error submitting order",
         description: "Please try again",
       });
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -131,6 +136,14 @@ export const ButtonPayment = () => {
   ];
   if (activeUser) {
     return null;
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center">
+        <Loader2 className="h-4 w-4 animate-spin" />
+      </div>
+    );
   }
 
   return (
@@ -224,10 +237,8 @@ export const ButtonPayment = () => {
             </div>
           </div>
 
-          {/* Pricing & Features Section */}
           <div className="relative z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-t border-violet-200/50 dark:border-violet-800/30">
             <div className="p-5">
-              {/* Price */}
               <div className="text-center mb-5">
                 <div className="relative inline-block">
                   <div className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
@@ -242,7 +253,6 @@ export const ButtonPayment = () => {
                 </div>
               </div>
 
-              {/* Top Features Only */}
               <div className="grid grid-cols-1 gap-2 mb-5">
                 {features.slice(0, 4).map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm">
@@ -257,7 +267,6 @@ export const ButtonPayment = () => {
                 </div>
               </div>
 
-              {/* CTA Button */}
               <Button
                 className="w-full h-10 text-sm font-semibold bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 border-0 shadow-lg hover:shadow-xl transition-all duration-300"
                 onClick={() => {
@@ -269,7 +278,6 @@ export const ButtonPayment = () => {
                 {t("premium.upgrade_now")}
               </Button>
 
-              {/* Guarantee */}
               <div className="mt-3 text-center">
                 <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1">
                   <CheckCircle2 className="h-3 w-3 text-green-500" />

@@ -9,7 +9,7 @@ export const MobileHeader = () => {
 
   return (
     <Sheet>
-      <SheetTrigger className="pr-4 transition hover:opacity-75 lg:hidden">
+      <SheetTrigger className="p-2 transition hover:opacity-75 lg:hidden">
         <Menu />
       </SheetTrigger>
       <SheetContent side="left" className="p-0 border-0">

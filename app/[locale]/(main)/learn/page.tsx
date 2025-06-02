@@ -167,14 +167,13 @@ const LearnPage = () => {
   };
 
   const getLessonStatusDescription = (
-    status: "locked" | "available" | "completed",
-    orderLesson: number
+    status: "locked" | "available" | "completed"
   ): string => {
     switch (status) {
       case "completed":
         return t("status.completed");
       case "available":
-        return `${t("status.lesson")} ${orderLesson}`;
+        return `${t("status.lesson_start")}`;
       case "locked":
         return t("status.locked");
     }
@@ -368,10 +367,7 @@ const LearnPage = () => {
 
             {selectedUnit.lessons.map((lesson) => {
               const status = getLessonStatus(lesson);
-              const statusDescription = getLessonStatusDescription(
-                status,
-                lesson.orderLesson
-              );
+              const statusDescription = getLessonStatusDescription(status);
               const isCurrentLessonLoading = loadingLessonId === lesson.id;
 
               return (
@@ -448,10 +444,8 @@ const LearnPage = () => {
                     {unit.lessons && unit.lessons.length > 0 ? (
                       unit.lessons.map((lesson) => {
                         const status = getLessonStatus(lesson);
-                        const statusDescription = getLessonStatusDescription(
-                          status,
-                          lesson.orderLesson
-                        );
+                        const statusDescription =
+                          getLessonStatusDescription(status);
                         const isCurrentLessonLoading =
                           loadingLessonId === lesson.id;
 

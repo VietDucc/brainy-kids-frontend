@@ -22,7 +22,6 @@ export default function VideoDetailPage() {
       if (foundVideo) {
         setVideo(foundVideo);
 
-        // Find related videos
         if (foundVideo.relatedVideos) {
           const related = foundVideo.relatedVideos
             .map((id) => VIDEOS.find((v) => v.id === id))
@@ -57,7 +56,6 @@ export default function VideoDetailPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
-            {/* Video Player */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -92,7 +90,6 @@ export default function VideoDetailPage() {
             </div>
           </div>
 
-          {/* Sidebar with Related Videos */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-foreground flex items-center">
               <RotateCcw className="h-5 w-5 mr-2" />
@@ -146,7 +143,6 @@ export default function VideoDetailPage() {
               </Link>
             </div>
 
-            {/* Learning Progress Card */}
             <Card className="p-4 bg-card/70 backdrop-blur-sm border-border mt-6">
               <h3 className="font-semibold text-foreground mb-2">
                 Your Learning Progress

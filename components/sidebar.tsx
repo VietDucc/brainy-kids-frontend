@@ -38,6 +38,11 @@ export const Sidebar = ({ className }: SidebarProps) => {
     },
     { label: "navigation.games", href: "/games", iconSrc: "/game.png" },
     { label: "navigation.videos", href: "/videos", iconSrc: "/video.svg" },
+    {
+      label: "navigation.speakbooks",
+      href: "/audio-book",
+      iconSrc: "/book.png",
+    },
   ];
 
   return (

@@ -13,7 +13,6 @@ import {
   CreditCard,
   LogIn,
   Rocket,
-  Zap,
   ArrowRight,
   Crown,
 } from "lucide-react";
@@ -357,20 +356,23 @@ const Header = () => {
                         </Link>
                       );
                     })}
-
-                    <Link
-                      href="/login"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-primary/10 transition-colors group"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-full p-1.5 group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800/30 transition-colors">
-                        <LogIn className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-                      </div>
-                      <span className="text-sm font-medium">
-                        {t("nav.login")}
-                      </span>
-                      <ChevronRight className="h-3.5 w-3.5 ml-auto opacity-60" />
-                    </Link>
+                    <SignedOut>
+                      <SignInButton mode="modal">
+                        <Button
+                          variant="default"
+                          size="icon"
+                          className="flex items-center gap-2 p-2 rounded-lg transition-colors group w-full"
+                        >
+                          <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-full p-1.5 group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800/30 transition-colors">
+                            <LogIn className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                          </div>
+                          <span className="text-sm font-medium">
+                            {t("nav.login")}
+                          </span>
+                          <ChevronRight className="h-3.5 w-3.5 ml-auto opacity-60" />
+                        </Button>
+                      </SignInButton>
+                    </SignedOut>
                   </nav>
 
                   <div className="bg-amber-50 dark:bg-amber-950 rounded-lg p-4">
@@ -394,33 +396,6 @@ const Header = () => {
                       <Star className="h-4 w-4 text-yellow-400" />
                     </div>
                   </div>
-
-                  <Button
-                    className="w-full relative bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg shadow-primary/20"
-                    size="lg"
-                  >
-                    <div className="flex flex-col items-center">
-                      <span className="text-sm font-bold mb-0.5 flex items-center gap-1.5">
-                        <Zap className="h-3.5 w-3.5 text-yellow-200" />
-                        {t("actions.try_free")}
-                      </span>
-                      <span className="text-[10px] opacity-90">
-                        {t("actions.try_free_period")}
-                      </span>
-                    </div>
-                    <motion.div
-                      className="absolute -top-1 -right-1"
-                      initial={{ rotate: 0 }}
-                      animate={{ rotate: [0, 10, -10, 0] }}
-                      transition={{
-                        duration: 5,
-                        repeat: Infinity,
-                        repeatType: "loop",
-                      }}
-                    >
-                      <Sparkles className="h-3.5 w-3.5 text-yellow-300" />
-                    </motion.div>
-                  </Button>
 
                   <div className="text-center space-y-2 text-xs text-muted-foreground">
                     <p>{t("footer.copyright")}</p>

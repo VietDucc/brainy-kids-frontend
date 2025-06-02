@@ -21,38 +21,29 @@ export default function SubtitleDisplay({
   const [displayVietnameseText, setDisplayVietnameseText] = useState("");
   const [isHovered, setIsHovered] = useState(false);
 
-  // Vietnamese subtitle delay in milliseconds (should be at least 200ms)
   const viDelay = 0;
 
   useEffect(() => {
-    // Clear any existing timeout
     let timeoutIdEn: NodeJS.Timeout;
     let timeoutIdVi: NodeJS.Timeout;
 
     if (englishText) {
-      // For English text
       if (timeOffset < 0) {
-        // Show English immediately if offset is negative
         setDisplayEnglishText(englishText);
       } else {
-        // Delay English text display if offset is positive
         timeoutIdEn = setTimeout(() => {
           setDisplayEnglishText(englishText);
         }, timeOffset);
       }
 
-      // For Vietnamese text - always add the viDelay
-      // If we have Vietnamese text from props, use it, otherwise use fallback message
       const viText = vietnameseText || "Chưa có bản dịch";
 
-      // Calculate Vietnamese delay based on English offset
       const vietnameseDelay = Math.max(0, timeOffset) + viDelay;
 
       timeoutIdVi = setTimeout(() => {
         setDisplayVietnameseText(viText);
       }, vietnameseDelay);
     } else {
-      // If no English text, clear both displays
       setDisplayEnglishText("");
       setDisplayVietnameseText("");
     }

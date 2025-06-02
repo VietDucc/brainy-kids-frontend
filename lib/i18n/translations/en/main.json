@@ -6,7 +6,8 @@
     "flashcards": "Flashcards",
     "dictionary": "Dictionary",
     "leaderboard": "Leaderboard",
-    "blog": "Blog"
+    "blog": "Blog",
+    "speakbooks": "Audio Books"
   },
   "auth": {
     "sign_in": "Sign In",
