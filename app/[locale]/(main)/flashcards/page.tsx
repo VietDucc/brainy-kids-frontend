@@ -401,7 +401,9 @@ export default function FlashCardApp() {
             <Button variant="outline" onClick={() => setEditingDeck(null)}>
               Cancel
             </Button>
-            <Button onClick={updateDeck}>Save Changes</Button>
+            <Button size="sm" onClick={updateDeck}>
+              Save Changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

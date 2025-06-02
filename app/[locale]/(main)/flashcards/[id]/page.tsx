@@ -22,6 +22,7 @@ import {
   Edit,
   Trash2,
   MoreVertical,
+  Upload,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -35,6 +36,8 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { useAuth } from "@clerk/nextjs";
 import { FlashCard, DeckWithCards, StudyMode } from "../types";
+import { useToast } from "@/hooks/use-toast";
+import BulkImportDialog from "../components/bulk-import-dialog";
 
 export default function FlashCardDetail({
   params,
@@ -47,11 +50,13 @@ export default function FlashCardDetail({
   const unwrappedSearchParams = React.use(searchParams);
   const router = useRouter();
   const { userId } = useAuth();
+  const { toast } = useToast();
   const [deck, setDeck] = useState<DeckWithCards | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [showCreateCard, setShowCreateCard] = useState(false);
+  const [showBulkImport, setShowBulkImport] = useState(false);
   const [editingCard, setEditingCard] = useState<FlashCard | null>(null);
   const [newCardFront, setNewCardFront] = useState("");
   const [newCardBack, setNewCardBack] = useState("");
@@ -59,6 +64,7 @@ export default function FlashCardDetail({
   const [studyProgress, setStudyProgress] = useState({
     correct: 0,
     incorrect: 0,
+    skipped: 0,
     remaining: 0,
   });
 
@@ -158,50 +164,133 @@ export default function FlashCardDetail({
     );
   }
 
-  const createCard = () => {
+  const createCard = async () => {
     if (!deck || !newCardFront.trim() || !newCardBack.trim()) return;
 
-    const newCard: FlashCard = {
-      id: Math.max(0, ...deck.flashCards.map((c) => c.id)) + 1,
-      front: newCardFront,
-      back: newCardBack,
-    };
+    try {
+      const response = await fetch("/api/card", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          front: newCardFront,
+          back: newCardBack,
+          deckId: Number(unwrappedParams.id),
+        }),
+      });
 
-    setDeck({
-      ...deck,
-      flashCards: [...deck.flashCards, newCard],
-    });
-    setNewCardFront("");
-    setNewCardBack("");
-    setShowCreateCard(false);
-  };
+      if (!response.ok) {
+        throw new Error("Failed to create card");
+      }
 
-  const deleteCard = (cardId: number) => {
-    if (!deck) return;
-    setDeck({
-      ...deck,
-      flashCards: deck.flashCards.filter((card) => card.id !== cardId),
-    });
-    if (currentCardIndex >= deck.flashCards.length - 1) {
-      setCurrentCardIndex(Math.max(0, deck.flashCards.length - 2));
+      const newCard = await response.json();
+
+      setDeck({
+        ...deck,
+        flashCards: [...deck.flashCards, newCard],
+      });
+
+      setNewCardFront("");
+      setNewCardBack("");
+      setShowCreateCard(false);
+
+      toast({
+        variant: "success",
+        title: "Card created",
+        description: "Flashcard has been successfully created.",
+      });
+    } catch (error) {
+      console.error("Error creating card:", error);
+      toast({
+        variant: "error",
+        title: "Error",
+        description: "Failed to create card. Please try again.",
+      });
     }
   };
 
-  const updateCard = () => {
+  const deleteCard = async (cardId: number) => {
+    if (!deck) return;
+
+    try {
+      const response = await fetch(`/api/card/${cardId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete card");
+      }
+
+      setDeck({
+        ...deck,
+        flashCards: deck.flashCards.filter((card) => card.id !== cardId),
+      });
+
+      if (currentCardIndex >= deck.flashCards.length - 1) {
+        setCurrentCardIndex(Math.max(0, deck.flashCards.length - 2));
+      }
+
+      toast({
+        variant: "success",
+        title: "Card deleted",
+        description: "Flashcard has been successfully deleted.",
+      });
+    } catch (error) {
+      console.error("Error deleting card:", error);
+      toast({
+        variant: "error",
+        title: "Error",
+        description: "Failed to delete card. Please try again.",
+      });
+    }
+  };
+
+  const updateCard = async () => {
     if (!editingCard || !deck || !newCardFront.trim() || !newCardBack.trim())
       return;
 
-    setDeck({
-      ...deck,
-      flashCards: deck.flashCards.map((card) =>
-        card.id === editingCard.id
-          ? { ...card, front: newCardFront, back: newCardBack }
-          : card
-      ),
-    });
-    setEditingCard(null);
-    setNewCardFront("");
-    setNewCardBack("");
+    try {
+      const response = await fetch(`/api/card/${editingCard.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          front: newCardFront,
+          back: newCardBack,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update card");
+      }
+
+      setDeck({
+        ...deck,
+        flashCards: deck.flashCards.map((card) =>
+          card.id === editingCard.id
+            ? { ...card, front: newCardFront, back: newCardBack }
+            : card
+        ),
+      });
+
+      setEditingCard(null);
+      setNewCardFront("");
+      setNewCardBack("");
+
+      toast({
+        title: "Card updated",
+        description: "Flashcard has been successfully updated.",
+      });
+    } catch (error) {
+      console.error("Error updating card:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update card. Please try again.",
+      });
+    }
   };
 
   const startStudySession = () => {
@@ -212,6 +301,7 @@ export default function FlashCardDetail({
     setStudyProgress({
       correct: 0,
       incorrect: 0,
+      skipped: 0,
       remaining: deck.flashCards.length,
     });
     setDeck({
@@ -235,7 +325,7 @@ export default function FlashCardDetail({
 
     setStudyProgress((prev) => ({
       ...prev,
-      [status]: prev[status] + 1,
+      [status]: prev[status as keyof typeof prev] + 1,
       remaining: prev.remaining - 1,
     }));
 
@@ -250,6 +340,50 @@ export default function FlashCardDetail({
       ...deck,
       flashCards: updatedCards,
     });
+  };
+
+  const bulkImportCards = async (
+    cards: { front: string; back: string; deckId: number }[]
+  ) => {
+    try {
+      const response = await fetch("/api/card/bulk", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cards),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to import cards");
+      }
+
+      await response.json();
+
+      const deckResponse = await fetch(
+        unwrappedSearchParams.type === "user"
+          ? `/api/user-deck/${unwrappedParams.id}`
+          : `/api/deck/${unwrappedParams.id}`
+      );
+
+      if (deckResponse.ok) {
+        const deckData = await deckResponse.json();
+        setDeck(deckData);
+      }
+
+      toast({
+        title: "Cards imported successfully",
+        description: `${cards.length} flashcards have been added to your deck.`,
+      });
+    } catch (error) {
+      console.error("Error importing cards:", error);
+      toast({
+        variant: "destructive",
+        title: "Import failed",
+        description: "Failed to import cards. Please try again.",
+      });
+      throw error;
+    }
   };
 
   return (
@@ -284,6 +418,15 @@ export default function FlashCardDetail({
               <Plus className="w-4 h-4 mr-2" />
               Add Card
             </Button>
+            <Button
+              onClick={() => setShowBulkImport(true)}
+              variant="outline"
+              size="sm"
+              className="h-9"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Bulk Import
+            </Button>
             {studyMode === "overview" && deck.flashCards.length > 0 && (
               <Button onClick={startStudySession} size="sm" className="h-9">
                 Start Learning
@@ -304,13 +447,29 @@ export default function FlashCardDetail({
           </Card>
         ) : studyMode === "learn" ? (
           <div className="space-y-6 sm:space-y-8">
+            <div className="flex justify-between items-center">
+              <Button
+                variant="outline"
+                onClick={() => setStudyMode("overview")}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Exit Study
+              </Button>
+              <div className="text-sm text-muted-foreground">
+                Card {currentCardIndex + 1} of {deck.flashCards.length}
+              </div>
+            </div>
+
             {/* Progress Bar */}
             <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
               <div
                 className="bg-primary h-full transition-all"
                 style={{
                   width: `${
-                    ((studyProgress.correct + studyProgress.incorrect) /
+                    ((studyProgress.correct +
+                      studyProgress.incorrect +
+                      studyProgress.skipped) /
                       deck.flashCards.length) *
                     100
                   }%`,
@@ -325,6 +484,9 @@ export default function FlashCardDetail({
               </Badge>
               <Badge variant="secondary" className="px-3 py-1">
                 Incorrect: {studyProgress.incorrect}
+              </Badge>
+              <Badge variant="secondary" className="px-3 py-1">
+                Skipped: {studyProgress.skipped}
               </Badge>
               <Badge variant="secondary" className="px-3 py-1">
                 Remaining: {studyProgress.remaining}
@@ -398,7 +560,7 @@ export default function FlashCardDetail({
         ) : (
           <div className="space-y-6 sm:space-y-8">
             {/* Overview Stats */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
               <Card>
                 <CardContent className="p-4 sm:p-6 text-center">
                   <h3 className="text-xl sm:text-2xl font-bold text-green-600">
@@ -427,6 +589,19 @@ export default function FlashCardDetail({
               </Card>
               <Card>
                 <CardContent className="p-4 sm:p-6 text-center">
+                  <h3 className="text-xl sm:text-2xl font-bold text-yellow-600">
+                    {
+                      deck.flashCards.filter((c) => c.status === "skipped")
+                        .length
+                    }
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Skipped
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4 sm:p-6 text-center">
                   <h3 className="text-xl sm:text-2xl font-bold text-gray-600">
                     {deck.flashCards.filter((c) => !c.status).length}
                   </h3>
@@ -448,6 +623,7 @@ export default function FlashCardDetail({
                       "h-auto",
                       card.status === "correct" && "border-green-500",
                       card.status === "incorrect" && "border-red-500",
+                      card.status === "skipped" && "border-yellow-500",
                       !card.status && "hover:border-primary/50"
                     )}
                   >
@@ -557,12 +733,19 @@ export default function FlashCardDetail({
               >
                 Cancel
               </Button>
-              <Button onClick={editingCard ? updateCard : createCard}>
+              <Button onClick={editingCard ? updateCard : createCard} size="sm">
                 {editingCard ? "Save Changes" : "Create Card"}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <BulkImportDialog
+          open={showBulkImport}
+          onOpenChange={setShowBulkImport}
+          deckId={Number(unwrappedParams.id)}
+          onImport={bulkImportCards}
+        />
       </div>
     </div>
   );

@@ -12,7 +12,6 @@ import {
   Calendar,
   Clock,
   Eye,
-  Heart,
   MessageCircle,
   Share2,
   Star,
@@ -42,7 +41,6 @@ export default function BlogPostDetail({
   const [newComment, setNewComment] = useState("");
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyContent, setReplyContent] = useState("");
-  const [isLiked, setIsLiked] = useState(false);
   const { userId } = useAuth();
   const [content, setContent] = useState(post.content);
   const [title, setTitle] = useState(post.title);
@@ -378,10 +376,11 @@ export default function BlogPostDetail({
     <div className="min-h-screen">
       {/* Header */}
       <header className="shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Button
+                size="sm"
                 variant="ghost"
                 onClick={onBack}
                 className="flex items-center gap-2"
@@ -395,16 +394,7 @@ export default function BlogPostDetail({
                 <Share2 className="w-4 h-4 mr-2" />
                 {t("header.share")}
               </Button>
-              <Button
-                variant={isLiked ? "default" : "outline"}
-                size="sm"
-                onClick={() => setIsLiked(!isLiked)}
-              >
-                <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
-                {t("post.stats.likes", {
-                  count: post.likes + (isLiked ? 1 : 0),
-                })}
-              </Button>
+
               {isAuthor && (
                 <Button onClick={handleSave} variant="default" size="sm">
                   {t("header.save_changes")}

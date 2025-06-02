@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import Loading from "@/app/loading";
+import Image from "next/image";
 
 interface LeaderboardUser {
   id: number;
   clerkUserId: string;
   username: string;
   score: number;
-  level?: number;
+  profile_image_url?: string;
 }
 
 export default function LeaderboardPage() {
@@ -125,23 +126,32 @@ export default function LeaderboardPage() {
                 transition={{ delay: 0.2 }}
               >
                 <Avatar className="h-24 w-24 border-4 border-white mb-4">
-                  <span className="text-xl font-bold">
-                    {getInitials(topThree[1].username)}
-                  </span>
+                  {topThree[1].profile_image_url ? (
+                    <Image
+                      src={topThree[1].profile_image_url}
+                      alt={topThree[1].username}
+                      width={96}
+                      height={96}
+                      className="rounded-full object-cover"
+                    />
+                  ) : (
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {getInitials(topThree[1].username)}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
                 <div className="text-center text-white">
                   <p className="font-semibold text-lg">
                     {formatUsername(topThree[1].username)}
                   </p>
                   <p className="text-primary-foreground/80">
-                    Level {topThree[1].level || 3}
+                    {topThree[1].score} điểm
                   </p>
                 </div>
                 <div className="mt-4 text-6xl font-bold text-white">2</div>
               </motion.div>
             )}
 
-            {/* First Place */}
             {topThree[0] && (
               <motion.div
                 className="flex flex-col items-center -mt-8"
@@ -149,23 +159,32 @@ export default function LeaderboardPage() {
                 animate={{ y: 0, opacity: 1 }}
               >
                 <Avatar className="h-32 w-32 border-4 border-yellow-400 mb-4">
-                  <span className="text-2xl font-bold">
-                    {getInitials(topThree[0].username)}
-                  </span>
+                  {topThree[0].profile_image_url ? (
+                    <Image
+                      src={topThree[0].profile_image_url}
+                      alt={topThree[0].username}
+                      width={128}
+                      height={128}
+                      className="rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-2xl font-bold">
+                      {getInitials(topThree[0].username)}
+                    </span>
+                  )}
                 </Avatar>
                 <div className="text-center text-white">
                   <p className="font-bold text-xl">
                     {formatUsername(topThree[0].username)}
                   </p>
                   <p className="text-primary-foreground/80">
-                    Level {topThree[0].level || 3}
+                    {topThree[0].score} điểm
                   </p>
                 </div>
                 <div className="mt-4 text-7xl font-bold text-white">1</div>
               </motion.div>
             )}
 
-            {/* Third Place */}
             {topThree[2] && (
               <motion.div
                 className="flex flex-col items-center"
@@ -174,16 +193,26 @@ export default function LeaderboardPage() {
                 transition={{ delay: 0.4 }}
               >
                 <Avatar className="h-24 w-24 border-4 border-white mb-4">
-                  <span className="text-xl font-bold">
-                    {getInitials(topThree[2].username)}
-                  </span>
+                  {topThree[2].profile_image_url ? (
+                    <Image
+                      src={topThree[2].profile_image_url}
+                      alt={topThree[2].username}
+                      width={96}
+                      height={96}
+                      className="rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-xl font-bold">
+                      {getInitials(topThree[2].username)}
+                    </span>
+                  )}
                 </Avatar>
                 <div className="text-center text-white">
                   <p className="font-semibold text-lg">
                     {formatUsername(topThree[2].username)}
                   </p>
                   <p className="text-primary-foreground/80">
-                    Level {topThree[2].level || 3}
+                    {topThree[2].score} điểm
                   </p>
                 </div>
                 <div className="mt-4 text-6xl font-bold text-white">3</div>
@@ -192,7 +221,6 @@ export default function LeaderboardPage() {
           </div>
         </div>
 
-        {/* Rest of Users */}
         <div className="bg-card rounded-3xl shadow-sm">
           <div className="p-6">
             <div className="space-y-2">
@@ -208,16 +236,23 @@ export default function LeaderboardPage() {
                     {index + 4}
                   </span>
                   <Avatar className="h-12 w-12 mx-4">
-                    <span className="text-base font-semibold">
-                      {getInitials(user.username)}
-                    </span>
+                    {user.profile_image_url ? (
+                      <Image
+                        src={user.profile_image_url}
+                        alt={user.username}
+                        width={48}
+                        height={48}
+                        className="rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-base font-semibold">
+                        {getInitials(user.username)}
+                      </span>
+                    )}
                   </Avatar>
                   <div className="flex-grow">
                     <p className="font-medium text-foreground">
                       {formatUsername(user.username)}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Level {user.level || 3}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

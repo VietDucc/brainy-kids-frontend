@@ -1,24 +1,31 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { useRouter, useParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { FileText, Sparkles, ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FileText, Sparkles, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 // Mock data for lessons
 const lessonsData = [
   {
     id: "1",
     title: "Meet the Farm Animals",
-    content: "In this lesson, we'll learn about different farm animals and the sounds they make.",
+    content:
+      "In this lesson, we'll learn about different farm animals and the sounds they make.",
     unitId: "1",
     unitTitle: "Farm Animals",
     courseTitle: "Animals and Their Sounds",
@@ -30,7 +37,8 @@ const lessonsData = [
   {
     id: "2",
     title: "Animal Homes",
-    content: "Learn where different farm animals live and what their homes are called.",
+    content:
+      "Learn where different farm animals live and what their homes are called.",
     unitId: "1",
     unitTitle: "Farm Animals",
     courseTitle: "Animals and Their Sounds",
@@ -75,7 +83,7 @@ const lessonsData = [
     createdAt: "2023-06-10T11:20:00Z",
     emoji: "🌾",
   },
-]
+];
 
 // Mock data for units
 const units = [
@@ -84,7 +92,7 @@ const units = [
   { id: "3", title: "Primary Colors", courseTitle: "Colors and Shapes Fun" },
   { id: "4", title: "Shapes All Around", courseTitle: "Colors and Shapes Fun" },
   { id: "5", title: "Counting to 10", courseTitle: "Numbers and Counting" },
-]
+];
 
 const emojis = [
   "🐮",
@@ -117,27 +125,27 @@ const emojis = [
   "🎤",
   "🎵",
   "🎹",
-]
+];
 
 export default function EditLessonPage() {
-  const router = useRouter()
-  const params = useParams()
-  const lessonId = params.id as string
-  const [isLoading, setIsLoading] = useState(false)
-  const [isFetching, setIsFetching] = useState(true)
+  const router = useRouter();
+  const params = useParams();
+  const lessonId = params.id as string;
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
     unitId: "",
     status: "",
     emoji: "🐮",
-  })
+  });
 
   useEffect(() => {
     // Simulate API fetch
-    setIsFetching(true)
+    setIsFetching(true);
     setTimeout(() => {
-      const lesson = lessonsData.find((l) => l.id === lessonId)
+      const lesson = lessonsData.find((l) => l.id === lessonId);
       if (lesson) {
         setFormData({
           title: lesson.title,
@@ -145,44 +153,51 @@ export default function EditLessonPage() {
           unitId: lesson.unitId,
           status: lesson.status,
           emoji: lesson.emoji,
-        })
+        });
       }
-      setIsFetching(false)
-    }, 500)
-  }, [lessonId])
+      setIsFetching(false);
+    }, 500);
+  }, [lessonId]);
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     // Simulate API call
     setTimeout(() => {
-      setIsLoading(false)
-      router.push("/admin/lessons")
-    }, 1000)
+      setIsLoading(false);
+      router.push("/admin/lessons");
+    }, 1000);
 
-    console.log(formData)
-  }
+    console.log(formData);
+  };
 
   if (isFetching) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-bounce text-5xl">🔄</div>
-          <p className="text-xl font-medium text-green-600">Loading lesson...</p>
+          <p className="text-xl font-medium text-green-600">
+            Loading lesson...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" asChild className="rounded-full hover:bg-green-50 hover:text-green-600">
+        <Button
+          variant="ghost"
+          size="icon"
+          asChild
+          className="rounded-full hover:bg-green-50 hover:text-green-600"
+        >
           <Link href="/admin/lessons">
             <ArrowLeft className="h-5 w-5" />
             <span className="sr-only">Back to lessons</span>
@@ -192,7 +207,9 @@ export default function EditLessonPage() {
           <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-blue-500">
             Edit Lesson 📖
           </h1>
-          <p className="text-gray-600 mt-2">Update this fun learning lesson for children</p>
+          <p className="text-gray-600 mt-2">
+            Update this fun learning lesson for children
+          </p>
         </div>
       </div>
 
@@ -210,7 +227,10 @@ export default function EditLessonPage() {
               </Label>
               <div className="flex gap-3">
                 <div className="flex-shrink-0">
-                  <Select value={formData.emoji} onValueChange={(value) => handleChange("emoji", value)}>
+                  <Select
+                    value={formData.emoji}
+                    onValueChange={(value) => handleChange("emoji", value)}
+                  >
                     <SelectTrigger className="w-16 h-16 text-3xl flex items-center justify-center p-0 border-2 border-green-200 rounded-xl">
                       <SelectValue placeholder="🐮" />
                     </SelectTrigger>
@@ -258,7 +278,7 @@ export default function EditLessonPage() {
               />
               <p className="text-sm text-green-600 flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
-                Write content that's easy for children to understand!
+                Write content that&apos;s easy for children to understand!
               </p>
             </div>
 
@@ -267,13 +287,23 @@ export default function EditLessonPage() {
                 <Label htmlFor="unitId" className="text-gray-700">
                   Unit
                 </Label>
-                <Select value={formData.unitId} onValueChange={(value) => handleChange("unitId", value)}>
-                  <SelectTrigger id="unitId" className="border-2 border-green-200 rounded-xl">
+                <Select
+                  value={formData.unitId}
+                  onValueChange={(value) => handleChange("unitId", value)}
+                >
+                  <SelectTrigger
+                    id="unitId"
+                    className="border-2 border-green-200 rounded-xl"
+                  >
                     <SelectValue placeholder="Select a unit" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
                     {units.map((unit) => (
-                      <SelectItem key={unit.id} value={unit.id} className="rounded-lg">
+                      <SelectItem
+                        key={unit.id}
+                        value={unit.id}
+                        className="rounded-lg"
+                      >
                         {unit.title} ({unit.courseTitle})
                       </SelectItem>
                     ))}
@@ -289,26 +319,34 @@ export default function EditLessonPage() {
                 <Label htmlFor="status" className="text-gray-700">
                   Status
                 </Label>
-                <Select value={formData.status} onValueChange={(value) => handleChange("status", value)}>
-                  <SelectTrigger id="status" className="border-2 border-green-200 rounded-xl">
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleChange("status", value)}
+                >
+                  <SelectTrigger
+                    id="status"
+                    className="border-2 border-green-200 rounded-xl"
+                  >
                     <SelectValue placeholder="Select a status" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
                     <SelectItem value="draft" className="rounded-lg">
                       <div className="flex items-center gap-2">
-                        <span className="text-lg">✏️</span> Draft - Still working on it
+                        <span className="text-lg">✏️</span> Draft - Still
+                        working on it
                       </div>
                     </SelectItem>
                     <SelectItem value="published" className="rounded-lg">
                       <div className="flex items-center gap-2">
-                        <span className="text-lg">🚀</span> Published - Ready for learning!
+                        <span className="text-lg">🚀</span> Published - Ready
+                        for learning!
                       </div>
                     </SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-sm text-green-600 flex items-center gap-1">
                   <Sparkles className="h-3 w-3" />
-                  Publish when you're ready for students to see it!
+                  Publish when you&apos;re ready for students to see it!
                 </p>
               </div>
             </div>
@@ -334,6 +372,5 @@ export default function EditLessonPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
