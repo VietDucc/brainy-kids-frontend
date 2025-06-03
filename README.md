@@ -41,9 +41,9 @@
 **Thành viên nhóm:**
 
 - **Đỗ Quang Huy** - MSSV: 215221339
-- **Dương Viết Đức** - MSSV: [Mã số sinh viên 2]
-- **Đồng Hữu Nguyên Khoa** - MSSV: [Mã số sinh viên 3]
-- **Lê Trung Kiên** - MSSV: [Mã số sinh viên 4]
+- **Dương Viết Đức** - MSSV: 21521959
+- **Đồng Hữu Nguyên Khoa** - MSSV: 23520734
+- **Lê Trung Kiên** - MSSV: 21520308
 
 ## 🛠️ Tech Stack
 
