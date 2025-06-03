@@ -54,7 +54,7 @@
   },
   "upgrade": {
     "title": "Nâng cấp để mở khóa thêm bài học",
-    "description": "Còn {count} bài học nữa đang chờ bạn khám phá!",
+    "description": "Còn {{count}} bài học nữa đang chờ bạn khám phá!",
     "button": "Nâng cấp ngay"
   }
 } 
