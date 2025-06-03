@@ -520,7 +520,6 @@ CHỈ 3-4 DÒNG NGẮN! Trẻ em phải đọc được!`;
 
       <div className="p-3 sm:p-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-t border-gray-100 dark:border-gray-800">
         <form onSubmit={handleSendMessage} className="flex gap-2 relative">
-          {/* Mode Selector Button */}
           <div className="relative">
             <button
               type="button"

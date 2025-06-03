@@ -33,6 +33,7 @@
   "status": {
     "completed": "✅ Completed! 🌟",
     "lesson": "Lesson",
+    "lesson_start": "Start Lesson",
     "locked": "Complete previous lessons to unlock"
   },
   "errors": {
