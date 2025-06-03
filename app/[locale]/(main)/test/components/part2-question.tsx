@@ -74,7 +74,7 @@ export function Part2Question({
                     {optionLabel}
                   </span>
 
-                  {/* <span>{option.answers}</span> */}
+                  <span>{option.answers}</span>
                 </Label>
 
                 {showResults && (

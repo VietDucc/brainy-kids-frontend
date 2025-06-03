@@ -75,7 +75,7 @@ export function Part1Question({
                 <span className="inline-flex items-center justify-center w-6 h-6 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
                   {optionLabel}
                 </span>
-                <span>{option.answers}</span>
+                {/* <span>{option.answers}</span> */}
               </Label>
 
               {showResults && (
