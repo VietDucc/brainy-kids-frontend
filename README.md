@@ -27,10 +27,10 @@
 
 ### 🎯 Lĩnh vực học tập
 
-1. **📚 Ngôn ngữ**: Học đọc, viết và phát triển vốn từ vựng
-2. **🧩 Tư duy**: Phát triển kỹ năng giải quyết vấn đề và tư duy logic
-3. **🔢 Toán học**: Học toán qua các bài tập tương tác và trò chơi số học
-4. **💻 Lập trình**: Làm quen với tư duy lập trình qua các trò chơi đơn giản
+1. **📚 Ngôn ngữ**: Học đọc, viết và phát triển vốn từ vựng (Available)
+2. **🧩 Tư duy**: Phát triển kỹ năng giải quyết vấn đề và tư duy logic (In Progress...)
+3. **🔢 Toán học**: Học toán qua các bài tập tương tác và trò chơi số học  (In Progress...)
+4. **💻 Lập trình**: Làm quen với tư duy lập trình qua các trò chơi đơn giản  (In Progress...)
 
 ## 👥 Đội ngũ phát triển
 
