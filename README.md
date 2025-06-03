@@ -47,10 +47,6 @@
 
 ## 🛠️ Tech Stack
 
-<div align="center" >
-  <img src="https://via.placeholder.com/1200x600/8B5CF6/FFFFFF?text=Tech+Stack+Overview" alt="Tech Stack Overview" width="100%" />
-  <p><em>Tổng quan về các công nghệ được sử dụng</em></p>
-</div>
 
 ### Frontend Framework
 
