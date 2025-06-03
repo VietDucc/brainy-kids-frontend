@@ -65,6 +65,7 @@ const LearnPage = () => {
   const [loadingLessonId, setLoadingLessonId] = useState<number | null>(null);
   const [showLearningOptions, setShowLearningOptions] = useState(false);
   const [selectedLessonId, setSelectedLessonId] = useState<number | null>(null);
+  const [activeUser, setActiveUser] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,6 +132,23 @@ const LearnPage = () => {
       setSelectedUnitId(parseInt(unitId, 10));
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    const fetchActiveUser = async () => {
+      try {
+        const response = await fetch("/api/active-user", {
+          method: "GET",
+        });
+        const data = await response.json();
+        setActiveUser(data.active);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching active user:", error);
+        setActiveUser(false);
+      }
+    };
+    fetchActiveUser();
+  }, []);
 
   if (isLoading) {
     return <Loading text="courses" />;
@@ -365,7 +383,10 @@ const LearnPage = () => {
               {selectedUnit.title}
             </h2>
 
-            {selectedUnit.lessons.map((lesson) => {
+            {(activeUser
+              ? selectedUnit.lessons
+              : selectedUnit.lessons.slice(0, 3)
+            ).map((lesson) => {
               const status = getLessonStatus(lesson);
               const statusDescription = getLessonStatusDescription(status);
               const isCurrentLessonLoading = loadingLessonId === lesson.id;
@@ -383,6 +404,28 @@ const LearnPage = () => {
                 />
               );
             })}
+
+            {!activeUser && selectedUnit.lessons.length > 3 && (
+              <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4">
+                  <span className="text-white text-xl">🚀</span>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                  {t("upgrade.title")}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {t("upgrade.description", {
+                    count: selectedUnit.lessons.length - 3,
+                  })}
+                </p>
+                <Button
+                  onClick={() => router.push("/premium")}
+                  className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                >
+                  {t("upgrade.button")}
+                </Button>
+              </div>
+            )}
           </div>
         </FeedWrapper>
       </div>
@@ -442,30 +485,56 @@ const LearnPage = () => {
                   )}
                   <div className="grid grid-cols-1 gap-4">
                     {unit.lessons && unit.lessons.length > 0 ? (
-                      unit.lessons.map((lesson) => {
-                        const status = getLessonStatus(lesson);
-                        const statusDescription =
-                          getLessonStatusDescription(status);
-                        const isCurrentLessonLoading =
-                          loadingLessonId === lesson.id;
+                      <>
+                        {(activeUser
+                          ? unit.lessons
+                          : unit.lessons.slice(0, 3)
+                        ).map((lesson) => {
+                          const status = getLessonStatus(lesson);
+                          const statusDescription =
+                            getLessonStatusDescription(status);
+                          const isCurrentLessonLoading =
+                            loadingLessonId === lesson.id;
 
-                        return (
-                          <LessonCard
-                            key={lesson.id}
-                            id={lesson.id}
-                            title={lesson.title}
-                            description={statusDescription}
-                            status={status}
-                            icon={getLessonIcon(lesson)}
-                            onClick={
-                              status !== "locked"
-                                ? () => handleLessonClick(lesson.id)
-                                : undefined
-                            }
-                            isLoading={isCurrentLessonLoading}
-                          />
-                        );
-                      })
+                          return (
+                            <LessonCard
+                              key={lesson.id}
+                              id={lesson.id}
+                              title={lesson.title}
+                              description={statusDescription}
+                              status={status}
+                              icon={getLessonIcon(lesson)}
+                              onClick={
+                                status !== "locked"
+                                  ? () => handleLessonClick(lesson.id)
+                                  : undefined
+                              }
+                              isLoading={isCurrentLessonLoading}
+                            />
+                          );
+                        })}
+                        {!activeUser && unit.lessons.length > 3 && (
+                          <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
+                            <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4">
+                              <span className="text-white text-xl">🚀</span>
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                              {t("upgrade.title")}
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                              {t("upgrade.description", {
+                                count: unit.lessons.length - 3,
+                              })}
+                            </p>
+                            <Button
+                              onClick={() => router.push("/premium")}
+                              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                            >
+                              {t("upgrade.button")}
+                            </Button>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <p className="text-sm italic text-slate-500 dark:text-slate-400">
                         {t("errors.no_lessons")}

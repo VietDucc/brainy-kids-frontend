@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI('AIzaSyA3o-klkke_8AiOUvCQwU-1SHoKAKQ8gTw'); // Thay YOUR_API_KEY bằng API key của bạn
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' }); // Hoặc 'gemini-pro-vision'
+const genAI = new GoogleGenerativeAI('AIzaSyA3o-klkke_8AiOUvCQwU-1SHoKAKQ8gTw'); 
+const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
 async function generateResponse(prompt: string): Promise<string> {
   try {

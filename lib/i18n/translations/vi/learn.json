@@ -51,5 +51,10 @@
   "recommendations": {
     "title": "Đề xuất cho bạn",
     "based_on": "Dựa trên lịch sử học tập của bạn"
+  },
+  "upgrade": {
+    "title": "Nâng cấp để mở khóa thêm bài học",
+    "description": "Còn {count} bài học nữa đang chờ bạn khám phá!",
+    "button": "Nâng cấp ngay"
   }
 } 

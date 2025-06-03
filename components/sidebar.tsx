@@ -13,9 +13,10 @@ import { ButtonPayment } from "./button-payment";
 
 type SidebarProps = {
   className?: string;
+  activeUser?: boolean;
 };
 
-export const Sidebar = ({ className }: SidebarProps) => {
+export const Sidebar = ({ className, activeUser = false }: SidebarProps) => {
   const { t } = useTranslation("main");
 
   const navigationItems = [
@@ -36,12 +37,18 @@ export const Sidebar = ({ className }: SidebarProps) => {
       href: "/dictionary",
       iconSrc: "/dictionary.svg",
     },
-    { label: "navigation.games", href: "/games", iconSrc: "/game.png" },
+    {
+      label: "navigation.games",
+      href: "/games",
+      iconSrc: "/game.png",
+      disabled: !activeUser,
+    },
     { label: "navigation.videos", href: "/videos", iconSrc: "/video.svg" },
     {
       label: "navigation.speakbooks",
       href: "/audio-book",
       iconSrc: "/book.png",
+      disabled: !activeUser,
     },
   ];
 
@@ -68,6 +75,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
             label={t(item.label)}
             href={item.href}
             iconSrc={item.iconSrc}
+            disabled={item.disabled}
           />
         ))}
       </div>

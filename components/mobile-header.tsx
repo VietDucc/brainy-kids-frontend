@@ -4,7 +4,11 @@ import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/sidebar";
 
-export const MobileHeader = () => {
+type MobileHeaderProps = {
+  activeUser?: boolean;
+};
+
+export const MobileHeader = ({ activeUser = false }: MobileHeaderProps) => {
   // const { t } = useTranslation("main");
 
   return (
@@ -13,7 +17,7 @@ export const MobileHeader = () => {
         <Menu />
       </SheetTrigger>
       <SheetContent side="left" className="p-0 border-0">
-        <Sidebar />
+        <Sidebar activeUser={activeUser} />
       </SheetContent>
     </Sheet>
   );

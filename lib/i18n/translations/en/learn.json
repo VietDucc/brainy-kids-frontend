@@ -51,5 +51,10 @@
   "recommendations": {
     "title": "Recommended for You",
     "based_on": "Based on your learning history"
+  },
+  "upgrade": {
+    "title": "Upgrade to unlock more lessons",
+    "description": "{count} more lessons are waiting for you to explore!",
+    "button": "Upgrade Now"
   }
 } 
