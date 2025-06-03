@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, Rocket, Lightbulb, Trophy, ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const WorkFlow = () => {
   const [isClient, setIsClient] = useState(false);
+  const { t } = useTranslation("workflow");
 
   useEffect(() => {
     setIsClient(true);
@@ -13,25 +15,22 @@ const WorkFlow = () => {
   const steps = [
     {
       number: 1,
-      title: "Tạo tài khoản",
-      description:
-        "Đăng ký tài khoản và tạo hồ sơ cho con bạn với các thông tin về độ tuổi và sở thích.",
+      title: t("steps.1.title"),
+      description: t("steps.1.description"),
       icon: Rocket,
       color: "#FF6B6B",
     },
     {
       number: 2,
-      title: "Khám phá bài học",
-      description:
-        "Truy cập vào kho bài học và trò chơi đa dạng được thiết kế phù hợp với độ tuổi.",
+      title: t("steps.2.title"),
+      description: t("steps.2.description"),
       icon: Lightbulb,
       color: "#4ECDC4",
     },
     {
       number: 3,
-      title: "Học và tiến bộ",
-      description:
-        "Theo dõi sự tiến bộ của con bạn và nhận báo cáo chi tiết về quá trình học tập.",
+      title: t("steps.3.title"),
+      description: t("steps.3.description"),
       icon: Trophy,
       color: "#FFD166",
     },
@@ -173,7 +172,7 @@ const WorkFlow = () => {
             >
               <span className="flex items-center gap-1.5">
                 <Sparkles className="h-3 w-3" />
-                Dễ dàng bắt đầu
+                {t("highlight")}
               </span>
             </motion.div>
             <motion.h2
@@ -183,7 +182,8 @@ const WorkFlow = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.6 }}
             >
-              Cách thức <span className="text-primary">hoạt động</span>
+              {t("title.text")}{" "}
+              <span className="text-primary">{t("title.highlight")}</span>
             </motion.h2>
             <motion.p
               className="max-w-[900px] text-xs sm:text-sm md:text-base text-muted-foreground"
@@ -192,8 +192,7 @@ const WorkFlow = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              Quy trình học tập đơn giản, hiệu quả và thú vị cho trẻ em mọi lứa
-              tuổi.
+              {t("description")}
             </motion.p>
           </motion.div>
         </motion.div>

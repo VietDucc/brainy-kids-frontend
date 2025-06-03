@@ -10,49 +10,45 @@ interface SubtitleDisplayProps {
   englishText: string;
   vietnameseText?: string;
   timeOffset?: number;
+  loadingState?: {
+    english: "loading" | "loaded" | "error";
+    vietnamese: "loading" | "loaded" | "error";
+  };
 }
 
 export default function SubtitleDisplay({
   englishText,
   vietnameseText = "",
   timeOffset = -1200,
+  loadingState,
 }: SubtitleDisplayProps) {
   const [displayEnglishText, setDisplayEnglishText] = useState("");
   const [displayVietnameseText, setDisplayVietnameseText] = useState("");
   const [isHovered, setIsHovered] = useState(false);
 
-  // Vietnamese subtitle delay in milliseconds (should be at least 200ms)
   const viDelay = 0;
 
   useEffect(() => {
-    // Clear any existing timeout
     let timeoutIdEn: NodeJS.Timeout;
     let timeoutIdVi: NodeJS.Timeout;
 
     if (englishText) {
-      // For English text
       if (timeOffset < 0) {
-        // Show English immediately if offset is negative
         setDisplayEnglishText(englishText);
       } else {
-        // Delay English text display if offset is positive
         timeoutIdEn = setTimeout(() => {
           setDisplayEnglishText(englishText);
         }, timeOffset);
       }
 
-      // For Vietnamese text - always add the viDelay
-      // If we have Vietnamese text from props, use it, otherwise use fallback message
       const viText = vietnameseText || "Chưa có bản dịch";
 
-      // Calculate Vietnamese delay based on English offset
       const vietnameseDelay = Math.max(0, timeOffset) + viDelay;
 
       timeoutIdVi = setTimeout(() => {
         setDisplayVietnameseText(viText);
       }, vietnameseDelay);
     } else {
-      // If no English text, clear both displays
       setDisplayEnglishText("");
       setDisplayVietnameseText("");
     }
@@ -127,7 +123,11 @@ export default function SubtitleDisplay({
                 </motion.p>
               ) : (
                 <p className="text-sm text-center text-gray-400 dark:text-gray-500 italic">
-                  Waiting for subtitles...
+                  {loadingState?.english === "loading"
+                    ? "Loading subtitles..."
+                    : loadingState?.english === "error"
+                    ? "Error loading subtitles"
+                    : "Waiting for subtitles..."}
                 </p>
               )}
             </AnimatePresence>
@@ -155,7 +155,11 @@ export default function SubtitleDisplay({
                 </motion.p>
               ) : (
                 <p className="text-sm text-center text-gray-400 dark:text-gray-500 italic">
-                  Đang chờ phụ đề...
+                  {loadingState?.vietnamese === "loading"
+                    ? "Đang tải phụ đề..."
+                    : loadingState?.vietnamese === "error"
+                    ? "Lỗi khi tải phụ đề"
+                    : "Đang chờ phụ đề..."}
                 </p>
               )}
             </AnimatePresence>

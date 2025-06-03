@@ -1,9 +1,0 @@
-User-agent: *
-Allow: /
-
-# Disallow admin and api routes
-Disallow: /admin/*
-Disallow: /api/*
-
-# Sitemap
-Sitemap: https://brainykidslearn.id.vn/sitemap.xml 

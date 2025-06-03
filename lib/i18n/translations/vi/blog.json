@@ -1,0 +1,99 @@
+{
+  "header": {
+    "title": "Blog",
+    "badge": "Chuyên nghiệp",
+    "create_post": "Tạo bài viết",
+    "back_to_posts": "Quay lại danh sách",
+    "share": "Chia sẻ",
+    "save_changes": "Lưu thay đổi"
+  },
+  "create_dialog": {
+    "title": "Tạo bài viết mới",
+    "description": "Chia sẻ suy nghĩ của bạn với thế giới",
+    "form": {
+      "title": {
+        "label": "Tiêu đề",
+        "placeholder": "Nhập một tiêu đề hấp dẫn..."
+      },
+      "content": {
+        "label": "Nội dung",
+        "placeholder": "Viết nội dung bài viết của bạn tại đây..."
+      },
+      "image": {
+        "label": "URL hình ảnh",
+        "placeholder": "Nhập URL hình ảnh..."
+      }
+    },
+    "actions": {
+      "cancel": "Hủy",
+      "publish": "Đăng bài"
+    }
+  },
+  "filters": {
+    "search": {
+      "placeholder": "Tìm kiếm bài viết..."
+    },
+    "categories": {
+      "all": "Tất cả",
+      "technology": "Công nghệ",
+      "education": "Giáo dục",
+      "language": "Ngôn ngữ",
+      "culture": "Văn hóa"
+    },
+    "sort": {
+      "newest": "Mới nhất",
+      "oldest": "Cũ nhất",
+      "popular": "Phổ biến"
+    },
+    "view": {
+      "grid": "Xem dạng lưới",
+      "list": "Xem dạng danh sách"
+    }
+  },
+  "post": {
+    "time": {
+      "just_now": "Vừa xong",
+      "minutes_ago": "{{count}} phút trước",
+      "hours_ago": "{{count}} giờ trước",
+      "days_ago": "{{count}} ngày trước"
+    },
+    "read_time": "{{count}} phút đọc",
+    "stats": {
+      "views": "{{count}} lượt xem",
+      "likes": "{{count}} lượt thích",
+      "comments": "{{count}} bình luận"
+    },
+    "featured": "Nổi bật",
+    "anonymous": "Ẩn danh",
+    "about_author": "Về {{name}}",
+    "view_profile": "Xem hồ sơ",
+    "write_comment": "Viết bình luận...",
+    "write_reply": "Viết phản hồi...",
+    "post_comment": "Đăng",
+    "reply": "Phản hồi",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "cancel": "Hủy",
+    "tags": "Thẻ",
+    "comments_count": "Bình luận ({{count}})"
+  },
+  "loading": {
+    "posts": "Đang tải bài viết...",
+    "no_posts": "Chưa có bài viết nào"
+  },
+  "errors": {
+    "fetch": "Lỗi khi tải bài viết",
+    "create": "Không thể tạo bài viết",
+    "update": "Không thể cập nhật bài viết",
+    "delete_comment": "Không thể xóa bình luận",
+    "add_comment": "Không thể thêm bình luận",
+    "update_comment": "Không thể cập nhật bình luận"
+  },
+  "success": {
+    "post_updated": "Cập nhật bài viết thành công",
+    "comment_added": "Thêm bình luận thành công",
+    "comment_updated": "Cập nhật bình luận thành công", 
+    "comment_deleted": "Xóa bình luận thành công",
+    "reply_added": "Thêm phản hồi thành công"
+  }
+} 

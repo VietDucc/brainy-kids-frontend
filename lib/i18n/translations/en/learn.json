@@ -1,0 +1,60 @@
+{
+  "title": "Learn",
+  "description": "Choose your learning path and start your journey",
+  "categories": {
+    "beginner": {
+      "title": "Beginner",
+      "description": "Start with the basics"
+    },
+    "intermediate": {
+      "title": "Intermediate",
+      "description": "Build on your knowledge"
+    },
+    "advanced": {
+      "title": "Advanced",
+      "description": "Master complex topics"
+    }
+  },
+  "featured": {
+    "title": "Featured Lessons",
+    "view_all": "View all"
+  },
+  "progress": {
+    "title": "Your Progress",
+    "completed": "Completed",
+    "in_progress": "In Progress",
+    "not_started": "Not Started"
+  },
+  "learning_options": {
+    "title": "Choose Learning Method",
+    "vocabulary": "Learn Vocabulary",
+    "exercises": "Do Exercises"
+  },
+  "status": {
+    "completed": "✅ Completed! 🌟",
+    "lesson": "Lesson",
+    "lesson_start": "Start Lesson",
+    "locked": "Complete previous lessons to unlock"
+  },
+  "errors": {
+    "load_course": "Failed to load course data. Please try again later.",
+    "load_lesson": "Failed to load lesson. Please try again.",
+    "no_challenges": "This lesson doesn't have any challenges yet.",
+    "unit_not_found": "Unit not found",
+    "no_lessons": "No lessons available in this unit yet.",
+    "no_units": "No units available for this course yet."
+  },
+  "actions": {
+    "try_again": "Try Again",
+    "back_to_units": "Back to units"
+  },
+  "recommendations": {
+    "title": "Recommended for You",
+    "based_on": "Based on your learning history"
+  },
+  "upgrade": {
+    "title": "Upgrade to unlock more lessons",
+    "description": "{count} more lessons are waiting for you to explore!",
+    "button": "Upgrade Now"
+  }
+} 

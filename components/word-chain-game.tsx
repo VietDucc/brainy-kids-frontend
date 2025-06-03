@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import { AUDIO_FILES, createAudio } from "@/lib/audio-utils";
 
 // List of common English words to use as starting words
 const STARTER_WORDS = [
@@ -96,9 +97,8 @@ export default function WordChainGame() {
     const loadAudio = async () => {
       try {
         if (typeof window !== "undefined") {
-          correctAudioRef.current = new Audio("/correct.wav");
-          wrongAudioRef.current = new Audio("/incorrect.wav");
-          timerAudioRef.current = new Audio("/time-over.mp3");
+          correctAudioRef.current = createAudio(AUDIO_FILES.CORRECT);
+          wrongAudioRef.current = createAudio(AUDIO_FILES.INCORRECT);
 
           // Preload the audio files
           await Promise.all([
@@ -121,7 +121,7 @@ export default function WordChainGame() {
     };
   }, []);
 
-  const playSound = async (type: "correct" | "wrong" | "timer") => {
+  const playSound = async (type: "correct" | "wrong") => {
     if (!soundEnabled) return;
 
     try {
@@ -129,8 +129,6 @@ export default function WordChainGame() {
         await correctAudioRef.current.play();
       } else if (type === "wrong" && wrongAudioRef.current) {
         await wrongAudioRef.current.play();
-      } else if (type === "timer" && timerAudioRef.current) {
-        await timerAudioRef.current.play();
       }
     } catch (error) {
       console.error("Error playing sound:", error);

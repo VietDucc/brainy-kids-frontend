@@ -37,10 +37,17 @@ export const api = {
   userDeckById: (clerkUserId: string, id: number) =>
     `${API_BASE_URL}/api/${clerkUserId}/decks/${id}`,
   userDeckCardById: (clerkUserId: string, deckId: number) =>
-    `${API_BASE_URL}/api/{clerkUserId}/cards/deck/${deckId}?clerkUserId=${clerkUserId}`,
+    `${API_BASE_URL}/api/${clerkUserId}/decks/${deckId}`,
   blog: `${API_BASE_URL}/api/blogs`,
   blogById: (id: number) => `${API_BASE_URL}/api/blogs/${id}`,
   blogCommentById: (id: number) => `${API_BASE_URL}/api/blogs/${id}/comments`,
   replyById: (commentId: number) => `${API_BASE_URL}/api/comments/${commentId}/reply`,
   commentById: (id: number) => `${API_BASE_URL}/api/comments/${id}`,
+  vnpay: (amount: number, orderInfo: string) => `${API_BASE_URL}/submitOrder?amount=${amount}&orderInfo=${orderInfo}`,
+  activeUser: (clerkUserId: string) => `${API_BASE_URL}/users/userActive/${clerkUserId}`,
+  book: `${API_BASE_URL}/books`,
+  bookById: (id: number) => `${API_BASE_URL}/books/${id}`,
+  cardById: (clerkUserId: string, id: number) => `${API_BASE_URL}/api/${clerkUserId}/cards/${id}`,
+  deleteCardById: (id: number) => `${API_BASE_URL}/api/{clerkUserId}/cards/${id}`,
+  bulkCreateCards: (clerkUserId: string) => `${API_BASE_URL}/api/${clerkUserId}/cards/bulk`,
 };

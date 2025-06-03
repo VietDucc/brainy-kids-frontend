@@ -22,6 +22,7 @@ export async function GET(
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      cache: "no-cache",
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch units for course ${courseId}`);

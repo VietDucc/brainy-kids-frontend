@@ -1,0 +1,22 @@
+{
+  "highlight": "Dễ dàng bắt đầu",
+  "title": {
+    "text": "Cách thức",
+    "highlight": "hoạt động"
+  },
+  "description": "Quy trình học tập đơn giản, hiệu quả và thú vị cho trẻ em mọi lứa tuổi.",
+  "steps": {
+    "1": {
+      "title": "Tạo tài khoản",
+      "description": "Đăng ký tài khoản và tạo hồ sơ cho con bạn với các thông tin về độ tuổi và sở thích."
+    },
+    "2": {
+      "title": "Khám phá bài học",
+      "description": "Truy cập vào kho bài học và trò chơi đa dạng được thiết kế phù hợp với độ tuổi."
+    },
+    "3": {
+      "title": "Học và tiến bộ",
+      "description": "Theo dõi sự tiến bộ của con bạn và nhận báo cáo chi tiết về quá trình học tập."
+    }
+  }
+} 

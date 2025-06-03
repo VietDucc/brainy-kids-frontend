@@ -1,0 +1,36 @@
+{
+  "description": "Nền tảng học tập tương tác giúp trẻ phát triển ngôn ngữ, tư duy, toán học và lập trình một cách thú vị.",
+  "newsletter": "Đăng ký nhận tin",
+  "sections": {
+    "product": {
+      "title": "Sản phẩm",
+      "links": {
+        "features": "Tính năng",
+        "pricing": "Gói dịch vụ",
+        "trial": "Dùng thử miễn phí"
+      }
+    },
+    "company": {
+      "title": "Công ty",
+      "links": {
+        "about": "Về chúng tôi",
+        "blog": "Blog",
+        "contact": "Liên hệ"
+      }
+    },
+    "contact": {
+      "title": "Liên hệ & Hỗ trợ",
+      "address": "khu phố 6, phường Linh Trung, quận Thủ Đức, TP HCM",
+      "email": "kidslearn@gmail.com",
+      "phone": "090 123 4567"
+    }
+  },
+  "legal": {
+    "copyright": "© {year} KidsLearn. Tất cả các quyền được bảo lưu.",
+    "links": {
+      "terms": "Điều khoản sử dụng",
+      "privacy": "Chính sách bảo mật",
+      "cookies": "Cookie"
+    }
+  }
+} 

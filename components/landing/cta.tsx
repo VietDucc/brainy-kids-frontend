@@ -3,8 +3,11 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { Sparkles, ArrowRight, BookOpen } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const CTA = () => {
+  const { t } = useTranslation("cta");
+
   return (
     <section className="relative py-12 sm:py-16 md:py-24 lg:py-32 overflow-hidden w-full">
       <div className="absolute inset-0 -z-10">
@@ -113,11 +116,16 @@ const CTA = () => {
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter md:text-4xl/tight">
-                Sẵn sàng để con bạn bắt đầu học tập?
+                {t("title")}
               </h2>
               <p className="max-w-[600px] text-sm text-muted-foreground md:text-lg/relaxed">
-                Đăng ký ngay hôm nay và nhận 7 ngày dùng thử miễn phí gói{" "}
-                <span className="text-primary font-semibold">Gia đình</span>
+                {t("description", {
+                  plan: (
+                    <span className="text-primary font-semibold">
+                      {t("plan")}
+                    </span>
+                  ),
+                })}
               </p>
             </motion.div>
 
@@ -138,7 +146,7 @@ const CTA = () => {
                   className="w-full text-primary-foreground rounded-xl px-3 sm:px-4 md:px-6 h-10 sm:h-11 md:h-12 text-sm sm:text-base md:text-lg font-medium"
                 >
                   <span className="flex items-center gap-1 sm:gap-2">
-                    Bắt đầu dùng thử miễn phí
+                    {t("buttons.trial")}
                     <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                   </span>
                 </Button>
@@ -155,7 +163,7 @@ const CTA = () => {
                   className="w-full rounded-xl px-3 sm:px-4 md:px-6 h-10 sm:h-11 md:h-12 text-sm sm:text-base md:text-lg font-medium"
                 >
                   <span className="flex items-center gap-1 sm:gap-2">
-                    Tìm hiểu thêm
+                    {t("buttons.learn_more")}
                     <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                   </span>
                 </Button>
@@ -169,86 +177,39 @@ const CTA = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.7 }}
             >
-              <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                >
-                  <path
-                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M9 12L11 14L15 10"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span>Không cần thẻ tín dụng</span>
-              </div>
-
-              <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                >
-                  <path
-                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M9 12L11 14L15 10"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span>Hủy bất kỳ lúc nào</span>
-              </div>
-
-              <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                >
-                  <path
-                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M9 12L11 14L15 10"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span>Hỗ trợ 24/7</span>
-              </div>
+              {Object.entries(t("features", { returnObjects: true })).map(
+                ([key, value]) => (
+                  <div
+                    key={key}
+                    className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
+                    >
+                      <path
+                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M9 12L11 14L15 10"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span>{value}</span>
+                  </div>
+                )
+              )}
             </motion.div>
           </div>
         </motion.div>

@@ -1,0 +1,32 @@
+{
+  "learning_tip": "Fun learning every day",
+  "help_kids": "Help kids",
+  "learning_description": "An interactive learning platform that helps children develop language, thinking, math and programming in an engaging way.",
+  "platform_description": "An interactive learning platform that helps children develop language, thinking, math and programming in an engaging way.",
+  "start_now": "Start Now",
+  "learn_more": "Learn More",
+  "students_using": "1000+ students are using",
+  "learning_progress": "Learning Progress",
+  "completed": "completed",
+  "hero": {
+    "title": {
+      "help": "Help kids",
+      "learn": "learn",
+      "fun": "with fun",
+      "effective": "effectively",
+      "and": "and"
+    },
+    "subtitle": "An interactive learning platform that helps children develop language, thinking, math and programming in an engaging way.",
+    "cta": {
+      "start": "Start Now",
+      "learn": "Learn More"
+    },
+    "stats": {
+      "users": "1000+ students are using",
+      "progress": {
+        "title": "Learning Progress",
+        "value": "85% completed"
+      }
+    }
+  }
+} 

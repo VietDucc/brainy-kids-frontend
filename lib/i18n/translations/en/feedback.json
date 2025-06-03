@@ -1,0 +1,35 @@
+{
+  "highlight": "Parent Feedback",
+  "title": {
+    "text": "What parents say about",
+    "highlight": "us"
+  },
+  "description": "Thousands of parents have trusted us to support their children's learning.",
+  "testimonials": [
+    {
+      "content": "My child loves learning on this platform. The lessons are interesting and they've made noticeable progress in math.",
+      "author": "Nguyen Thi Huong",
+      "role": "Parent of 2nd grade student"
+    },
+    {
+      "content": "User-friendly interface and easy to use. My child has learned many new vocabulary words and is very excited every time they study.",
+      "author": "Tran Van Minh",
+      "role": "Parent of 1st grade student"
+    },
+    {
+      "content": "I'm very impressed with how this platform helps my child learn basic programming. The lessons are very intuitive.",
+      "author": "Le Thi Ha",
+      "role": "Parent of 4th grade student"
+    },
+    {
+      "content": "The learning games are very engaging, my child often asks to study more each day.",
+      "author": "Pham Van Duc",
+      "role": "Parent of 3rd grade student"
+    },
+    {
+      "content": "I see my child is much more confident when communicating in English after learning on this platform.",
+      "author": "Hoang Thi Mai",
+      "role": "Parent of 5th grade student"
+    }
+  ]
+} 

@@ -1,0 +1,29 @@
+{
+  "navigation": {
+    "learn": "Học tập",
+    "games": "Trò chơi",
+    "videos": "Video",
+    "flashcards": "Thẻ ghi nhớ",
+    "dictionary": "Từ điển",
+    "leaderboard": "Bảng xếp hạng",
+    "blog": "Blog",
+    "speakbooks": "Sách nói"
+  },
+  "auth": {
+    "sign_in": "Đăng nhập",
+    "sign_up": "Đăng ký",
+    "profile": "Hồ sơ",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất"
+  },
+  "search": {
+    "placeholder": "Tìm kiếm...",
+    "no_results": "Không tìm thấy kết quả",
+    "categories": {
+      "all": "Tất cả",
+      "lessons": "Bài học",
+      "games": "Trò chơi",
+      "videos": "Video"
+    }
+  }
+} 

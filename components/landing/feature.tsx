@@ -8,6 +8,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const FeatureCard = ({
   icon: Icon,
@@ -126,33 +127,31 @@ const FeatureCard = ({
 };
 
 const Feature = () => {
+  const { t } = useTranslation("feature");
+
   const features = [
     {
       icon: BookOpen,
-      title: "Ngôn ngữ",
-      description:
-        "Học đọc, viết và phát triển vốn từ vựng qua các trò chơi tương tác.",
+      title: t("areas.language.title"),
+      description: t("areas.language.description"),
       color: "#FF6B6B",
     },
     {
       icon: BrainCircuit,
-      title: "Tư duy",
-      description:
-        "Phát triển kỹ năng giải quyết vấn đề và tư duy logic qua các thử thách.",
+      title: t("areas.thinking.title"),
+      description: t("areas.thinking.description"),
       color: "#4ECDC4",
     },
     {
       icon: Calculator,
-      title: "Toán học",
-      description:
-        "Học toán qua các bài tập tương tác và trò chơi số học thú vị.",
+      title: t("areas.math.title"),
+      description: t("areas.math.description"),
       color: "#FFD166",
     },
     {
       icon: Code,
-      title: "Lập trình",
-      description:
-        "Làm quen với tư duy lập trình qua các trò chơi kéo thả đơn giản.",
+      title: t("areas.programming.title"),
+      description: t("areas.programming.description"),
       color: "#b433bd",
     },
   ];
@@ -229,7 +228,7 @@ const Feature = () => {
             >
               <span className="flex items-center gap-1.5">
                 <Sparkles className="h-3 w-3" />
-                Tính năng nổi bật
+                {t("highlight")}
               </span>
             </motion.div>
             <motion.h2
@@ -239,7 +238,7 @@ const Feature = () => {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.5, delay: 0.6, ease: "easeOut" }}
             >
-              Học tập <span className="text-primary">đa dạng lĩnh vực</span>
+              {t("title")}
             </motion.h2>
             <motion.p
               className="max-w-[900px] text-xs sm:text-sm md:text-base text-muted-foreground"
@@ -248,8 +247,7 @@ const Feature = () => {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }}
             >
-              Nền tảng của chúng tôi cung cấp nhiều lĩnh vực học tập khác nhau,
-              giúp trẻ phát triển toàn diện.
+              {t("description")}
             </motion.p>
           </motion.div>
         </motion.div>

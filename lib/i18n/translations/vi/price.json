@@ -1,0 +1,85 @@
+{
+  "highlight": "Gói học tập",
+  "title": {
+    "text": "Chọn gói phù hợp với",
+    "highlight": "con bạn"
+  },
+  "description": "Chúng tôi cung cấp nhiều gói học tập khác nhau để phù hợp với nhu cầu và ngân sách của bạn.",
+  "billing": {
+    "monthly": "Hàng tháng",
+    "yearly": "Hàng năm",
+    "discount": "-17%",
+    "save": "Tiết kiệm"
+  },
+  "plans": {
+    "basic": {
+      "name": "Cơ bản",
+      "description": "Dành cho người mới bắt đầu",
+      "features": [
+        "Truy cập 100+ bài học",
+        "Trò chơi học tập cơ bản",
+        "Báo cáo tiến độ hàng tuần",
+        "Hỗ trợ qua email"
+      ]
+    },
+    "standard": {
+      "name": "Tiêu chuẩn",
+      "description": "Dành cho học sinh tiểu học",
+      "features": [
+        "Truy cập 300+ bài học",
+        "Tất cả trò chơi học tập",
+        "Báo cáo tiến độ hàng ngày",
+        "Hỗ trợ qua email và chat",
+        "Bài tập cá nhân hóa"
+      ],
+      "popular": "Phổ biến nhất"
+    },
+    "premium": {
+      "name": "Cao cấp",
+      "description": "Dành cho học sinh nghiêm túc",
+      "features": [
+        "Truy cập toàn bộ bài học",
+        "Báo cáo tiến độ thời gian thực",
+        "Hỗ trợ ưu tiên 24/7",
+        "Bài tập cá nhân hóa",
+        "Kèm 1-1 với giáo viên"
+      ]
+    }
+  },
+  "cta": {
+    "popular": "Bắt đầu ngay",
+    "default": "Đăng ký"
+  },
+  "scroll_hint": "Vuốt để xem tất cả các gói",
+  "lifetime": {
+    "badge": "Đặc quyền trọn đời",
+    "title": "Nâng cấp một lần, học mãi mãi",
+    "description": "Mở khóa toàn bộ tính năng và nội dung học tập không giới hạn với gói Lifetime Premium",
+    "access": "LIFETIME ACCESS",
+    "plan_name": "Premium Lifetime",
+    "plan_description": "Trọn đời không giới hạn",
+    "one_time_payment": "Thanh toán một lần duy nhất",
+    "upgrade_button": "Nâng cấp ngay",
+    "signin_to_upgrade": "Đăng nhập để nâng cấp",
+    "processing": "Đang xử lý...",
+    "already_upgraded": "Đã nâng cấp Premium",
+    "enjoy_premium": "Bạn đang sở hữu gói Premium trọn đời. Tận hưởng tất cả tính năng!",
+    "money_back_guarantee": "Đảm bảo hoàn tiền trong 30 ngày nếu không hài lòng",
+    "toast": {
+      "success": "Tạo đơn hàng thành công",
+      "redirect": "Đang chuyển đến trang thanh toán...",
+      "error": "Có lỗi xảy ra",
+      "try_again": "Vui lòng thử lại sau"
+    },
+    "features": [
+      "Truy cập không giới hạn tất cả bài học",
+      "Công cụ học tập thông minh AI",
+      "Theo dõi tiến độ học tập chi tiết",
+      "Bài tập tương tác hấp dẫn",
+      "Phát âm chuẩn với công nghệ AI",
+      "Cập nhật nội dung thường xuyên",
+      "Hỗ trợ kỹ thuật ưu tiên",
+      "Không giới hạn thời gian sử dụng"
+    ]
+  }
+} 

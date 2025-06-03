@@ -1,0 +1,98 @@
+{
+  "header": {
+    "title": "Blog",
+    "badge": "Professional",
+    "create_post": "Create Post",
+    "back_to_posts": "Back to Posts",
+    "share": "Share",
+    "save_changes": "Save Changes"
+  },
+  "create_dialog": {
+    "title": "Create New Post",
+    "description": "Share your thoughts with the world",
+    "form": {
+      "title": {
+        "label": "Title",
+        "placeholder": "Enter an engaging title..."
+      },
+      "content": {
+        "label": "Content",
+        "placeholder": "Write your post content here..."
+      },
+      "image": {
+        "label": "Image URL",
+        "placeholder": "Enter image URL..."
+      }
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "publish": "Publish"
+    }
+  },
+  "filters": {
+    "search": {
+      "placeholder": "Search posts..."
+    },
+    "categories": {
+      "all": "All",
+      "technology": "Technology",
+      "education": "Education",
+      "language": "Language",
+      "culture": "Culture"
+    },
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "popular": "Popular"
+    },
+    "view": {
+      "grid": "Grid View",
+      "list": "List View"
+    }
+  },
+  "post": {
+    "time": {
+      "just_now": "Just now",
+      "minutes_ago": "{{count}} minutes ago",
+      "hours_ago": "{{count}} hours ago",
+      "days_ago": "{{count}} days ago"
+    },
+    "read_time": "{{count}} min read",
+    "stats": {
+      "views": "{{count}} views",
+      "likes": "{{count}} likes",
+      "comments": "{{count}} comments"
+    },
+    "featured": "Featured",
+    "anonymous": "Anonymous",
+    "about_author": "About {{name}}",
+    "view_profile": "View Profile",
+    "write_comment": "Write a comment...",
+    "write_reply": "Write a reply...",
+    "post_comment": "Post",
+    "reply": "Reply",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "tags": "Tags",
+    "comments_count": "Comments ({{count}})"
+  },
+  "loading": {
+    "posts": "Loading posts..."
+  },
+  "errors": {
+    "fetch": "Error fetching posts",
+    "create": "Failed to create post",
+    "update": "Failed to update post",
+    "delete_comment": "Failed to delete comment",
+    "add_comment": "Failed to add comment",
+    "update_comment": "Failed to update comment"
+  },
+  "success": {
+    "post_updated": "Post updated successfully",
+    "comment_added": "Comment added successfully",
+    "comment_updated": "Comment updated successfully",
+    "comment_deleted": "Comment deleted successfully",
+    "reply_added": "Reply added successfully"
+  }
+} 

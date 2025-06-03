@@ -1,0 +1,23 @@
+{
+  "title": "Learn with diversity",
+  "description": "Our platform provides various learning areas to help children develop comprehensively.",
+  "highlight": "Featured Features",
+  "areas": {
+    "language": {
+      "title": "Language",
+      "description": "Learn reading, writing and develop vocabulary through interactive games."
+    },
+    "thinking": {
+      "title": "Thinking",
+      "description": "Develop problem-solving skills and logical thinking through challenges."
+    },
+    "math": {
+      "title": "Mathematics",
+      "description": "Learn math through interactive exercises and fun number games."
+    },
+    "programming": {
+      "title": "Programming",
+      "description": "Get familiar with programming thinking through simple drag-and-drop games."
+    }
+  }
+} 

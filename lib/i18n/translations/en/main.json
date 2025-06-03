@@ -1,0 +1,29 @@
+{
+  "navigation": {
+    "learn": "Learn",
+    "games": "Games",
+    "videos": "Videos",
+    "flashcards": "Flashcards",
+    "dictionary": "Dictionary",
+    "leaderboard": "Leaderboard",
+    "blog": "Blog",
+    "speakbooks": "Audio Books"
+  },
+  "auth": {
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "search": {
+    "placeholder": "Search...",
+    "no_results": "No results found",
+    "categories": {
+      "all": "All",
+      "lessons": "Lessons",
+      "games": "Games",
+      "videos": "Videos"
+    }
+  }
+} 

@@ -1,0 +1,25 @@
+{
+  "success": {
+    "title": "Thanh toán thành công!",
+    "description": "Cảm ơn bạn! Giao dịch của bạn đã được xử lý thành công."
+  },
+  "failed": {
+    "title": "Thanh toán thất bại",
+    "description": "Rất tiếc, đã xảy ra lỗi trong quá trình xử lý thanh toán.",
+    "support_message": "Nếu bạn tiếp tục gặp vấn đề, vui lòng liên hệ đội ngũ hỗ trợ của chúng tôi."
+  },
+  "amount": {
+    "label": "Tổng số tiền thanh toán"
+  },
+  "transaction": {
+    "bank": "Ngân hàng",
+    "card_type": "Loại thẻ",
+    "date": "Ngày giao dịch",
+    "transaction_no": "Mã giao dịch",
+    "bank_transaction_no": "Mã giao dịch ngân hàng",
+    "order_info": "Thông tin đơn hàng"
+  },
+  "actions": {
+    "return_learning": "Quay lại học tập"
+  }
+} 

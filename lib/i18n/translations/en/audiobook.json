@@ -1,0 +1,49 @@
+{
+  "title": "Audio Books",
+  "page_title": "Audio Book Library",
+  "page_description": "Discover our rich collection of audio books",
+  "loading": "Loading book...",
+  "book_not_found": "Book not found",
+  "back_to_home": "Back to home",
+  "back": "Back",
+  "audio_player": "Audio",
+  "page": "Page",
+  "of": "of",
+  "current_time": "Current time",
+  "total_time": "Total time",
+  "play": "Play",
+  "pause": "Pause",
+  "previous": "Previous",
+  "next": "Next",
+  "skip_back": "Skip back",
+  "skip_forward": "Skip forward",
+  "volume": "Volume",
+  "page_list": "Page list",
+  "list": {
+    "loading_books": "Loading books...",
+    "pages_with_audio": "pages with audio",
+    "available_pages": "Available audio pages:",
+    "read_book": "Read Book",
+    "no_books": "No books available"
+  },
+  "error": {
+    "load_book": "Error loading book",
+    "load_books": "Error loading book list",
+    "try_again": "Please try again later",
+    "audio_error": "Error playing audio",
+    "network_error": "Network connection error"
+  },
+  "controls": {
+    "play_pause": "Play/Pause",
+    "previous_page": "Previous page",
+    "next_page": "Next page",
+    "seek": "Seek",
+    "go_to_page": "Go to page"
+  },
+  "status": {
+    "playing": "Playing",
+    "paused": "Paused",
+    "loading": "Loading",
+    "ended": "Ended"
+  }
+} 

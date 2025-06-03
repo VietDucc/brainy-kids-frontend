@@ -1,0 +1,35 @@
+{
+  "highlight": "Phản hồi từ phụ huynh",
+  "title": {
+    "text": "Phụ huynh nói gì về",
+    "highlight": "chúng tôi"
+  },
+  "description": "Hàng ngàn phụ huynh đã tin tưởng chúng tôi trong việc hỗ trợ con em họ học tập.",
+  "testimonials": [
+    {
+      "content": "Con tôi rất thích học trên nền tảng này. Các bài học thú vị và con tiến bộ rõ rệt trong việc học toán.",
+      "author": "Nguyễn Thị Hương",
+      "role": "Phụ huynh học sinh lớp 2"
+    },
+    {
+      "content": "Giao diện thân thiện và dễ sử dụng. Con tôi đã học được nhiều từ vựng mới và rất hào hứng mỗi khi học.",
+      "author": "Trần Văn Minh",
+      "role": "Phụ huynh học sinh lớp 1"
+    },
+    {
+      "content": "Tôi rất ấn tượng với cách nền tảng này giúp con tôi học lập trình cơ bản. Các bài học rất trực quan.",
+      "author": "Lê Thị Hà",
+      "role": "Phụ huynh học sinh lớp 4"
+    },
+    {
+      "content": "Các trò chơi học tập rất cuốn hút, con tôi thường xuyên đòi được học thêm mỗi ngày.",
+      "author": "Phạm Văn Đức",
+      "role": "Phụ huynh học sinh lớp 3"
+    },
+    {
+      "content": "Tôi thấy con mình tự tin hơn rất nhiều khi giao tiếp bằng tiếng Anh sau khi học trên nền tảng này.",
+      "author": "Hoàng Thị Mai",
+      "role": "Phụ huynh học sinh lớp 5"
+    }
+  ]
+} 

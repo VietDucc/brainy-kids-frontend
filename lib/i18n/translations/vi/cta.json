@@ -1,0 +1,14 @@
+{
+  "title": "Sẵn sàng để con bạn bắt đầu học tập?",
+  "description": "Đăng ký ngay hôm nay và nhận 7 ngày dùng thử miễn phí gói Premium",
+  "plan": "Gia đình",
+  "buttons": {
+    "trial": "Bắt đầu dùng thử miễn phí",
+    "learn_more": "Tìm hiểu thêm"
+  },
+  "features": {
+    "no_credit_card": "Không cần thẻ tín dụng",
+    "cancel_anytime": "Hủy bất kỳ lúc nào",
+    "support": "Hỗ trợ 24/7"
+  }
+} 

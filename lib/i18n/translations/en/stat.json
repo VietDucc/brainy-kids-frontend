@@ -1,0 +1,19 @@
+{
+  "highlight": "Achievements",
+  "title": {
+    "text": "Impressive",
+    "highlight": "numbers"
+  },
+  "description": "We are proud of our achievements in supporting children's learning.",
+  "stats": {
+    "students": {
+      "label": "Students using"
+    },
+    "lessons": {
+      "label": "Interactive lessons"
+    },
+    "satisfaction": {
+      "label": "Satisfied parents"
+    }
+  }
+} 

@@ -1,0 +1,7 @@
+{
+    "welcome": "Welcome",
+    "description": "This is an English description.",
+    "client-component": {
+      "heading": "This is client component"
+    }
+  }
