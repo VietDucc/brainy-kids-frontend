@@ -82,6 +82,7 @@
 ### State Management & Forms
 
 <img align="right" src="https://react-hook-form.com/images/logo/react-hook-form-logo-only.svg" width="80" height="80" />
+<img align="right" src="https://react-hook-form.com/images/logo/react-hook-form-logo-only.svg](https://th.bing.com/th/id/R.e505af7c3b77f263109c20c8212448ff?rik=3bUY8NvU6ewBIQ&riu=http%3a%2f%2fmediaresource.sfo2.digitaloceanspaces.com%2fwp-content%2fuploads%2f2024%2f04%2f20152646%2fzod-logo-B57E684330-seeklogo.com.png&ehk=kwdcoVcmme3zHc37jfHUXh5KZOiHL%2bp2YG9EQNCnNUA%3d&risl=&pid=ImgRaw&r=0" width="80" height="80" />
 
 - **React Hook Form** - Form validation và quản lý
 - **Zod** - Schema validation
