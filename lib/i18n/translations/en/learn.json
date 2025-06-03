@@ -54,7 +54,7 @@
   },
   "upgrade": {
     "title": "Upgrade to unlock more lessons",
-    "description": "{count} more lessons are waiting for you to explore!",
+    "description": "{{count}} more lessons are waiting for you to explore!",
     "button": "Upgrade Now"
   }
 } 
