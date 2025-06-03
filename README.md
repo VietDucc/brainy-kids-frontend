@@ -6,6 +6,8 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.1-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+**Đây là repo front-end** Kết hợp với Back-ennd ở **https://github.com/VietDucc/BrainyKids**
+
 ## 📋 Giới thiệu
 
 **Brainy Kids Learn** là nền tảng học tập trực tuyến thông minh được thiết kế đặc biệt dành cho trẻ em từ 6-12 tuổi. Với giao diện thân thiện và các phương pháp học tập tương tác, chúng tôi giúp trẻ phát triển toàn diện về ngôn ngữ một cách vui vẻ và hiệu quả.
