@@ -182,7 +182,7 @@ const PremiumPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="grid lg:grid-cols-2 gap-8 items-start">
+      <div className="grid lg:grid-cols-2 gap-8 items-start px-6">
         {/* Left: Benefits */}
         <div className="space-y-4">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">

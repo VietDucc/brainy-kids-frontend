@@ -18,7 +18,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Card } from "./ui/card";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Badge } from "./ui/badge";
 import React from "react";
@@ -49,12 +49,11 @@ const GlowEffect = () => {
   );
 };
 
-export const ButtonPayment = () => {
+export const ButtonPayment = ({ activeUser }) => {
   const { toast } = useToast();
   const { userId } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation("common");
-  const [activeUser, setActiveUser] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleUpgrade = async () => {
@@ -89,17 +88,6 @@ export const ButtonPayment = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    const fetchActiveUser = async () => {
-      const response = await fetch("/api/active-user", {
-        method: "GET",
-      });
-      const data = await response.json();
-      setActiveUser(data.active);
-      console.log(data);
-    };
-    fetchActiveUser();
-  }, []);
 
   const benefits = [
     {

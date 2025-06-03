@@ -50,4 +50,6 @@ export const api = {
   cardById: (clerkUserId: string, id: number) => `${API_BASE_URL}/api/${clerkUserId}/cards/${id}`,
   deleteCardById: (id: number) => `${API_BASE_URL}/api/{clerkUserId}/cards/${id}`,
   bulkCreateCards: (clerkUserId: string) => `${API_BASE_URL}/api/${clerkUserId}/cards/bulk`,
+  exams: `${API_BASE_URL}/api/exam`,
+  examById: (id: number) => `${API_BASE_URL}/api/exam/${id}`,
 };

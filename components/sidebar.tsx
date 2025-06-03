@@ -50,6 +50,11 @@ export const Sidebar = ({ className, activeUser = false }: SidebarProps) => {
       iconSrc: "/book.png",
       disabled: !activeUser,
     },
+    {
+      label: "navigation.test",
+      href: "/test",
+      iconSrc: "/test.png",
+    },
   ];
 
   return (
@@ -60,7 +65,7 @@ export const Sidebar = ({ className, activeUser = false }: SidebarProps) => {
       )}
     >
       <Link href="/learn">
-        <div className="flex items-center gap-x-3 pb-7 pl-4 pt-8">
+        <div className="flex items-center gap-x-3 pb-7 pl-4 pt-8 flex-shrink-0">
           <BookOpen className="h-6 w-6 text-primary" />
           <h1 className="text-2xl font-extrabold tracking-wide">
             Kids<span className="text-primary font-light">Learn</span>
@@ -68,7 +73,7 @@ export const Sidebar = ({ className, activeUser = false }: SidebarProps) => {
         </div>
       </Link>
 
-      <div className="flex flex-1 flex-col gap-y-2">
+      <div className="flex flex-1 flex-col gap-y-2 overflow-y-auto min-h-0">
         {navigationItems.map((item) => (
           <SidebarItem
             key={item.href}
@@ -79,28 +84,31 @@ export const Sidebar = ({ className, activeUser = false }: SidebarProps) => {
           />
         ))}
       </div>
-      <div className="py-4 flex justify-center">
-        <ButtonPayment />
-      </div>
-      <div className="py-4">
-        <ClerkLoading>
-          <Loader className="h-5 w-5 animate-spin text-muted-foreground" />
-        </ClerkLoading>
 
-        <ClerkLoaded>
-          <div className="flex justify-between items-center gap-2">
-            <UserButton
-              appearance={{
-                elements: {
-                  userButtonPopoverCard: { pointerEvents: "initial" },
-                },
-              }}
-            />
-            <LanguageSwitcher />
+      <div className="flex-shrink-0">
+        <div className="py-4 flex justify-center">
+          <ButtonPayment activeUser={activeUser} />
+        </div>
+        <div className="py-4">
+          <ClerkLoading>
+            <Loader className="h-5 w-5 animate-spin text-muted-foreground" />
+          </ClerkLoading>
 
-            <ModeToggle />
-          </div>
-        </ClerkLoaded>
+          <ClerkLoaded>
+            <div className="flex justify-between items-center gap-2">
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonPopoverCard: { pointerEvents: "initial" },
+                  },
+                }}
+              />
+              <LanguageSwitcher />
+
+              <ModeToggle />
+            </div>
+          </ClerkLoaded>
+        </div>
       </div>
     </div>
   );

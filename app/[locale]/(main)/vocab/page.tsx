@@ -96,7 +96,7 @@ export default function VocabularyLearningPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-6rem)] bg-[url('/images/kids-pattern.png')] dark:bg-gray-900 flex flex-col relative overflow-hidden">
+    <div className="h-[calc(100vh-6rem)] bg-[url('/images/kids-pattern.png')] dark:bg-gray-900 flex flex-col relative overflow-hidden p-4 md:p-0">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-10 left-10 animate-float-slow">
           <Sparkles className="w-8 h-8 text-yellow-400" />
