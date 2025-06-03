@@ -8,6 +8,8 @@
 
 **Đây là repo front-end** Kết hợp với Back-ennd ở **https://github.com/VietDucc/BrainyKids**
 
+Link swagger: **https://duc-spring.ngodat0103.live/demo/swagger-ui/index.html#/**
+
 ## 📋 Giới thiệu
 
 **Brainy Kids Learn** là nền tảng học tập trực tuyến thông minh được thiết kế đặc biệt dành cho trẻ em từ 6-12 tuổi. Với giao diện thân thiện và các phương pháp học tập tương tác, chúng tôi giúp trẻ phát triển toàn diện về ngôn ngữ một cách vui vẻ và hiệu quả.
@@ -237,7 +239,7 @@
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/your-username/brainy-kids-frontend.git
+git clone https://github.com/VietDucc/brainy-kids-frontend.git
 cd brainy-kids-frontend
 ```
 
