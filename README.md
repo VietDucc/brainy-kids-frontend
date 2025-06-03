@@ -6,6 +6,8 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.1-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+**Đây là repo front-end** Kết hợp với Back-ennd ở **https://github.com/VietDucc/BrainyKids**
+
 ## 📋 Giới thiệu
 
 **Brainy Kids Learn** là nền tảng học tập trực tuyến thông minh được thiết kế đặc biệt dành cho trẻ em từ 6-12 tuổi. Với giao diện thân thiện và các phương pháp học tập tương tác, chúng tôi giúp trẻ phát triển toàn diện về ngôn ngữ một cách vui vẻ và hiệu quả.
@@ -27,10 +29,10 @@
 
 ### 🎯 Lĩnh vực học tập
 
-1. **📚 Ngôn ngữ**: Học đọc, viết và phát triển vốn từ vựng
-2. **🧩 Tư duy**: Phát triển kỹ năng giải quyết vấn đề và tư duy logic
-3. **🔢 Toán học**: Học toán qua các bài tập tương tác và trò chơi số học
-4. **💻 Lập trình**: Làm quen với tư duy lập trình qua các trò chơi đơn giản
+1. **📚 Ngôn ngữ**: Học đọc, viết và phát triển vốn từ vựng (Available)
+2. **🧩 Tư duy**: Phát triển kỹ năng giải quyết vấn đề và tư duy logic (In Progress...)
+3. **🔢 Toán học**: Học toán qua các bài tập tương tác và trò chơi số học (In Progress...)
+4. **💻 Lập trình**: Làm quen với tư duy lập trình qua các trò chơi đơn giản (In Progress...)
 
 ## 👥 Đội ngũ phát triển
 
@@ -41,16 +43,11 @@
 **Thành viên nhóm:**
 
 - **Đỗ Quang Huy** - MSSV: 215221339
-- **Dương Viết Đức** - MSSV: [Mã số sinh viên 2]
-- **Đồng Hữu Nguyên Khoa** - MSSV: [Mã số sinh viên 3]
-- **Lê Trung Kiên** - MSSV: [Mã số sinh viên 4]
+- **Dương Viết Đức** - MSSV: 21521959
+- **Đồng Hữu Nguyên Khoa** - MSSV: 23520734
+- **Lê Trung Kiên** - MSSV: 21520308
 
 ## 🛠️ Tech Stack
-
-<div align="center" >
-  <img src="https://via.placeholder.com/1200x600/8B5CF6/FFFFFF?text=Tech+Stack+Overview" alt="Tech Stack Overview" width="100%" />
-  <p><em>Tổng quan về các công nghệ được sử dụng</em></p>
-</div>
 
 ### Frontend Framework
 
@@ -86,6 +83,7 @@
 ### State Management & Forms
 
 <img align="right" src="https://react-hook-form.com/images/logo/react-hook-form-logo-only.svg" width="80" height="80" />
+<img align="right" src="https://cdn.sanity.io/images/lgyvk39l/production/2ac822f29cf9da44a22454052a6090b890bf2bcb-512x512.png" width="80" height="80" />
 
 - **React Hook Form** - Form validation và quản lý
 - **Zod** - Schema validation
