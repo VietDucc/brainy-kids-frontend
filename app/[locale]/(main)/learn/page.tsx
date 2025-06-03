@@ -526,10 +526,7 @@ const LearnPage = () => {
                                 count: unit.lessons.length - 3,
                               })}
                             </p>
-                            <Button
-                              onClick={() => router.push("/premium")}
-                              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
-                            >
+                            <Button onClick={() => router.push("/premium")}>
                               {t("upgrade.button")}
                             </Button>
                           </div>
