@@ -239,7 +239,7 @@ Link swagger: **https://duc-spring.ngodat0103.live/demo/swagger-ui/index.html#/*
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/your-username/brainy-kids-frontend.git
+git clone https://github.com/VietDucc/brainy-kids-frontend.git
 cd brainy-kids-frontend
 ```
 
