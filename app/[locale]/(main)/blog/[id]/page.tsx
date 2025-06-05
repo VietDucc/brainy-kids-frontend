@@ -1,54 +1,85 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { auth } from "@clerk/nextjs/server";
+import { Suspense } from "react";
+import { BlogDetailClient } from "./blog-detail-client";
+import { BlogDetailSkeleton } from "./blog-detail-skeleton";
+import { api } from "@/app/api/config";
 import { BlogPost } from "../type";
-import BlogPostDetail from "../components/BlogPostDetail";
-import { useParams, useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
-import Loading from "@/app/loading";
-export default function BlogPostPage() {
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const params = useParams();
-  const router = useRouter();
-  const id = params.id as string;
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+import { notFound } from "next/navigation";
+import Link from "next/link";
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`/api/blog/${id}`);
-        if (!response.ok) {
-          throw new Error("Post not found");
-        }
-        const data = await response.json();
-        setPost(data);
-      } catch (error) {
-        console.error("Error fetching post:", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to fetch post",
-          description: "Please try again",
-        });
-        router.push("/blog");
-      } finally {
-        setLoading(false);
+interface BlogPostPageProps {
+  params: {
+    id: string;
+  };
+}
+
+async function getBlogPost(
+  id: string,
+  token: string
+): Promise<BlogPost | null> {
+  try {
+    const response = await fetch(api.blogById(parseInt(id)), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
       }
-    };
+      throw new Error("Failed to fetch blog post");
+    }
 
-    fetchPost();
-  }, [id, router]);
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching blog post:", error);
+    return null;
+  }
+}
 
-  if (loading || !post) {
-    return <Loading text="post..." />;
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const { getToken, userId } = await auth();
+  const token = await getToken({ template: "jwt-clerk" });
+
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">Unauthorized access. Please sign in.</p>
+      </div>
+    );
   }
 
-  return (
-    <BlogPostDetail
-      post={post}
-      onBack={() => router.push("/blog")}
-      authorId={post.authorId}
-    />
-  );
+  try {
+    const post = await getBlogPost(params.id, token);
+
+    if (!post) {
+      notFound();
+    }
+
+    return (
+      <Suspense fallback={<BlogDetailSkeleton />}>
+        <BlogDetailClient post={post} userId={userId} token={token} />
+      </Suspense>
+    );
+  } catch (error) {
+    console.error("Error in BlogPostPage:", error);
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">
+            Oops! We couldn&apos;t load this blog post. Please try again later!
+          </p>
+          <Link
+            href="/blog"
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors inline-block"
+          >
+            Back to Blog
+          </Link>
+        </div>
+      </div>
+    );
+  }
 }

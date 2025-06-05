@@ -52,4 +52,5 @@ export const api = {
   bulkCreateCards: (clerkUserId: string) => `${API_BASE_URL}/api/${clerkUserId}/cards/bulk`,
   exams: `${API_BASE_URL}/api/exam`,
   examById: (id: number) => `${API_BASE_URL}/api/exam/${id}`,
+  examProgressSubmit: (examId: number) => `${API_BASE_URL}/exam/progress/exam/${examId}`,
 };

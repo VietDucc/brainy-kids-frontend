@@ -10,7 +10,7 @@ interface LessonCardProps {
   description: string;
   status: "locked" | "available" | "completed";
   icon: string;
-  onClick: (lessonId: number) => void;
+  onClick?: (lessonId: number) => void;
   isLoading?: boolean;
 }
 
@@ -52,7 +52,7 @@ export const LessonCard = ({
   const currentStatus = statusMap[status];
 
   const handleClick = () => {
-    if (status === "locked" || isLoading) return;
+    if (status === "locked" || isLoading || !onClick) return;
     onClick(id);
   };
 
@@ -106,48 +106,50 @@ export const LessonCard = ({
           "transform scale-[1.02] border-green-300 dark:border-green-700 shadow-green-100 dark:shadow-green-900/20"
       )}
     >
-      <div
-        className={cn(
-          "flex h-12 w-12 shrink-0 items-center justify-center rounded-full",
-          currentStatus.iconBg
-        )}
-      >
-        <div className="relative">
-          <span className="text-2xl">{icon}</span>
-          <div className="absolute -bottom-1 -right-1 rounded-full bg-white dark:bg-slate-900 p-[2px] shadow-sm">
-            {currentStatus.icon}
+      <div className="lesson-card-content flex items-center gap-4 w-full">
+        <div
+          className={cn(
+            "flex h-12 w-12 shrink-0 items-center justify-center rounded-full",
+            currentStatus.iconBg
+          )}
+        >
+          <div className="relative">
+            <span className="text-2xl">{icon}</span>
+            <div className="absolute -bottom-1 -right-1 rounded-full bg-white dark:bg-slate-900 p-[2px] shadow-sm">
+              {currentStatus.icon}
+            </div>
           </div>
         </div>
-      </div>
-      <div>
-        <h3
-          className={cn(
-            "font-bold",
-            status === "locked"
-              ? "text-slate-500 dark:text-slate-400"
-              : "text-slate-700 dark:text-slate-200"
-          )}
-        >
-          {title}
-        </h3>
-        <p
-          className={cn(
-            "text-sm",
-            status === "locked"
-              ? "text-slate-400 dark:text-slate-500"
-              : "text-slate-500 dark:text-slate-400"
-          )}
-        >
-          {description}
-        </p>
-      </div>
-      {status === "available" && isHovering && (
-        <div className="ml-auto animate-pulse">
-          <p className="text-xs font-medium text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full">
-            Start lesson
+        <div className="flex-1">
+          <h3
+            className={cn(
+              "font-bold",
+              status === "locked"
+                ? "text-slate-500 dark:text-slate-400"
+                : "text-slate-700 dark:text-slate-200"
+            )}
+          >
+            {title}
+          </h3>
+          <p
+            className={cn(
+              "text-sm",
+              status === "locked"
+                ? "text-slate-400 dark:text-slate-500"
+                : "text-slate-500 dark:text-slate-400"
+            )}
+          >
+            {description}
           </p>
         </div>
-      )}
+        {status === "available" && isHovering && (
+          <div className="ml-auto animate-pulse">
+            <p className="text-xs font-medium text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full">
+              Start lesson
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

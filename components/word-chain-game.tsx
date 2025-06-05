@@ -31,7 +31,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { AUDIO_FILES, createAudio } from "@/lib/audio-utils";
 
-// List of common English words to use as starting words
 const STARTER_WORDS = [
   "apple",
   "banana",
@@ -93,19 +92,27 @@ export default function WordChainGame() {
   const timerAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Preload audio files
     const loadAudio = async () => {
       try {
         if (typeof window !== "undefined") {
           correctAudioRef.current = createAudio(AUDIO_FILES.CORRECT);
           wrongAudioRef.current = createAudio(AUDIO_FILES.INCORRECT);
 
-          // Preload the audio files
-          await Promise.all([
-            correctAudioRef.current.load(),
-            wrongAudioRef.current.load(),
-            timerAudioRef.current.load(),
-          ]);
+          const loadPromises = [];
+
+          if (correctAudioRef.current) {
+            loadPromises.push(correctAudioRef.current.load());
+          }
+
+          if (wrongAudioRef.current) {
+            loadPromises.push(wrongAudioRef.current.load());
+          }
+
+          if (timerAudioRef.current) {
+            loadPromises.push(timerAudioRef.current.load());
+          }
+
+          await Promise.all(loadPromises);
         }
       } catch (error) {
         console.error("Error loading audio files:", error);
@@ -139,7 +146,6 @@ export default function WordChainGame() {
     return STARTER_WORDS[Math.floor(Math.random() * STARTER_WORDS.length)];
   };
 
-  // Start the game
   const startGame = () => {
     const startWord = getRandomStarterWord();
     setWordChain([startWord]);
@@ -180,7 +186,6 @@ export default function WordChainGame() {
     return () => clearInterval(timer);
   }, [isPlaying, timeLeft, gameOver, difficulty, soundEnabled]);
 
-  // Handle game over
   const handleGameOver = (message: string) => {
     setIsPlaying(false);
     setGameOver(true);
@@ -188,18 +193,15 @@ export default function WordChainGame() {
     setIsError(true);
     playSound("wrong");
 
-    // Update high score if current score is higher
     if (score > highScore) {
       setHighScore(score);
 
-      // Add achievement for new high score
       if (!achievements.includes("New High Score!")) {
         setAchievements((prev) => [...prev, "New High Score!"]);
       }
     }
   };
 
-  // Check if the word is valid
   const checkWord = async (word: string) => {
     if (!word) return false;
 
@@ -217,7 +219,6 @@ export default function WordChainGame() {
     }
   };
 
-  // Get a hint
   const getHint = async () => {
     if (!DIFFICULTY_SETTINGS[difficulty].hintAllowed || showHint) return;
 

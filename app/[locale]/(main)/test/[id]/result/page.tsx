@@ -12,6 +12,7 @@ import { CheckCircle, XCircle, Clock, RotateCcw } from "lucide-react";
 import type { Exam, Question } from "@/types/exam";
 import { ExamHeader } from "@/app/[locale]/(main)/test/components/exam-header";
 import { TestStatistics } from "@/app/[locale]/(main)/test/components/test-statistics";
+import { api } from "@/app/api/config";
 
 interface TestResult {
   totalQuestions: number;
@@ -52,18 +53,17 @@ export default function TestResultPage() {
     const fetchExamAndCalculateResults = async () => {
       try {
         if (params.id) {
-          // Fetch exam data
-          const response = await fetch(`/api/exam/${params.id}`);
+          const response = await fetch(
+            `${api.examById(parseInt(params.id as string))}`
+          );
           const examData = await response.json();
           setExam(examData);
 
-          // Get user answers from URL params or localStorage
           const answersParam = searchParams.get("answers");
           const userAnswers = answersParam
             ? JSON.parse(decodeURIComponent(answersParam))
             : {};
 
-          // Calculate results
           const result = calculateTestResults(examData, userAnswers);
           setTestResult(result);
         }

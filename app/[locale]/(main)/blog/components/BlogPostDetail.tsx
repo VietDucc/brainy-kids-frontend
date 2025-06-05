@@ -21,41 +21,53 @@ import {
 import { BlogPost, Comment } from "../type";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
-import { useAuth } from "@clerk/nextjs";
 import Editor from "./Editor";
 import { useToast } from "@/hooks/use-toast";
 import { CommentComponent } from "./Comment";
+import { api } from "@/app/api/config";
+import { useUser } from "@clerk/nextjs";
 
 interface BlogPostDetailProps {
   post: BlogPost;
   onBack: () => void;
   authorId: string;
+  userId: string;
+  token: string;
 }
 
 export default function BlogPostDetail({
   post,
   onBack,
   authorId,
+  userId,
+  token,
 }: BlogPostDetailProps) {
   const { t } = useTranslation("blog");
+  const { user } = useUser();
   const [newComment, setNewComment] = useState("");
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyContent, setReplyContent] = useState("");
-  const { userId } = useAuth();
   const [content, setContent] = useState(post.content);
   const [title, setTitle] = useState(post.title);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [isAddingComment, setIsAddingComment] = useState(false);
+  const [isAddingReply, setIsAddingReply] = useState(false);
   const isAuthor = userId === authorId;
   const { toast } = useToast();
 
   useEffect(() => {
     fetchComments();
-  }, [post.id]);
+  }, []);
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(`/api/comment/${post.id}`);
+      const response = await fetch(api.blogCommentById(post.id), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch comments");
       }
@@ -105,10 +117,13 @@ export default function BlogPostDetail({
     if (!newComment.trim()) return;
 
     try {
-      const response = await fetch(`/api/comment/${post.id}`, {
+      setIsAddingComment(true);
+      const response = await fetch(api.blogCommentById(post.id), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          clerkUserId: userId,
         },
         body: JSON.stringify({
           content: newComment,
@@ -119,8 +134,17 @@ export default function BlogPostDetail({
         throw new Error(t("errors.add_comment"));
       }
 
+      const newCommentData = await response.json();
+
+      const commentWithUserInfo = {
+        ...newCommentData,
+        authorName: user?.fullName || user?.firstName || "Anonymous",
+        authorImg: user?.imageUrl || "",
+      };
+
+      setComments((prevComments) => [commentWithUserInfo, ...prevComments]);
       setNewComment("");
-      await fetchComments();
+
       toast({
         variant: "success",
         title: t("success.comment_added"),
@@ -132,6 +156,8 @@ export default function BlogPostDetail({
         title: t("errors.add_comment"),
         description: t("errors.try_again"),
       });
+    } finally {
+      setIsAddingComment(false);
     }
   };
 
@@ -139,8 +165,14 @@ export default function BlogPostDetail({
     if (!replyContent.trim()) return;
 
     try {
-      const response = await fetch(`/api/comment/${post.id}/${commentId}`, {
+      setIsAddingReply(true);
+      const response = await fetch(api.replyById(commentId), {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          clerkUserId: userId,
+        },
         body: JSON.stringify({
           content: replyContent,
         }),
@@ -150,9 +182,38 @@ export default function BlogPostDetail({
         throw new Error("Failed to add reply");
       }
 
+      const newReplyData = await response.json();
+
+      // Add user information to the reply for immediate display
+      const replyWithUserInfo = {
+        ...newReplyData,
+        authorName: user?.fullName || user?.firstName || "Anonymous",
+        authorImg: user?.imageUrl || "",
+      };
+
+      // Add the reply to the appropriate comment in local state
+      const addReplyToComment = (comments: Comment[]): Comment[] => {
+        return comments.map((comment) => {
+          if (comment.id === commentId) {
+            return {
+              ...comment,
+              replies: [...(comment.replies || []), replyWithUserInfo],
+            };
+          }
+          if (comment.replies && comment.replies.length > 0) {
+            return {
+              ...comment,
+              replies: addReplyToComment(comment.replies),
+            };
+          }
+          return comment;
+        });
+      };
+
+      setComments((prevComments) => addReplyToComment(prevComments));
       setReplyContent("");
       setReplyingTo(null);
-      await fetchComments();
+
       toast({
         title: "Reply added successfully",
       });
@@ -163,6 +224,8 @@ export default function BlogPostDetail({
         title: "Failed to add reply",
         description: "Please try again",
       });
+    } finally {
+      setIsAddingReply(false);
     }
   };
 
@@ -180,10 +243,12 @@ export default function BlogPostDetail({
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`/api/blog/${post.id}`, {
+      const response = await fetch(api.blogById(post.id), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          clerkUserId: userId,
         },
         body: JSON.stringify({
           content,
@@ -212,15 +277,33 @@ export default function BlogPostDetail({
 
   const handleDeleteComment = async (commentId: number) => {
     try {
-      const response = await fetch(`/api/comment/${commentId}`, {
+      const response = await fetch(api.commentById(commentId), {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          clerkUserId: userId,
+        },
       });
 
       if (!response.ok) {
         throw new Error("Failed to delete comment");
       }
 
-      await fetchComments();
+      // Remove comment from local state
+      const removeCommentFromState = (comments: Comment[]): Comment[] => {
+        return comments.filter((comment) => {
+          if (comment.id === commentId) {
+            return false;
+          }
+          if (comment.replies && comment.replies.length > 0) {
+            comment.replies = removeCommentFromState(comment.replies);
+          }
+          return true;
+        });
+      };
+
+      setComments((prevComments) => removeCommentFromState(prevComments));
+
       toast({
         title: "Comment deleted successfully",
       });
@@ -236,10 +319,12 @@ export default function BlogPostDetail({
 
   const handleEditComment = async (commentId: number, content: string) => {
     try {
-      const response = await fetch(`/api/comment/${commentId}`, {
+      const response = await fetch(api.commentById(commentId), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          clerkUserId: userId,
         },
         body: JSON.stringify({
           content,
@@ -247,18 +332,37 @@ export default function BlogPostDetail({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update comment");
+        throw new Error("Failed to edit comment");
       }
 
-      await fetchComments();
+      const updatedComment = await response.json();
+
+      // Update comment in local state
+      const updateCommentInState = (comments: Comment[]): Comment[] => {
+        return comments.map((comment) => {
+          if (comment.id === commentId) {
+            return { ...comment, content: updatedComment.content };
+          }
+          if (comment.replies && comment.replies.length > 0) {
+            return {
+              ...comment,
+              replies: updateCommentInState(comment.replies),
+            };
+          }
+          return comment;
+        });
+      };
+
+      setComments((prevComments) => updateCommentInState(prevComments));
+
       toast({
         title: "Comment updated successfully",
       });
     } catch (error) {
-      console.error("Error updating comment:", error);
+      console.error("Error editing comment:", error);
       toast({
         variant: "destructive",
-        title: "Failed to update comment",
+        title: "Failed to edit comment",
         description: "Please try again",
       });
     }
@@ -326,7 +430,13 @@ export default function BlogPostDetail({
           )} flex gap-2`}
         >
           <Avatar className="w-8 h-8">
-            <AvatarFallback>{userId?.[0] || "U"}</AvatarFallback>
+            <AvatarImage
+              src={user?.imageUrl || ""}
+              alt={user?.fullName || ""}
+            />
+            <AvatarFallback>
+              {user?.fullName?.charAt(0) || user?.firstName?.charAt(0) || "U"}
+            </AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <Textarea
@@ -349,9 +459,16 @@ export default function BlogPostDetail({
               <Button
                 size="sm"
                 onClick={() => handleAddReply(comment.id)}
-                disabled={!replyContent.trim()}
+                disabled={!replyContent.trim() || isAddingReply}
               >
-                Reply
+                {isAddingReply ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Replying...
+                  </>
+                ) : (
+                  "Reply"
+                )}
               </Button>
             </div>
           </div>
@@ -598,7 +715,15 @@ export default function BlogPostDetail({
             {/* Add Comment */}
             <div className="flex gap-2">
               <Avatar className="w-8 h-8">
-                <AvatarFallback>{userId?.[0] || "U"}</AvatarFallback>
+                <AvatarImage
+                  src={user?.imageUrl || ""}
+                  alt={user?.fullName || ""}
+                />
+                <AvatarFallback>
+                  {user?.fullName?.charAt(0) ||
+                    user?.firstName?.charAt(0) ||
+                    "U"}
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <Textarea
@@ -610,10 +735,17 @@ export default function BlogPostDetail({
                 <div className="flex justify-end mt-2">
                   <Button
                     onClick={handleAddComment}
-                    disabled={!newComment.trim()}
+                    disabled={!newComment.trim() || isAddingComment}
                     size="sm"
                   >
-                    {t("post.post_comment")}
+                    {isAddingComment ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        {t("post.posting")}
+                      </>
+                    ) : (
+                      t("post.post_comment")
+                    )}
                   </Button>
                 </div>
               </div>

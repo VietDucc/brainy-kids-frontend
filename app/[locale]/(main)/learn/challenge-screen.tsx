@@ -22,6 +22,7 @@ import { SingleChallenge } from "./components/SingleChallenge";
 import { AssistChallenge } from "./components/AssistChallenge";
 import { MultiChallenge } from "./components/MultiChallenge";
 import { AUDIO_FILES, createAudio } from "@/lib/audio-utils";
+import { api } from "@/app/api/config";
 
 interface ChallengeOption {
   id: number;
@@ -52,6 +53,7 @@ interface ChallengeScreenProps {
   lessonTitle: string;
   onExit: () => void;
   lessonId: number;
+  token: string;
 }
 
 export const ChallengeScreen = ({
@@ -59,6 +61,7 @@ export const ChallengeScreen = ({
   onComplete,
   onExit,
   lessonId,
+  token,
 }: ChallengeScreenProps) => {
   const validChallenges = Array.isArray(challenges) ? challenges : [];
 
@@ -186,7 +189,6 @@ export const ChallengeScreen = ({
       setIsCorrect(null);
       setFeedbackMessage("");
     } else {
-      // Completed all challenges
       completeSoundRef.current?.play();
       setShowSummary(true);
     }
@@ -220,7 +222,9 @@ export const ChallengeScreen = ({
     setAutoAdvanceTimeout(timeout);
   };
 
-  const handleFinishLesson = async () => {
+  const handleFinishLesson = async (e?: React.MouseEvent) => {
+    e?.preventDefault();
+
     try {
       setIsSubmitting(true);
 
@@ -229,26 +233,30 @@ export const ChallengeScreen = ({
         results.correct &&
         results.correct / sortedChallenges.length >= 0.5
       ) {
-        onComplete(lessonId);
-        fetch("/api/lesson-progress", {
+        const response = await fetch(`${api.lessonProgress}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             clerkUserId: userId,
             lessonId,
             completed: true,
           }),
-        }).catch((error) => {
-          toast.error("Error saving progress:", error);
         });
-      } else {
-        onComplete();
+
+        if (!response.ok) {
+          throw new Error("Failed to save lesson progress");
+        }
       }
+      onComplete(lessonId);
     } catch (error) {
       console.error("Error in handleFinishLesson:", error);
-      onComplete();
+      toast.error("Có lỗi khi lưu tiến trình. Vui lòng thử lại!");
+      setTimeout(() => {
+        onComplete();
+      }, 1000);
     } finally {
       setIsSubmitting(false);
     }
@@ -332,14 +340,18 @@ export const ChallengeScreen = ({
             </Button>
             <Button
               variant="default"
+              type="button"
               className="flex-1 py-3 relative overflow-hidden"
               onClick={handleFinishLesson}
               disabled={isSubmitting}
             >
               {isSubmitting ? (
                 <>
-                  <span className="opacity-0">Continue</span>
-                  <Loader2 className="h-5 w-5 animate-spin absolute" />
+                  <span className="opacity-0">Đang lưu...</span>
+                  <div className="absolute inset-0 flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm">Đang lưu...</span>
+                  </div>
                 </>
               ) : (
                 <>

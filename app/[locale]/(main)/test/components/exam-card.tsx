@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -22,6 +22,12 @@ interface ExamCardProps {
 }
 
 export function ExamCard({ exam }: ExamCardProps) {
+  const router = useRouter();
+
+  const handleStartExam = async () => {
+    router.push(`/test/${exam.id}`);
+  };
+
   return (
     <Card className="h-full flex flex-col">
       <CardHeader>
@@ -37,9 +43,9 @@ export function ExamCard({ exam }: ExamCardProps) {
         )}
       </CardContent>
       <CardFooter>
-        <Link href={`/test/${exam.id}`} className="w-full">
-          <Button className="w-full">Start Exam</Button>
-        </Link>
+        <Button onClick={handleStartExam} className="w-full">
+          Start Exam
+        </Button>
       </CardFooter>
     </Card>
   );

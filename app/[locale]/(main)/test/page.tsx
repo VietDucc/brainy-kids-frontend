@@ -1,46 +1,73 @@
-"use client";
-import { ExamCard } from "./components/exam-card";
-import { useEffect, useState } from "react";
-import Loading from "@/app/loading";
+import { auth } from "@clerk/nextjs/server";
+import { Suspense } from "react";
+import { TestClient } from "./test-client";
+import { TestSkeleton } from "./test-skeleton";
+import { api } from "@/app/api/config";
 
-export default function Home() {
-  const [loading, setLoading] = useState(true);
-  const [exams, setExams] = useState([]);
+interface Exam {
+  id: number;
+  name: string;
+  description: string;
+  voice: string;
+}
 
-  useEffect(() => {
-    const fetchExams = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch("/api/exam");
-        const data = await response.json();
-        setExams(data);
-      } catch (error) {
-        console.error("Failed to fetch exams:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+async function getExamsData(token: string): Promise<Exam[]> {
+  try {
+    const response = await fetch(api.exams, {
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-    fetchExams();
-  }, []);
+    if (!response.ok) {
+      throw new Error("Failed to fetch exams");
+    }
 
-  if (loading) {
-    return <Loading text="exams..." />;
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching exams:", error);
+    return [];
   }
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2">English Exam Platform</h1>
-        <p className="text-gray-600">
-          Practice your English skills with TOEIC-style exams
-        </p>
-      </header>
+}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {exams.map((exam) => (
-          <ExamCard key={exam.id} exam={exam} />
-        ))}
+export default async function TestPage() {
+  const { getToken } = await auth();
+  const token = await getToken({ template: "jwt-clerk" });
+
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">Unauthorized access</p>
       </div>
-    </div>
-  );
+    );
+  }
+
+  try {
+    const examsData = await getExamsData(token);
+
+    return (
+      <Suspense fallback={<TestSkeleton />}>
+        <TestClient examsData={examsData} />
+      </Suspense>
+    );
+  } catch (error) {
+    console.error("Error in TestPage:", error);
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">
+            Oops! We couldn&apos;t load the exams. Please try again later!
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 }

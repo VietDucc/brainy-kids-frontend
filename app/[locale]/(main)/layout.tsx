@@ -1,49 +1,56 @@
-"use client";
 import type { PropsWithChildren } from "react";
-import { useEffect, useState } from "react";
+import { auth } from "@clerk/nextjs/server";
+import { Suspense } from "react";
+import { MainLayoutClient } from "./main-layout-client";
+import { MainLayoutSkeleton } from "./main-layout-skeleton";
+import { api } from "@/app/api/config";
 
-import { MobileHeader } from "@/components/mobile-header";
-import { Sidebar } from "@/components/sidebar";
-import { Toaster } from "sonner";
-import ChatbotPopup from "@/components/chatbot/Chatbotpopup";
-import { useAuth } from "@clerk/nextjs";
+async function getActiveUserStatus(
+  userId: string,
+  token: string
+): Promise<boolean> {
+  try {
+    const response = await fetch(api.activeUser(userId), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    });
 
-const MainLayout = ({ children }: PropsWithChildren) => {
-  const { userId } = useAuth();
-  const [activeUser, setActiveUser] = useState<boolean>(false);
-  // const { t } = useTranslation(["main"]);
-
-  useEffect(() => {
-    const fetchActiveUser = async () => {
-      try {
-        const response = await fetch("/api/active-user", {
-          method: "GET",
-        });
-        const data = await response.json();
-        setActiveUser(data.active);
-      } catch (error) {
-        console.error("Error fetching active user:", error);
-        setActiveUser(false);
-      }
-    };
-
-    if (userId) {
-      fetchActiveUser();
+    if (!response.ok) {
+      return false;
     }
-  }, [userId]);
+
+    const data = await response.json();
+    return data.active || false;
+  } catch (error) {
+    console.error("Error fetching active user:", error);
+    return false;
+  }
+}
+
+const MainLayout = async ({ children }: PropsWithChildren) => {
+  const { userId, getToken } = await auth();
+
+  if (!userId) {
+    return (
+      <Suspense fallback={<MainLayoutSkeleton />}>
+        <MainLayoutClient activeUser={false} userId={null}>
+          {children}
+        </MainLayoutClient>
+      </Suspense>
+    );
+  }
+
+  const token = await getToken({ template: "jwt-clerk" });
+  const activeUser = token ? await getActiveUserStatus(userId, token) : false;
 
   return (
-    <>
-      <MobileHeader activeUser={activeUser} />
-      <Sidebar className="hidden lg:flex" activeUser={activeUser} />
-      <main className="h-full lg:pl-[256px] ">
-        <div className="mx-auto h-full max-w-[1056px] pt-6">
-          <Toaster />
-          {userId && activeUser && <ChatbotPopup />}
-          {children}
-        </div>
-      </main>
-    </>
+    <Suspense fallback={<MainLayoutSkeleton />}>
+      <MainLayoutClient activeUser={activeUser} userId={userId}>
+        {children}
+      </MainLayoutClient>
+    </Suspense>
   );
 };
 

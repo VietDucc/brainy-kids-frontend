@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { useAuth, SignInButton } from "@clerk/nextjs";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/app/api/config";
 
 const Pricing = () => {
   const [isClient, setIsClient] = useState(false);
@@ -40,7 +41,7 @@ const Pricing = () => {
 
     try {
       setIsLoading(true);
-      const response = await fetch("/api/vnpay", {
+      const response = await fetch(`${api.vnpay}`, {
         method: "POST",
         body: JSON.stringify({ amount: 100000, orderInfo: userId }),
       });

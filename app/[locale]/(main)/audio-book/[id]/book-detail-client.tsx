@@ -11,10 +11,8 @@ import {
   SkipBack,
   SkipForward,
   Volume2,
-  Loader2,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
-import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 
 interface Voice {
@@ -30,50 +28,25 @@ interface Book {
   voices: Voice[];
 }
 
-interface BookDetailProps {
-  bookId: string;
+interface BookDetailClientProps {
+  bookData: Book | null;
 }
 
-export default function BookDetail({ bookId }: BookDetailProps) {
-  const [book, setBook] = useState<Book | null>(null);
-  const [loading, setLoading] = useState(true);
+export function BookDetailClient({ bookData }: BookDetailClientProps) {
   const [currentVoiceIndex, setCurrentVoiceIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const { toast } = useToast();
   const { t } = useTranslation("audiobook");
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  useEffect(() => {
-    const fetchBook = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`/api/book/${bookId}`);
-        const data = await response.json();
-        setBook(data);
-      } catch (error) {
-        console.error("Error fetching book:", error);
-        toast({
-          variant: "destructive",
-          title: t("error.load_book"),
-          description: t("error.try_again"),
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBook();
-  }, [bookId, toast, t]);
-
   const handleNext = useCallback(() => {
-    if (book && currentVoiceIndex < book.voices.length - 1) {
+    if (bookData && currentVoiceIndex < bookData.voices.length - 1) {
       setCurrentVoiceIndex(currentVoiceIndex + 1);
       setIsPlaying(false);
     }
-  }, [book, currentVoiceIndex]);
+  }, [bookData, currentVoiceIndex]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -113,7 +86,7 @@ export default function BookDetail({ bookId }: BookDetailProps) {
       audio.removeEventListener("loadstart", handleLoadStart);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [book, currentVoiceIndex, handleNext]);
+  }, [bookData, currentVoiceIndex, handleNext]);
 
   const handlePlayPause = () => {
     const audio = audioRef.current;
@@ -157,21 +130,12 @@ export default function BookDetail({ bookId }: BookDetailProps) {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">{t("loading")}</span>
-      </div>
-    );
-  }
-
-  if (!book) {
+  if (!bookData) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">{t("book_not_found")}</h1>
-          <Link href="/">
+          <Link href="/audio-book">
             <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t("back_to_home")}
@@ -182,7 +146,7 @@ export default function BookDetail({ bookId }: BookDetailProps) {
     );
   }
 
-  const currentVoice = book.voices[currentVoiceIndex];
+  const currentVoice = bookData.voices[currentVoiceIndex];
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -194,7 +158,7 @@ export default function BookDetail({ bookId }: BookDetailProps) {
           </Button>
         </Link>
         <span className="text-muted-foreground font-bold text-md md:text-xl text-center w-full">
-          {book.title}
+          {bookData.title}
         </span>
       </div>
 
@@ -213,10 +177,11 @@ export default function BookDetail({ bookId }: BookDetailProps) {
                   <div className="flex items-center gap-3">
                     <Volume2 className="h-5 w-5 text-muted-foreground" />
                     <div>
-                      <h3 className="font-medium text-sm">{book.title}</h3>
+                      <h3 className="font-medium text-sm">{bookData.title}</h3>
                       <p className="text-xs text-muted-foreground">
                         {t("page")} {currentVoice.pageIndex} (
-                        {currentVoiceIndex + 1} {t("of")} {book.voices.length})
+                        {currentVoiceIndex + 1} {t("of")}{" "}
+                        {bookData.voices.length})
                       </p>
                     </div>
                   </div>
@@ -250,7 +215,9 @@ export default function BookDetail({ bookId }: BookDetailProps) {
                       variant="outline"
                       size="sm"
                       onClick={handleNext}
-                      disabled={currentVoiceIndex === book.voices.length - 1}
+                      disabled={
+                        currentVoiceIndex === bookData.voices.length - 1
+                      }
                       className="p-2"
                       title={t("controls.next_page")}
                     >
@@ -275,7 +242,7 @@ export default function BookDetail({ bookId }: BookDetailProps) {
                   </div>
 
                   <div className="flex items-center gap-1">
-                    {book.voices.map((voice, index) => (
+                    {bookData.voices.map((voice, index) => (
                       <Button
                         key={voice.id}
                         variant={
@@ -303,9 +270,9 @@ export default function BookDetail({ bookId }: BookDetailProps) {
           <CardContent className="px-0">
             <div className="w-full" style={{ height: "150vh" }}>
               <iframe
-                src={`${book.pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                src={`${bookData.pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
                 className="w-full h-full"
-                title={`PDF viewer for ${book.title}`}
+                title={`PDF viewer for ${bookData.title}`}
               />
             </div>
           </CardContent>
