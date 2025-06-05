@@ -3,6 +3,7 @@ FROM node:20-alpine as build
 
 WORKDIR /app
 COPY package.json yarn.lock ./
+COPY .env .env             
 RUN yarn install --frozen-lockfile
 
 COPY . .
@@ -17,6 +18,7 @@ COPY --from=build /app/.next ./.next
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/yarn.lock ./yarn.lock
+COPY --from=build /app/.env ./.env      
 
 ENV PORT=8083
 EXPOSE 8083
