@@ -611,16 +611,15 @@ export default function BlogPostDetail({
           </div>
 
           {/* Article Content */}
-          <div className="px-8 pb-8">
-            <div className="prose prose-lg max-w-none">
-              <Editor
-                value={content}
-                onChange={setContent}
-                isEditable={isAuthor}
-                onSave={handleSave}
-                showSaveButton={isAuthor}
-              />
-            </div>
+
+          <div className="prose prose-lg max-w-none">
+            <Editor
+              value={content}
+              onChange={setContent}
+              isEditable={isAuthor}
+              onSave={handleSave}
+              showSaveButton={isAuthor}
+            />
 
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (

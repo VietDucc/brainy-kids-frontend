@@ -63,15 +63,15 @@ export function LeaderboardClient({ leaderboardData }: LeaderboardClientProps) {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Leaderboard</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold">Leaderboard</h1>
           </div>
         </div>
 
-        <div className="relative bg-primary rounded-3xl p-12 mb-8">
-          <div className="flex justify-around items-end">
+        <div className="relative bg-primary rounded-2xl sm:rounded-3xl p-6 sm:p-12 mb-6 sm:mb-8">
+          <div className="flex justify-around items-end gap-2 sm:gap-4">
             {topThree[1] && (
               <motion.div
                 className="flex flex-col items-center"
@@ -79,7 +79,7 @@ export function LeaderboardClient({ leaderboardData }: LeaderboardClientProps) {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                <Avatar className="h-24 w-24 border-4 border-white mb-4">
+                <Avatar className="h-16 w-16 sm:h-24 sm:w-24 border-2 sm:border-4 border-white mb-2 sm:mb-4">
                   {topThree[1].profile_image_url ? (
                     <Image
                       src={topThree[1].profile_image_url}
@@ -89,30 +89,32 @@ export function LeaderboardClient({ leaderboardData }: LeaderboardClientProps) {
                       className="rounded-full object-cover"
                     />
                   ) : (
-                    <AvatarFallback className="bg-primary/10 text-primary">
+                    <AvatarFallback className="bg-primary/10 text-primary text-sm sm:text-base">
                       {getInitials(topThree[1].username)}
                     </AvatarFallback>
                   )}
                 </Avatar>
                 <div className="text-center text-white">
-                  <p className="font-semibold text-lg">
+                  <p className="font-semibold text-sm sm:text-lg truncate max-w-[80px] sm:max-w-none">
                     {formatUsername(topThree[1].username)}
                   </p>
-                  <p className="text-primary-foreground/80">
+                  <p className="text-primary-foreground/80 text-xs sm:text-base">
                     {topThree[1].score} điểm
                   </p>
                 </div>
-                <div className="mt-4 text-6xl font-bold text-white">2</div>
+                <div className="mt-2 sm:mt-4 text-3xl sm:text-6xl font-bold text-white">
+                  2
+                </div>
               </motion.div>
             )}
 
             {topThree[0] && (
               <motion.div
-                className="flex flex-col items-center -mt-8"
+                className="flex flex-col items-center -mt-4 sm:-mt-8"
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
               >
-                <Avatar className="h-32 w-32 border-4 border-yellow-400 mb-4">
+                <Avatar className="h-20 w-20 sm:h-32 sm:w-32 border-2 sm:border-4 border-yellow-400 mb-2 sm:mb-4">
                   {topThree[0].profile_image_url ? (
                     <Image
                       src={topThree[0].profile_image_url}
@@ -122,20 +124,22 @@ export function LeaderboardClient({ leaderboardData }: LeaderboardClientProps) {
                       className="rounded-full object-cover"
                     />
                   ) : (
-                    <span className="text-2xl font-bold">
+                    <span className="text-lg sm:text-2xl font-bold">
                       {getInitials(topThree[0].username)}
                     </span>
                   )}
                 </Avatar>
                 <div className="text-center text-white">
-                  <p className="font-bold text-xl">
+                  <p className="font-bold text-base sm:text-xl truncate max-w-[100px] sm:max-w-none">
                     {formatUsername(topThree[0].username)}
                   </p>
-                  <p className="text-primary-foreground/80">
+                  <p className="text-primary-foreground/80 text-xs sm:text-base">
                     {topThree[0].score} điểm
                   </p>
                 </div>
-                <div className="mt-4 text-7xl font-bold text-white">1</div>
+                <div className="mt-2 sm:mt-4 text-4xl sm:text-7xl font-bold text-white">
+                  1
+                </div>
               </motion.div>
             )}
 
@@ -146,7 +150,7 @@ export function LeaderboardClient({ leaderboardData }: LeaderboardClientProps) {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
-                <Avatar className="h-24 w-24 border-4 border-white mb-4">
+                <Avatar className="h-16 w-16 sm:h-24 sm:w-24 border-2 sm:border-4 border-white mb-2 sm:mb-4">
                   {topThree[2].profile_image_url ? (
                     <Image
                       src={topThree[2].profile_image_url}
@@ -156,40 +160,42 @@ export function LeaderboardClient({ leaderboardData }: LeaderboardClientProps) {
                       className="rounded-full object-cover"
                     />
                   ) : (
-                    <span className="text-xl font-bold">
+                    <span className="text-sm sm:text-xl font-bold">
                       {getInitials(topThree[2].username)}
                     </span>
                   )}
                 </Avatar>
                 <div className="text-center text-white">
-                  <p className="font-semibold text-lg">
+                  <p className="font-semibold text-sm sm:text-lg truncate max-w-[80px] sm:max-w-none">
                     {formatUsername(topThree[2].username)}
                   </p>
-                  <p className="text-primary-foreground/80">
+                  <p className="text-primary-foreground/80 text-xs sm:text-base">
                     {topThree[2].score} điểm
                   </p>
                 </div>
-                <div className="mt-4 text-6xl font-bold text-white">3</div>
+                <div className="mt-2 sm:mt-4 text-3xl sm:text-6xl font-bold text-white">
+                  3
+                </div>
               </motion.div>
             )}
           </div>
         </div>
 
-        <div className="bg-card rounded-3xl shadow-sm">
-          <div className="p-6">
-            <div className="space-y-2">
+        <div className="bg-card rounded-2xl sm:rounded-3xl shadow-sm">
+          <div className="p-4 sm:p-6">
+            <div className="space-y-1 sm:space-y-2">
               {restOfUsers.map((user, index) => (
                 <motion.div
                   key={user.id}
-                  className="flex items-center p-4 hover:bg-accent rounded-2xl transition-colors"
+                  className="flex items-center p-3 sm:p-4 hover:bg-accent rounded-xl sm:rounded-2xl transition-colors"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
-                  <span className="w-8 text-lg font-semibold text-muted-foreground">
+                  <span className="w-6 sm:w-8 text-base sm:text-lg font-semibold text-muted-foreground">
                     {index + 4}
                   </span>
-                  <Avatar className="h-12 w-12 mx-4">
+                  <Avatar className="h-10 w-10 sm:h-12 sm:w-12 mx-3 sm:mx-4">
                     {user.profile_image_url ? (
                       <Image
                         src={user.profile_image_url}
@@ -199,18 +205,18 @@ export function LeaderboardClient({ leaderboardData }: LeaderboardClientProps) {
                         className="rounded-full object-cover"
                       />
                     ) : (
-                      <span className="text-base font-semibold">
+                      <span className="text-sm sm:text-base font-semibold">
                         {getInitials(user.username)}
                       </span>
                     )}
                   </Avatar>
-                  <div className="flex-grow">
-                    <p className="font-medium text-foreground">
+                  <div className="flex-grow min-w-0">
+                    <p className="font-medium text-foreground text-sm sm:text-base truncate">
                       {formatUsername(user.username)}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold">
+                    <div className="bg-primary/10 text-primary px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
                       {user.score} points
                     </div>
                   </div>
