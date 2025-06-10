@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { LearnClient } from "./learn-client";
 import { api } from "@/app/api/config";
 import { UnitType } from "@/types/learn";
+import Link from "next/link";
 
 interface UserProgressData {
   activeCourse: {
@@ -104,7 +105,7 @@ const LearnPage = async ({ searchParams }: { searchParams: SearchParams }) => {
     }
 
     const units = await getUnits(userProgressData.activeCourse.id, token);
-    const selectedUnitId = searchParams.unitId
+    const selectedUnitId = (await searchParams.unitId)
       ? parseInt(searchParams.unitId, 10)
       : null;
 
@@ -291,7 +292,9 @@ const LearnPage = async ({ searchParams }: { searchParams: SearchParams }) => {
                                 Còn {unit.lessons.length - 3} bài học nữa đang
                                 chờ bạn khám phá
                               </p>
-                              <Button>Nâng cấp ngay</Button>
+                              <Link href="/premium">
+                                <Button>Nâng cấp ngay</Button>
+                              </Link>
                             </div>
                           )}
                         </>
