@@ -8,13 +8,19 @@
 
 Link web: **https://brainykidslearn.id.vn/**
 **Đây là repo front-end** Kết hợp với Back-end ở **https://github.com/VietDucc/BrainyKids**
+
 Link swagger: **https://duc-spring.ngodat0103.live/demo/swagger-ui/index.html#/**
-**Thẻ dùng thử để nâng cấp premium:** 
-    Ngân hàng: NCB
-    Số thẻ: 9704198526191432198
-    Tên chủ thẻ: NGUYEN VAN A
-    Ngày phát hành: 07/15
-    Mật khẩu OTP: 123456
+
+## 💳 Thẻ Dùng Thử Để Nâng Cấp Premium
+
+| Mục             | Thông tin                |
+|------------------|---------------------------|
+| 🏦 Ngân hàng     | NCB                       |
+| 💳 Số thẻ        | 9704 1985 2619 1432 198   |
+| 👤 Tên chủ thẻ   | NGUYEN VAN A              |
+| 📅 Ngày phát hành| 07/15                     |
+| 🔐 Mật khẩu OTP  | 123456                    |
+
 
 ## 📋 Giới thiệu
 
