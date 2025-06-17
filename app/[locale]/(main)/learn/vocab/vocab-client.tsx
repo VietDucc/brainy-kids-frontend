@@ -200,7 +200,6 @@ export function VocabClient({ vocabularyData }: VocabClientProps) {
                 </>
               ) : (
                 <>
-                  <BookOpen className="h-4 w-4 group-hover:scale-110 transition-transform" />
                   <span className="text-sm font-semibold">📚 Thẻ Từ Vựng</span>
                 </>
               )}
@@ -217,7 +216,6 @@ export function VocabClient({ vocabularyData }: VocabClientProps) {
                 </>
               ) : (
                 <>
-                  <Brain className="h-4 w-4 group-hover:scale-110 transition-transform" />
                   <span className="text-sm font-semibold">🧠 Tổng Quan</span>
                 </>
               )}
