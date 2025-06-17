@@ -6,7 +6,6 @@ export default async function CoursesPage() {
   const { getToken } = await auth();
 
   const token = await getToken({ template: "jwt-clerk" });
-  console.log("token", token);
 
   const res = await fetch(api.courses, {
     headers: {
