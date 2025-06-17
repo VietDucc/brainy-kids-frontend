@@ -38,7 +38,7 @@ Link swagger: **https://duc-spring.ngodat0103.live/demo/swagger-ui/index.html#/*
 
 ## 👥 Đội ngũ phát triển
 
-**Nhóm 3 - Môn Lập Trình Ứng dụng Web NT208.P23.ANTT**
+**Nhóm 8 - Môn Lập Trình Ứng dụng Web NT208.P23.ANTT**
 
 **🎓 Giảng viên hướng dẫn:** Trần Tuấn Dũng
 
