@@ -370,55 +370,57 @@ export function FlashCardDetailClient({
   return (
     <div className="container px-4 sm:px-6 py-4 sm:py-6">
       <div className="max-w-5xl mx-auto">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-8 mb-6 sm:mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => router.push("/flashcards")}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Button>
+        {studyMode === "overview" && (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-8 mb-6 sm:mb-8">
+            <Button
+              variant="ghost"
+              onClick={() => router.push("/flashcards")}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </Button>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-            <h1 className="text-xl sm:text-2xl font-bold break-all">
-              {deck.name}
-            </h1>
-            <Badge variant="secondary" className="whitespace-nowrap">
-              {deck.flashCards.length} cards
-            </Badge>
-          </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+              <h1 className="text-xl sm:text-2xl font-bold break-all">
+                {deck.name}
+              </h1>
+              <Badge variant="secondary" className="whitespace-nowrap">
+                {deck.flashCards.length} cards
+              </Badge>
+            </div>
 
-          <div className="flex items-center gap-2 self-end sm:self-auto">
-            {isUserDeck && (
-              <>
-                <Button
-                  onClick={() => setShowCreateCard(true)}
-                  variant="outline"
-                  size="sm"
-                  className="h-9"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Card
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              {isUserDeck && (
+                <>
+                  <Button
+                    onClick={() => setShowCreateCard(true)}
+                    variant="outline"
+                    size="sm"
+                    className="h-9"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Card
+                  </Button>
+                  <Button
+                    onClick={() => setShowBulkImport(true)}
+                    variant="outline"
+                    size="sm"
+                    className="h-9"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Bulk Import
+                  </Button>
+                </>
+              )}
+              {studyMode === "overview" && deck.flashCards.length > 0 && (
+                <Button onClick={startStudySession} size="sm" className="h-9">
+                  Start Learning
                 </Button>
-                <Button
-                  onClick={() => setShowBulkImport(true)}
-                  variant="outline"
-                  size="sm"
-                  className="h-9"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Bulk Import
-                </Button>
-              </>
-            )}
-            {studyMode === "overview" && deck.flashCards.length > 0 && (
-              <Button onClick={startStudySession} size="sm" className="h-9">
-                Start Learning
-              </Button>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {deck.flashCards.length === 0 ? (
           <Card className="text-center p-6 sm:p-8">
