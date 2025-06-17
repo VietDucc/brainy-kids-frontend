@@ -6,9 +6,15 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.1-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+Link web: **https://brainykidslearn.id.vn/**
 **Đây là repo front-end** Kết hợp với Back-end ở **https://github.com/VietDucc/BrainyKids**
-
 Link swagger: **https://duc-spring.ngodat0103.live/demo/swagger-ui/index.html#/**
+**Thẻ dùng thử để nâng cấp premium:** 
+    Ngân hàng: NCB
+    Số thẻ: 9704198526191432198
+    Tên chủ thẻ: NGUYEN VAN A
+    Ngày phát hành: 07/15
+    Mật khẩu OTP: 123456
 
 ## 📋 Giới thiệu
 
