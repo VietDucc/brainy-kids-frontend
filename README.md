@@ -8,6 +8,10 @@
 
 Link web: **https://brainykidslearn.id.vn/**
 
+Link demo: **https://www.youtube.com/watch?v=Xjv8J0U76nM**
+
+Link video tiktok: **https://vt.tiktok.com/ZSkbfhP3W/**
+
 **Đây là repo front-end** Kết hợp với Back-end ở **https://github.com/VietDucc/BrainyKids**
 
 Link swagger: **https://duc-spring.ngodat0103.live/demo/swagger-ui/index.html#/**
